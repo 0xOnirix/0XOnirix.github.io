@@ -1,0 +1,198 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on Onirix</title>
+		<link>http://localhost:1313/posts/</link>
+		<description>Recent content in Posts on Onirix</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>fr</language>
+		<copyright>CC BY-NC 4.0</copyright>
+		<lastBuildDate>Mon, 08 Jul 2024 16:04:20 +0200</lastBuildDate>
+		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Installation de Loxya(Robert2)</title>
+			<link>http://localhost:1313/posts/installation_robert2/installation_robert2/</link>
+			<pubDate>Mon, 08 Jul 2024 16:04:20 +0200</pubDate>
+			
+			<guid>http://localhost:1313/posts/installation_robert2/installation_robert2/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<p><strong>/!\ Cet installation a été réalisée sur Debian 12 ! /!\</strong></p>
+<h2 id="préambule">Préambule</h2>
+<p>Loxya(Robert2) est un serveur de gestion et suivis d&rsquo;inventaire.</p>
+<p>La version gratuite est open-source et comprend les fonctions suivantes:</p>
+<ul>
+<li>Gestion du stock</li>
+<li>Gestion des sorties</li>
+<li>Calendrier</li>
+<li>Gestion des clients et emprunteurs</li>
+<li>Gestion du personnel</li>
+<li>Edition de fiches de sorties, devis et factures</li>
+</ul>
+<p>Ce qu&rsquo;elle ne comprend PAS:</p>
+<ul>
+<li>Authentification LDAP (ou tout autre centralisation d&rsquo;authentification)</li>
+<li>Demande de réservation en ligne</li>
+<li>Scanner de code barre</li>
+<li>Assistance Loxya</li>
+</ul>
+<hr>
+<h2 id="installation">Installation</h2>
+<hr>
+<h3 id="installer-les-dépendances">Installer les dépendances</h3>
+<p>Robert 2 a besoin de apache2 et de certains modules PHP (version minimum supportée: php 8.0):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo apt install zip apache2 php libapache2-mod-php php-bcmath php-curl php-php-gettext php-intl php-mbstring php-xml php-bcmath php-mysql w3m -y
+</span></span></code></pre></div><hr>
+<h3 id="base-de-données">Base de données</h3>
+<p>Robert2 utilise uniquement MYSQL ou MariaDB pour stocker ses données, je vais ici utiliser MariaDB et la configurer.</p>
+<h4 id="installation-de-mariadb">Installation de MariaDB</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> sudo apt install mariadb-server -y
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo mysql_secure_installation
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Enter current password <span class="k">for</span> root <span class="o">(</span>enter <span class="k">for</span> none<span class="o">)</span>: MotDePasseRoot
+</span></span><span class="line"><span class="cl">Switch to unix_socket authentication <span class="o">[</span>Y/n<span class="o">]</span> n
+</span></span><span class="line"><span class="cl">Remove anonymous users? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl">Disallow root login remotely? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl">Remove <span class="nb">test</span> database and access to it? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl">Reload privilege tables now? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span></code></pre></div><h4 id="création-de-la-base-de-données">Création de la base de données</h4>
+<ul>
+<li>Se connecter à MariaDB : <code>sudo mysql -u root -p</code></li>
+<li>Créer une base de donnée: <code>CREATE DATABASE robert2_db;</code></li>
+<li>Créer un utilisateur autre que root: <code>CREATE USER 'robert2'@'localhost' IDENTIFIED BY 'motdepasse';</code></li>
+<li>Donner tous les droits à l&rsquo;utilisateur sur la base de données <code>GRANT ALL PRIVILEGES ON robert2_db.* TO 'robert2'@'localhost';</code></li>
+<li>Recharger les privilèges: <code>FLUSH PRIVILEGES;</code></li>
+<li>Fermer la connexion: <code>quit;</code></li>
+</ul>
+<p>Modifier le fichier <code>/etc/mysql/my.cnf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>client-server<span class="o">]</span>
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">default-character-set<span class="o">=</span>utf8mb4
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>mysqld<span class="o">]</span>
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">collation-server <span class="o">=</span> utf8mb4_unicode_ci
+</span></span></code></pre></div><hr>
+<h3 id="serveur-web">Serveur Web</h3>
+<p>Robert2 nécessite un serveur Web pour fonctionner, il ne supporte que <strong>NGINX</strong> et <strong>Apache2</strong>, je vais ici utiliser ce dernier.</p>
+<h4 id="page-en-http">Page en HTTP</h4>
+<p><strong>/!\ Attention /!\ il est fortemment déconseillé de déployer le serveur en HTTP en production.</strong></p>
+<p>Créer et modifier le fichier <code>/etc/apache2/sites-available/robert2.mydomain.local.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">&lt;VirtualHost *:80&gt;
+</span></span><span class="line"><span class="cl">        ServerAdmin admin@mydomain.local
+</span></span><span class="line"><span class="cl">        ServerName robert2.mydomain.local
+</span></span><span class="line"><span class="cl">        ServerAlias www.robert2.mydomain.local
+</span></span><span class="line"><span class="cl">        DocumentRoot /var/www/Robert2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ErrorLog <span class="si">${</span><span class="nv">APACHE_LOG_DIR</span><span class="si">}</span>/error.log
+</span></span><span class="line"><span class="cl">        CustomLog <span class="si">${</span><span class="nv">APACHE_LOG_DIR</span><span class="si">}</span>/access.log combined
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        &lt;Directory /var/www/Robert2&gt;
+</span></span><span class="line"><span class="cl">                Options +FollowSymLinks
+</span></span><span class="line"><span class="cl">                AllowOverride All
+</span></span><span class="line"><span class="cl">                Require all granted
+</span></span><span class="line"><span class="cl">        &lt;/Directory&gt;
+</span></span><span class="line"><span class="cl">        &lt;Location <span class="s2">&#34;/server-status&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">                SetHandler server-status
+</span></span><span class="line"><span class="cl">                Require all granted
+</span></span><span class="line"><span class="cl">        &lt;/Location&gt;
+</span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
+</span></span></code></pre></div><h4 id="page-en-https">Page en HTTPS</h4>
+<ul>
+<li>Mettre respectivement le certificat (ex: robert2.mydomain.local.crt) et la clé privée (ex: robert2.mydomain.local.key) du serveur dans <code>/etc/ssl/certs</code> et <code>/etc/ssl/private</code></li>
+<li>Activer le module php <strong>ssl</strong>: <code>sudo a2enmod ssl</code></li>
+<li>Modifier <code>/etc/apache2/sites-available/robert2.mydomain.local.conf</code>:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">&lt;VirtualHost *:80&gt;
+</span></span><span class="line"><span class="cl">		ServerName robert2.mydomain.local
+</span></span><span class="line"><span class="cl">		ServerAlias www.robert2.mydomain.local
+</span></span><span class="line"><span class="cl">		Redirect permanent / https://robert2.mydomain.local/
+</span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;VirtualHost *:443&gt;
+</span></span><span class="line"><span class="cl">ServerAdmin admin@mydomain.local
+</span></span><span class="line"><span class="cl">        ServerName robert2.mydomain.local
+</span></span><span class="line"><span class="cl">        ServerAlias www.robert2.mydomain.local
+</span></span><span class="line"><span class="cl">        DocumentRoot /var/www/Robert2
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">        SSLEngine On
+</span></span><span class="line"><span class="cl">        SSLCertificateFile /etc/ssl/certs/robert2.mydomain.local.crt
+</span></span><span class="line"><span class="cl">        SSLCertificateKeyFile /etc/ssl/private/robert2.mydomain.local.key
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ErrorLog <span class="si">${</span><span class="nv">APACHE_LOG_DIR</span><span class="si">}</span>/error.log
+</span></span><span class="line"><span class="cl">        CustomLog <span class="si">${</span><span class="nv">APACHE_LOG_DIR</span><span class="si">}</span>/access.log combined
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        &lt;Directory /var/www/Robert2&gt;
+</span></span><span class="line"><span class="cl">                Options +FollowSymLinks
+</span></span><span class="line"><span class="cl">                AllowOverride All
+</span></span><span class="line"><span class="cl">                Require all granted
+</span></span><span class="line"><span class="cl">        &lt;/Directory&gt;
+</span></span><span class="line"><span class="cl">        &lt;Location <span class="s2">&#34;/server-status&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">                SetHandler server-status
+</span></span><span class="line"><span class="cl">                Require all granted
+</span></span><span class="line"><span class="cl">        &lt;/Location&gt;
+</span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
+</span></span></code></pre></div><h4 id="paramétrage-dapache2">Paramétrage d&rsquo;Apache2</h4>
+<p>Afin de paramétrer commme il faut Apache2, il faut diter le fichier <code>/etc/apache2/apache2.conf</code> et rajouter la ligne <code>ServerName 127.0.0.1</code> à la fin.</p>
+<p>On active ensuite le VHost du serveur, désactiver le site par défaut et vérifier la configuration:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo a2ensite robert2.mydomain.local
+</span></span><span class="line"><span class="cl">sudo a2dissite 000-default.conf
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo apache2ctl configtest
+</span></span><span class="line"><span class="cl">AH00112: Warning: DocumentRoot <span class="o">[</span>/var/www/Robert2<span class="o">]</span> does not exist
+</span></span><span class="line"><span class="cl">Syntax OK
+</span></span></code></pre></div><p>L&rsquo;avertissement est normale car on n&rsquo;a pas encore créé le répertoire.</p>
+<p>Et enfin, on active le module URLRewriting et on redémarre Apache2:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo a2enmod rewrite
+</span></span><span class="line"><span class="cl">sudo systemctl restart apache2
+</span></span></code></pre></div><hr>
+<h3 id="robert2">Robert2</h3>
+<p>Ceci est la dernière étape de l&rsquo;article, l&rsquo;installation de Robert2.</p>
+<h4 id="téléchargement">Téléchargement</h4>
+<ul>
+<li>Télécharger le .zip à cette <a href="https://github.com/Robert-2/Robert2/releases">adresse</a></li>
+<li>Le mettre dans <code>/var/www/</code></li>
+<li>L&rsquo;extraire et renommer le dossier <strong>Robert2</strong></li>
+<li>Donner les droits sur le dossier à l&rsquo;utilisateur <strong>www-data</strong>: <code>sudo chown -R www-data:www-data /var/www/Robert2</code></li>
+</ul>
+<h4 id="finalisation-de-linstallation">Finalisation de l&rsquo;installation</h4>
+<p>Afin de finaliser l&rsquo;installation, il faut ouvrir un navigateur et se rendre sur l&rsquo;IP du serveur. Normalement, voila ce qui devrait s&rsquo;afficher.</p>
+<div>
+        <img src="/posts/installation_robert2/images/Capture1.png" alt="Capture1">
+</div>
+<p>On peut lancer l&rsquo;assistant en cliquant sur <strong>C&rsquo;est parti !</strong>.</p>
+<div>
+        <img src="/posts/installation_robert2/images/Capture2.png" alt="Capture2">
+</div>
+<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2, elle est très importante car si on ne rentre pas EXACTEMENT ça (en incluant le protocole) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
+<p>Après ça, il y a deux pages nous demandant de valider des paramètres et renseigner les informations de notre société avant d&rsquo;arriver au paramétrage de la BDD.</p>
+<div>
+        <img src="/posts/installation_robert2/images/Capture5.png" alt="Capture5">
+</div>
+<p>Ici, on va pouvoir renseigner les informations de la BDD créée précedemment:</p>
+<ul>
+<li><strong>Serveur MYSQL (host):</strong> localhost</li>
+<li><strong>Utilisateur MYSQL (user):</strong> Le nom de l&rsquo;utilisateur (ici robert2)</li>
+<li><strong>Mot de passe MYSQL (password):</strong> Le mot de passe de l&rsquo;utilisateur</li>
+<li><strong>Nom de la base de données:</strong> Ici robert2_db</li>
+</ul>
+<p>Une fois cela fait, il n&rsquo;y a plus qu&rsquo;a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le tour est joué !</p>
+<hr>
+<h2 id="erreurs">Erreurs</h2>
+<h3 id="page-blanche">Page blanche</h3>
+<p>Donnez l&rsquo;appartenance du dossier et sous-dossiers <code>/var/www/Robert2</code> à <strong>www-data</strong> (chown).</p>
+<h3 id="apachectl-status-renvoie-un-problème-avec-www-browser">apachectl status renvoie un problème avec www-browser</h3>
+<p>Installer le paquet <strong>w3m</strong>.</p>
+<h3 id="désolé-mais-lapi-est-inaccessible">Désolé, mais l&rsquo;API est inaccessible&hellip;</h3>
+<p>Cela signifie que l&rsquo;URL a laquelle vous vous connectez n&rsquo;est pas la même que celle inscrite après <strong>baseUrl</strong> dans le fichier <code>/var/www/Robert2/src/App/Config/settings.json</code>.
+Cela peut être au niveau du protocole (HTTPS/HTTP) ou parce que vous vous y connecter depuis l&rsquo;adresse IP alors que le nom de domaine y est paramétré.</p>
+<hr>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://robertmanager.org/wiki/install">https://robertmanager.org/wiki/install</a></li>
+<li><a href="https://www.debian-fr.org/t/certificat-packages-sury-org-expire/86215">https://www.debian-fr.org/t/certificat-packages-sury-org-expire/86215</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/apache-configuration-error-ah00558-could-not-reliably-determine-the-server-s-fully-qualified-domain-name">https://www.digitalocean.com/community/tutorials/apache-configuration-error-ah00558-could-not-reliably-determine-the-server-s-fully-qualified-domain-name</a></li>
+</ul>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>

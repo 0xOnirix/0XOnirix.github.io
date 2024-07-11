@@ -1,0 +1,96 @@
+baseURL = "https://0xonirix.github.io/"
+defaultContentLanguage = "fr"
+defaultContentLang = "fr"
+defaultContentLanguageInSubdir = false
+theme = "hermit-v2"
+title = 'Onirix'
+languageCode = 'fr'
+
+pygmentsCodefences  = true
+pygmentsUseClasses  = true
+
+rssLimit = 10
+
+copyright = "CC BY-NC 4.0"
+enableEmoji = true
+
+[frontmatter]
+date = ["date", "publishDate", "lastmod"]
+lastmod = ["lastmod", ":git", "date", "publishDate"]
+publishDate = ["publishDate", "date"]
+expiryDate = ["expiryDate"]
+
+
+[params.author]
+  name = "Onirix"
+  about = ""
+
+[blackfriday]
+  #hrefTargetBlank = true
+  #noreferrerLinks = true
+  #nofollowLinks = true
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.renderHooks]
+      [markup.goldmark.renderHooks.image]
+        enableDefault = true
+
+[params]
+  dateform        = "2 Jan, 2006"
+  dateformShort   = "2 Jan"
+  dateformNum     = "02-01-2006"
+  dateformNumTime = "02-01-2006"
+  description = "Blog d'Onirix"
+  themeColor = "#494f5c"
+  homeSubtitle = "Blog d'informatique et cybersécurité"
+  footerCopyright = '<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
+
+  justifyContent = false
+
+  relatedPosts = true
+  code_copy_button = true
+
+  homeSubtitlePrinter = true
+  scrollToTop = true 
+  global_mathjax = false
+  readTime = true
+  readTimeSeparator = "Temps de lecture:"
+  # legacyLayout = false
+  shareSocial = false
+  tagSymbol = "#"
+  categorySymbol = "⊲"
+  pinned = "Pinned Posts"
+  # pinnedSVGname = "pin"
+  descriptionInPosts= true
+  
+  [[params.socialLinks]]
+    name = "root-me"
+    url = "https://root-me.org/Onirix"
+
+  [[params.socialLinks]]
+    name = "github"
+    url = "https://github.com/0xOnirix"
+
+[menu]
+
+  [[menu.main]]
+    name = "Articles"
+    url = "posts/"
+    weight = 10
+
+    [[menu.main]]
+    name = "Catégories"
+    url = "categories/"
+    weight = 20
+
+  [[menu.main]]
+    name = "A propos"
+    url = "apropos"
+    weight = 30

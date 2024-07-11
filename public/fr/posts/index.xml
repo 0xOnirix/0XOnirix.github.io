@@ -1,0 +1,24 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on 0xOnirix</title>
+		<link>http://localhost:1313/fr/posts/</link>
+		<description>Recent content in Posts on 0xOnirix</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>fr-FR</language>
+		<copyright>No Copyright</copyright>
+		<lastBuildDate>Wed, 28 Feb 2024 12:59:09 +0200</lastBuildDate>
+		<atom:link href="http://localhost:1313/fr/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Post</title>
+			<link>http://localhost:1313/fr/posts/post/</link>
+			<pubDate>Wed, 28 Feb 2024 12:59:09 +0200</pubDate>
+			
+			<guid>http://localhost:1313/fr/posts/post/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<h1 id="blablabla">Blablabla</h1>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>
