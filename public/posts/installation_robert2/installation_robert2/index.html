@@ -16,19 +16,17 @@
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c"><meta name="author" content="Onirix"><meta name="description" content="Blog d&#39;Onirix">
 
   <meta itemprop="name" content="Installation de Loxya(Robert2)">
-  <meta itemprop="description" content="/!\ Cet installation a été réalisée sur Debian 12 ! /!\
-Préambule Loxya(Robert2) est un serveur de gestion et suivis d’inventaire.
+  <meta itemprop="description" content="Note Cet installation a été réalisée sur Debian 12 Préambule Loxya(Robert2) est un serveur de gestion et suivis d’inventaire.
 La version gratuite est open-source et comprend les fonctions suivantes:
 Gestion du stock Gestion des sorties Calendrier Gestion des clients et emprunteurs Gestion du personnel Edition de fiches de sorties, devis et factures Ce qu’elle ne comprend PAS:
 Authentification LDAP (ou tout autre centralisation d’authentification) Demande de réservation en ligne Scanner de code barre Assistance Loxya Installation Installer les dépendances Robert 2 a besoin d’un serveur Web (ici Apache2), une base de données (ici MariaDB) et de certains modules PHP (version minimum supportée: php 8.">
   <meta itemprop="datePublished" content="2024-07-08T16:04:20+02:00">
   <meta itemprop="dateModified" content="2024-07-08T16:04:20+02:00">
-  <meta itemprop="wordCount" content="840">
+  <meta itemprop="wordCount" content="854">
   <meta itemprop="keywords" content="Robert2,Loxya(Robert2),Loxya,Debian,Debian 12"><meta property="og:url" content="http://localhost:1313/posts/installation_robert2/installation_robert2/">
   <meta property="og:site_name" content="Onirix">
   <meta property="og:title" content="Installation de Loxya(Robert2)">
-  <meta property="og:description" content="/!\ Cet installation a été réalisée sur Debian 12 ! /!\
-Préambule Loxya(Robert2) est un serveur de gestion et suivis d’inventaire.
+  <meta property="og:description" content="Note Cet installation a été réalisée sur Debian 12 Préambule Loxya(Robert2) est un serveur de gestion et suivis d’inventaire.
 La version gratuite est open-source et comprend les fonctions suivantes:
 Gestion du stock Gestion des sorties Calendrier Gestion des clients et emprunteurs Gestion du personnel Edition de fiches de sorties, devis et factures Ce qu’elle ne comprend PAS:
 Authentification LDAP (ou tout autre centralisation d’authentification) Demande de réservation en ligne Scanner de code barre Assistance Loxya Installation Installer les dépendances Robert 2 a besoin d’un serveur Web (ici Apache2), une base de données (ici MariaDB) et de certains modules PHP (version minimum supportée: php 8.">
@@ -45,8 +43,7 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Installation de Loxya(Robert2)">
-  <meta name="twitter:description" content="/!\ Cet installation a été réalisée sur Debian 12 ! /!\
-Préambule Loxya(Robert2) est un serveur de gestion et suivis d’inventaire.
+  <meta name="twitter:description" content="Note Cet installation a été réalisée sur Debian 12 Préambule Loxya(Robert2) est un serveur de gestion et suivis d’inventaire.
 La version gratuite est open-source et comprend les fonctions suivantes:
 Gestion du stock Gestion des sorties Calendrier Gestion des clients et emprunteurs Gestion du personnel Edition de fiches de sorties, devis et factures Ce qu’elle ne comprend PAS:
 Authentification LDAP (ou tout autre centralisation d’authentification) Demande de réservation en ligne Scanner de code barre Assistance Loxya Installation Installer les dépendances Robert 2 a besoin d’un serveur Web (ici Apache2), une base de données (ici MariaDB) et de certains modules PHP (version minimum supportée: php 8.">
@@ -133,11 +130,17 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
     
     
     
-    3 Minutes, 49 Seconds</p>
+    3 Minutes, 52 Seconds</p>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>08-07-2024</p></div>
 			<hr class="post-end">
 			<div class="content">
-				<p><strong>/!\ Cet installation a été réalisée sur Debian 12 ! /!\</strong></p>
+				
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Cet installation a été réalisée sur Debian 12</div>
+    </aside>
 <h2 id="préambule">Préambule<a href="#préambule" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>Loxya(Robert2) est un serveur de gestion et suivis d&rsquo;inventaire.</p>
 <p>La version gratuite est open-source et comprend les fonctions suivantes:</p>
@@ -195,7 +198,13 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
 <h3 id="serveur-web">Serveur Web<a href="#serveur-web" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>Robert2 nécessite un serveur Web pour fonctionner, il ne supporte que <strong>NGINX</strong> et <strong>Apache2</strong>, je vais ici utiliser ce dernier.</p>
 <h4 id="http">HTTP<a href="#http" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
-<p><strong>/!\ Attention /!\ il est fortemment déconseillé de déployer le serveur en HTTP en production.</strong></p>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Avertissement</b>
+        </div>
+        <div class="admonition-content">Il est fortemment déconseillé de déployer le serveur en HTTP en production</div>
+    </aside>
 <p>Créer et modifier le fichier <code>/etc/apache2/sites-available/robert2.mydomain.local.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">&lt;VirtualHost *:80&gt;
 </span></span><span class="line"><span class="cl">        ServerAdmin admin@mydomain.local
@@ -253,7 +262,7 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
 </span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
 </span></span></code></pre></div><h4 id="paramétrage-dapache2">Paramétrage d&rsquo;Apache2<a href="#paramétrage-dapache2" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>Afin de paramétrer correctement Apache2, il faut éditer le fichier <code>/etc/apache2/apache2.conf</code> et rajouter la ligne <code>ServerName 127.0.0.1</code> à la fin.</p>
-<p>Sans ça, l&rsquo;erreur <strong>Apache Configuration Error AH00558: Could not reliably determine the server&rsquo;s fully qualified domain name</strong> va apparaître quadn on va utiliser <strong>apache2ctl configtest</strong>.</p>
+<p>Sans ça, l&rsquo;erreur <strong>Apache Configuration Error AH00558: Could not reliably determine the server&rsquo;s fully qualified domain name</strong> va apparaître quand on va utiliser <strong>apache2ctl configtest</strong>.</p>
 <p>On active ensuite le VHost du serveur, désactive le site par défaut et vérifie la configuration:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo a2ensite robert2.mydomain.local
 </span></span><span class="line"><span class="cl">sudo a2dissite 000-default.conf
@@ -283,7 +292,16 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
 <div>
         <img src="/posts/installation_robert2/images/Capture2.png" alt="Capture2">
 </div>
-<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2, elle est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
+<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2 (ici <code>https://robert2.mydomain.local</code>, il manque une partie sur la capture d&rsquo;écran).</p>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Avertissement</b>
+        </div>
+        <div class="admonition-content"><p>Cette valeur est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
+<p>En cas de problème, voir <a href="#d%C3%A9sol%C3%A9-mais-lapi-est-inaccessible">ici</a>.</p>
+</div>
+    </aside>
 <p>Après ça, il y a deux pages nous demandant de valider des paramètres et renseigner les informations de notre société avant d&rsquo;arriver au paramétrage de la BDD.</p>
 <div>
         <img src="/posts/installation_robert2/images/Capture5.png" alt="Capture5">
@@ -295,7 +313,7 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
 <li><strong>Mot de passe MYSQL (password):</strong> Le mot de passe de l&rsquo;utilisateur</li>
 <li><strong>Nom de la base de données:</strong> Ici robert2_db</li>
 </ul>
-<p>Une fois cela fait, il n&rsquo;y a plus qu&rsquo;a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le tour est joué !</p>
+<p>Une fois cela fait, il n&rsquo;y a plus qu&rsquo;a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le serveur est prêt !</p>
 <hr>
 <h2 id="erreurs">Erreurs<a href="#erreurs" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h3 id="page-blanche">Page blanche<a href="#page-blanche" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
@@ -303,8 +321,8 @@ Authentification LDAP (ou tout autre centralisation d’authentification) Demand
 <h3 id="apachectl-status-renvoie-un-problème-avec-www-browser">apachectl status renvoie un problème avec www-browser<a href="#apachectl-status-renvoie-un-problème-avec-www-browser" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>Installer le paquet <strong>w3m</strong>.</p>
 <h3 id="désolé-mais-lapi-est-inaccessible">Désolé, mais l&rsquo;API est inaccessible&hellip;<a href="#désolé-mais-lapi-est-inaccessible" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<p>Cela signifie que l&rsquo;URL a laquelle vous vous connectez n&rsquo;est pas la même que celle inscrite après <strong>baseUrl</strong> dans le fichier <code>/var/www/Robert2/src/App/Config/settings.json</code>.
-Cela peut être au niveau du protocole (HTTPS/HTTP) ou parce que vous vous y connecter depuis l&rsquo;adresse IP alors que le nom de domaine y est paramétré.</p>
+<p>Cela signifie que l&rsquo;URL a laquelle vous vous connectez n&rsquo;est pas la même que celle inscrite après <strong>baseUrl</strong> dans le fichier <code>/var/www/Robert2/src/App/Config/settings.json</code>.</p>
+<p>Cela peut être au niveau du protocole (HTTPS/HTTP) ou parce que vous vous y connecter depuis l&rsquo;adresse IP alors que le nom de domaine y est paramétré.</p>
 <hr>
 <h2 id="sources">Sources<a href="#sources" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>

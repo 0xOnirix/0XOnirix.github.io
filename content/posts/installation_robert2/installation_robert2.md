@@ -14,7 +14,9 @@ categories:
   - Administration système
 ---
 
-**/!\ Cet installation a été réalisée sur Debian 12 ! /!\\**
+{{< admonition type=note title="Note" >}}
+Cet installation a été réalisée sur Debian 12
+{{< /admonition >}}
 
 ## Préambule
 
@@ -97,7 +99,9 @@ Robert2 nécessite un serveur Web pour fonctionner, il ne supporte que **NGINX**
 
 #### HTTP
 
-**/!\ Attention /!\ il est fortemment déconseillé de déployer le serveur en HTTP en production.**
+{{< admonition type=warning title="Avertissement" >}}
+Il est fortemment déconseillé de déployer le serveur en HTTP en production
+{{< /admonition >}}
 
 Créer et modifier le fichier `/etc/apache2/sites-available/robert2.mydomain.local.conf`:
 ```sh
@@ -162,7 +166,7 @@ ServerAdmin admin@mydomain.local
 
 Afin de paramétrer correctement Apache2, il faut éditer le fichier `/etc/apache2/apache2.conf` et rajouter la ligne `ServerName 127.0.0.1` à la fin.
 
-Sans ça, l'erreur **Apache Configuration Error AH00558: Could not reliably determine the server's fully qualified domain name** va apparaître quadn on va utiliser **apache2ctl configtest**.
+Sans ça, l'erreur **Apache Configuration Error AH00558: Could not reliably determine the server's fully qualified domain name** va apparaître quand on va utiliser **apache2ctl configtest**.
 
 On active ensuite le VHost du serveur, désactive le site par défaut et vérifie la configuration:
 ```sh
@@ -210,7 +214,14 @@ On peut lancer l'assistant en cliquant sur **C'est parti !**.
         <img src="/posts/installation_robert2/images/Capture2.png" alt="Capture2">
 </div>
 
-Cette page demande l'**URL d'application** qui est l'URL à laquelle on va se connecter à Robert2, elle est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s'identifier ou le serveur sera inaccessible.
+Cette page demande l'**URL d'application** qui est l'URL à laquelle on va se connecter à Robert2 (ici `https://robert2.mydomain.local`, il manque une partie sur la capture d'écran).
+
+{{< admonition type=warning title="Avertissement" >}}
+Cette valeur est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s'identifier ou le serveur sera inaccessible.
+
+En cas de problème, voir [ici](#désolé-mais-lapi-est-inaccessible).
+{{< /admonition >}}
+ 
 
 Après ça, il y a deux pages nous demandant de valider des paramètres et renseigner les informations de notre société avant d'arriver au paramétrage de la BDD.
 
@@ -225,7 +236,7 @@ Ici, on va pouvoir renseigner les informations de la BDD créée précedemment:
 - **Mot de passe MYSQL (password):** Le mot de passe de l'utilisateur
 - **Nom de la base de données:** Ici robert2_db
 
-Une fois cela fait, il n'y a plus qu'a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le tour est joué !
+Une fois cela fait, il n'y a plus qu'a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le serveur est prêt !
 
 ---
 
@@ -241,6 +252,7 @@ Installer le paquet **w3m**.
 ### Désolé, mais l'API est inaccessible...
 
 Cela signifie que l'URL a laquelle vous vous connectez n'est pas la même que celle inscrite après **baseUrl** dans le fichier `/var/www/Robert2/src/App/Config/settings.json`.
+
 Cela peut être au niveau du protocole (HTTPS/HTTP) ou parce que vous vous y connecter depuis l'adresse IP alors que le nom de domaine y est paramétré.
 
 ---

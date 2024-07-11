@@ -16,7 +16,13 @@
 			
 			<guid>http://localhost:1313/posts/installation_robert2/installation_robert2/</guid>
 			<description><![CDATA[%!s(<nil>)]]></description>
-			<content type="html"><![CDATA[<p><strong>/!\ Cet installation a été réalisée sur Debian 12 ! /!\</strong></p>
+			<content type="html"><![CDATA[
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Cet installation a été réalisée sur Debian 12</div>
+    </aside>
 <h2 id="préambule">Préambule</h2>
 <p>Loxya(Robert2) est un serveur de gestion et suivis d&rsquo;inventaire.</p>
 <p>La version gratuite est open-source et comprend les fonctions suivantes:</p>
@@ -39,21 +45,20 @@
 <h2 id="installation">Installation</h2>
 <hr>
 <h3 id="installer-les-dépendances">Installer les dépendances</h3>
-<p>Robert 2 a besoin de apache2 et de certains modules PHP (version minimum supportée: php 8.0):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo apt install zip apache2 php libapache2-mod-php php-bcmath php-curl php-php-gettext php-intl php-mbstring php-xml php-bcmath php-mysql w3m -y
+<p>Robert 2 a besoin d&rsquo;un serveur Web (ici Apache2), une base de données (ici MariaDB) et de certains modules PHP (version minimum supportée: php 8.0):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo apt install apache2 mariadb-server zip php libapache2-mod-php php-bcmath php-curl php-php-gettext php-intl php-mbstring php-xml php-bcmath php-mysql w3m -y
 </span></span></code></pre></div><hr>
 <h3 id="base-de-données">Base de données</h3>
-<p>Robert2 utilise uniquement MYSQL ou MariaDB pour stocker ses données, je vais ici utiliser MariaDB et la configurer.</p>
-<h4 id="installation-de-mariadb">Installation de MariaDB</h4>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> sudo apt install mariadb-server -y
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo mysql_secure_installation
+<p>Robert2 est compatible uniquement <strong>MYSQL</strong> ou <strong>MariaDB</strong> pour stocker ses données, je vais ici utiliser MariaDB et la configurer.</p>
+<h4 id="installation-sécurisée-de-mariadb">Installation sécurisée de MariaDB</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> sudo mysql_secure_installation
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Enter current password <span class="k">for</span> root <span class="o">(</span>enter <span class="k">for</span> none<span class="o">)</span>: MotDePasseRoot
-</span></span><span class="line"><span class="cl">Switch to unix_socket authentication <span class="o">[</span>Y/n<span class="o">]</span> n
-</span></span><span class="line"><span class="cl">Remove anonymous users? <span class="o">[</span>Y/n<span class="o">]</span> y
-</span></span><span class="line"><span class="cl">Disallow root login remotely? <span class="o">[</span>Y/n<span class="o">]</span> y
-</span></span><span class="line"><span class="cl">Remove <span class="nb">test</span> database and access to it? <span class="o">[</span>Y/n<span class="o">]</span> y
-</span></span><span class="line"><span class="cl">Reload privilege tables now? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl"> Enter current password <span class="k">for</span> root <span class="o">(</span>enter <span class="k">for</span> none<span class="o">)</span>: MotDePasseRoot
+</span></span><span class="line"><span class="cl"> Switch to unix_socket authentication <span class="o">[</span>Y/n<span class="o">]</span> n
+</span></span><span class="line"><span class="cl"> Remove anonymous users? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl"> Disallow root login remotely? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl"> Remove <span class="nb">test</span> database and access to it? <span class="o">[</span>Y/n<span class="o">]</span> y
+</span></span><span class="line"><span class="cl"> Reload privilege tables now? <span class="o">[</span>Y/n<span class="o">]</span> y
 </span></span></code></pre></div><h4 id="création-de-la-base-de-données">Création de la base de données</h4>
 <ul>
 <li>Se connecter à MariaDB : <code>sudo mysql -u root -p</code></li>
@@ -63,7 +68,7 @@
 <li>Recharger les privilèges: <code>FLUSH PRIVILEGES;</code></li>
 <li>Fermer la connexion: <code>quit;</code></li>
 </ul>
-<p>Modifier le fichier <code>/etc/mysql/my.cnf</code>:</p>
+<p>Modifier le fichier <code>/etc/mysql/my.cnf</code> en ajoutant les lignes suivantes:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>client-server<span class="o">]</span>
 </span></span><span class="line"><span class="cl">...
 </span></span><span class="line"><span class="cl">default-character-set<span class="o">=</span>utf8mb4
@@ -74,7 +79,7 @@
 </span></span></code></pre></div><hr>
 <h3 id="serveur-web">Serveur Web</h3>
 <p>Robert2 nécessite un serveur Web pour fonctionner, il ne supporte que <strong>NGINX</strong> et <strong>Apache2</strong>, je vais ici utiliser ce dernier.</p>
-<h4 id="page-en-http">Page en HTTP</h4>
+<h4 id="http">HTTP</h4>
 <p><strong>/!\ Attention /!\ il est fortemment déconseillé de déployer le serveur en HTTP en production.</strong></p>
 <p>Créer et modifier le fichier <code>/etc/apache2/sites-available/robert2.mydomain.local.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">&lt;VirtualHost *:80&gt;
@@ -96,7 +101,7 @@
 </span></span><span class="line"><span class="cl">                Require all granted
 </span></span><span class="line"><span class="cl">        &lt;/Location&gt;
 </span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
-</span></span></code></pre></div><h4 id="page-en-https">Page en HTTPS</h4>
+</span></span></code></pre></div><h4 id="https">HTTPS</h4>
 <ul>
 <li>Mettre respectivement le certificat (ex: robert2.mydomain.local.crt) et la clé privée (ex: robert2.mydomain.local.key) du serveur dans <code>/etc/ssl/certs</code> et <code>/etc/ssl/private</code></li>
 <li>Activer le module php <strong>ssl</strong>: <code>sudo a2enmod ssl</code></li>
@@ -132,15 +137,16 @@
 </span></span><span class="line"><span class="cl">        &lt;/Location&gt;
 </span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
 </span></span></code></pre></div><h4 id="paramétrage-dapache2">Paramétrage d&rsquo;Apache2</h4>
-<p>Afin de paramétrer commme il faut Apache2, il faut diter le fichier <code>/etc/apache2/apache2.conf</code> et rajouter la ligne <code>ServerName 127.0.0.1</code> à la fin.</p>
-<p>On active ensuite le VHost du serveur, désactiver le site par défaut et vérifier la configuration:</p>
+<p>Afin de paramétrer correctement Apache2, il faut éditer le fichier <code>/etc/apache2/apache2.conf</code> et rajouter la ligne <code>ServerName 127.0.0.1</code> à la fin.</p>
+<p>Sans ça, l&rsquo;erreur <strong>Apache Configuration Error AH00558: Could not reliably determine the server&rsquo;s fully qualified domain name</strong> va apparaître quadn on va utiliser <strong>apache2ctl configtest</strong>.</p>
+<p>On active ensuite le VHost du serveur, désactive le site par défaut et vérifie la configuration:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo a2ensite robert2.mydomain.local
 </span></span><span class="line"><span class="cl">sudo a2dissite 000-default.conf
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo apache2ctl configtest
 </span></span><span class="line"><span class="cl">AH00112: Warning: DocumentRoot <span class="o">[</span>/var/www/Robert2<span class="o">]</span> does not exist
 </span></span><span class="line"><span class="cl">Syntax OK
 </span></span></code></pre></div><p>L&rsquo;avertissement est normale car on n&rsquo;a pas encore créé le répertoire.</p>
-<p>Et enfin, on active le module URLRewriting et on redémarre Apache2:</p>
+<p>Enfin, on active le module URLRewriting et on redémarre Apache2:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo a2enmod rewrite
 </span></span><span class="line"><span class="cl">sudo systemctl restart apache2
 </span></span></code></pre></div><hr>
@@ -154,7 +160,7 @@
 <li>Donner les droits sur le dossier à l&rsquo;utilisateur <strong>www-data</strong>: <code>sudo chown -R www-data:www-data /var/www/Robert2</code></li>
 </ul>
 <h4 id="finalisation-de-linstallation">Finalisation de l&rsquo;installation</h4>
-<p>Afin de finaliser l&rsquo;installation, il faut ouvrir un navigateur et se rendre sur l&rsquo;IP du serveur. Normalement, voila ce qui devrait s&rsquo;afficher.</p>
+<p>Afin de finaliser l&rsquo;installation, il faut ouvrir un navigateur et se rendre sur l&rsquo;IP du serveur, normalement, voila ce qui devrait s&rsquo;afficher.</p>
 <div>
         <img src="/posts/installation_robert2/images/Capture1.png" alt="Capture1">
 </div>
@@ -162,7 +168,7 @@
 <div>
         <img src="/posts/installation_robert2/images/Capture2.png" alt="Capture2">
 </div>
-<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2, elle est très importante car si on ne rentre pas EXACTEMENT ça (en incluant le protocole) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
+<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2, elle est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
 <p>Après ça, il y a deux pages nous demandant de valider des paramètres et renseigner les informations de notre société avant d&rsquo;arriver au paramétrage de la BDD.</p>
 <div>
         <img src="/posts/installation_robert2/images/Capture5.png" alt="Capture5">
