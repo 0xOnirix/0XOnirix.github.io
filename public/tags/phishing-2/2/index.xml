@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Phishing 2/2 on Onirix</title>
+    <link>http://localhost:1313/tags/phishing-2/2/</link>
+    <description>Recent content in Phishing 2/2 on Onirix</description>
+    <generator>Hugo</generator>
+    <language>fr</language>
+    <copyright>CC BY-NC 4.0</copyright>
+    <lastBuildDate>Fri, 12 Jul 2024 09:16:24 +0200</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/phishing-2/2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</title>
+      <link>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</link>
+      <pubDate>Fri, 12 Jul 2024 09:16:24 +0200</pubDate>
+      <guid>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</guid>
+      <description>Ceci est le write-up de la deuxième partie du challenge Forensic Enquête sur le phishing des JO du CTF Shutlock édition 2024 organisé par la DGSI et EPITA.&#xA;Énoncé Bravo ! Vous voici dans la deuxième partie de votre enquête. Le dump réseau vous a été confié avec une partie de son système de fichiers. L&amp;#39;utilisatrice à qui appartiennent ces informations, est une scientifique qui travaille sur le chiffrement du système d&amp;#39;information des JO.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Onirix</title>
-    <link>http://localhost:1313/</link>
-    <description>Recent content on Onirix</description>
+    <title>Write-Up on Onirix</title>
+    <link>http://localhost:1313/tags/write-up/</link>
+    <description>Recent content in Write-Up on Onirix</description>
     <generator>Hugo</generator>
     <language>fr</language>
     <copyright>CC BY-NC 4.0</copyright>
     <lastBuildDate>Fri, 12 Jul 2024 09:16:24 +0200</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/write-up/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</title>
       <link>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</link>
@@ -22,20 +22,6 @@
       <pubDate>Fri, 12 Jul 2024 08:20:30 +0200</pubDate>
       <guid>http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/</guid>
       <description>Ceci est le write-up de la première partie du challenge Forensic Enquête sur le phishing des JO du CTF Shutlock édition 2024 organisé par la DGSI et EPITA.&#xA;Énoncé Mike O&amp;#39;Soft a été averti d&amp;#39;une campagne de phishing par le groupe THE HAMOR. Une des personnes ayant reçu le mail de phishing en question, s&amp;#39;est faite piegée. Vous avez pour mission de mener l&amp;#39;enquête. Heureusement pour vous, les équipes du ministère ont réalisé un dump mémoire sur la machine.</description>
-    </item>
-    <item>
-      <title>Installation de Loxya(Robert2)</title>
-      <link>http://localhost:1313/posts/installation_robert2/installation_robert2/</link>
-      <pubDate>Mon, 08 Jul 2024 16:04:20 +0200</pubDate>
-      <guid>http://localhost:1313/posts/installation_robert2/installation_robert2/</guid>
-      <description>Note Cet installation a été réalisée sur Debian 12 Préambule Loxya(Robert2) est un serveur de gestion et suivis d&amp;rsquo;inventaire.&#xA;La version gratuite est open-source et comprend les fonctions suivantes:&#xA;Gestion du stock Gestion des sorties Calendrier Gestion des clients et emprunteurs Gestion du personnel Edition de fiches de sorties, devis et factures Ce qu&amp;rsquo;elle ne comprend PAS:&#xA;Authentification LDAP (ou tout autre centralisation d&amp;rsquo;authentification) Demande de réservation en ligne Scanner de code barre Assistance Loxya Installation Installer les dépendances Robert 2 a besoin d&amp;rsquo;un serveur Web (ici Apache2), une base de données (ici MariaDB) et de certains modules PHP (version minimum supportée: php 8.</description>
-    </item>
-    <item>
-      <title></title>
-      <link>http://localhost:1313/apropos/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/apropos/</guid>
-      <description>&lt;!DOCTYPE html&gt; Qui je suis ? Bonjour !&#xA;Je m&#39;appelle Onirix, je suis étudiant en cybersécurité à l&#39;ESNA de Bretagne.&#xA;Ceci est mon blog ou je partage mes connaissances en informatique, cybersécurité ainsi que des Write-Up de CTF.&#xA;Vous pouvez également me retrouver sur Root-Me et Github :) Enjoy ! </description>
     </item>
   </channel>
 </rss>
