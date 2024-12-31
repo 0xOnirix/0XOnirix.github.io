@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GQRX on Onirix</title>
+    <link>http://localhost:1313/tags/gqrx/</link>
+    <description>Recent content in GQRX on Onirix</description>
+    <generator>Hugo</generator>
+    <language>fr</language>
+    <copyright>CC BY-NC 4.0</copyright>
+    <lastBuildDate>Fri, 06 Dec 2024 11:04:20 +0100</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/gqrx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Introduction à la SDR</title>
+      <link>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</link>
+      <pubDate>Fri, 06 Dec 2024 11:04:20 +0100</pubDate>
+      <guid>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</guid>
+      <description>&lt;p&gt;&lt;em&gt;&amp;ldquo;La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel&amp;rdquo;&lt;/em&gt; (merci &lt;a href=&#34;https://fr.wikipedia.org/wiki/Radio_logicielle&#34;&gt;Wikipédia&lt;/a&gt;).&lt;/p&gt;&#xA;&lt;p&gt;Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.&lt;/p&gt;&#xA;&lt;p&gt;Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio, la législation en vigeur, et enfin présenter les matériels et logiciels couramment utilisés.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

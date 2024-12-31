@@ -15,22 +15,37 @@
 <meta name="msapplication-TileColor" content="#494f5c">
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c"><meta name="author" content="Onirix"><meta name="description" content="Blog d&#39;Onirix">
 
-  <meta itemprop="name" content="CTF">
-  <meta itemprop="description" content="Blog d&#39;Onirix">
-  <meta itemprop="datePublished" content="2024-07-12T09:16:24+02:00">
-  <meta itemprop="dateModified" content="2024-07-12T09:16:24+02:00"><meta property="og:url" content="http://localhost:1313/categories/ctf/">
+  <meta itemprop="name" content="Introduction à la SDR">
+  <meta itemprop="description" content="“La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel” (merci Wikipédia).
+Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.
+Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio, la législation en vigeur, et enfin présenter les matériels et logiciels couramment utilisés.">
+  <meta itemprop="datePublished" content="2024-12-06T11:04:20+01:00">
+  <meta itemprop="dateModified" content="2024-12-06T11:04:20+01:00">
+  <meta itemprop="wordCount" content="881">
+  <meta itemprop="keywords" content="SDR,Gnuradio,GQRX,Radio"><meta property="og:url" content="http://localhost:1313/posts/introduction_sdr/introduction_sdr/">
   <meta property="og:site_name" content="Onirix">
-  <meta property="og:title" content="CTF">
-  <meta property="og:description" content="Blog d&#39;Onirix">
+  <meta property="og:title" content="Introduction à la SDR">
+  <meta property="og:description" content="“La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel” (merci Wikipédia).
+Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.
+Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio, la législation en vigeur, et enfin présenter les matériels et logiciels couramment utilisés.">
   <meta property="og:locale" content="fr">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-06T11:04:20+01:00">
+    <meta property="article:modified_time" content="2024-12-06T11:04:20+01:00">
+    <meta property="article:tag" content="SDR">
+    <meta property="article:tag" content="Gnuradio">
+    <meta property="article:tag" content="GQRX">
+    <meta property="article:tag" content="Radio">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="CTF">
-  <meta name="twitter:description" content="Blog d&#39;Onirix">
-<title>CTF</title>
-<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/categories/ctf/index.xml" title="CTF" />
-<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" href="http://localhost:1313/css/style.min.b9b0196180ada2f18e02576d3cdb3bc8754a548453d05e24e7edba2a7084e3ae.css" integrity="sha256-ubAZYYCtovGOAldtPNs7yHVKVIRT0F4k5+26KnCE464=" crossorigin="anonymous"></head>
+  <meta name="twitter:title" content="Introduction à la SDR">
+  <meta name="twitter:description" content="“La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel” (merci Wikipédia).
+Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.
+Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio, la législation en vigeur, et enfin présenter les matériels et logiciels couramment utilisés.">
+<title>Introduction à la SDR</title>
+<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" href="http://localhost:1313/css/style.min.b9b0196180ada2f18e02576d3cdb3bc8754a548453d05e24e7edba2a7084e3ae.css" integrity="sha256-ubAZYYCtovGOAldtPNs7yHVKVIRT0F4k5+26KnCE464=" crossorigin="anonymous">
+	</head>
 <body id="page">
 	<header id="site-header" class="animated slideInUp">
 		<div class="hdr-wrapper section-inner">
@@ -60,7 +75,7 @@
 </nav>
 			</div>
 			<div class="hdr-right hdr-icons">
-				<span class="hdr-social hide-in-mobile"><a href="https://root-me.org/Onirix" target="_blank" rel="noopener me" title="Root me"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="15 20 20 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://root-me.org/Onirix" target="_blank" rel="noopener me" title="Root me"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="15 20 20 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <g transform="matrix(Infinity NaN NaN Infinity 0 0)" id="50923579-270d-4d1a-9075-40d70aad8772"  >
     </g>
     <g transform="matrix(1 0 0 1 24 24)" id="eaa9c12f-b9b6-4657-81a3-97aa8372d3d2"  >
@@ -98,23 +113,217 @@
 	</div>
 
 
-	<main class="site-main section-inner thin animated fadeIn faster">
-		<h1>CTF</h1>
-		
-		<div class="posts-group">
-			<div class="post-year" id="2024">2024</div>
-			<ul class="posts-list">
-				<li class="post-item">
-					<a href="http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/">
-						<span class="post-title">Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</span>
-						<span class="post-day">12 Jul</span>
-					</a></li>
-				<li class="post-item">
-					<a href="http://localhost:1313/posts/shutlock2024_phishing_1-2/shutlock2024_phishing_1-2/">
-						<span class="post-title">Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 1/2</span>
-						<span class="post-day">12 Jul</span>
-					</a></li>
-			</ul>
+	<main class="site-main section-inner animated fadeIn faster"><article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>6 Dec, 2024</span></div>
+				<h1>Introduction à la SDR</h1>
+			</header>
+			<div class="post-info"><p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg><a href="" target="_blank">Onirix</a></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="http://localhost:1313/tags/sdr">SDR</a></span><span class="tag"><a href="http://localhost:1313/tags/gnuradio">Gnuradio</a></span><span class="tag"><a href="http://localhost:1313/tags/gqrx">GQRX</a></span><span class="tag"><a href="http://localhost:1313/tags/radio">Radio</a></span></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span class="category"><a href="http://localhost:1313/categories/radio">Radio</a></span></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+    Temps de lecture:
+    
+    
+    
+    4 Minutes</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>06-12-2024</p></div>
+			<hr class="post-end">
+			<div class="content">
+				<p><em>&ldquo;La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel&rdquo;</em> (merci <a href="https://fr.wikipedia.org/wiki/Radio_logicielle">Wikipédia</a>).</p>
+<p>Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.</p>
+<p>Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio, la législation en vigeur, et enfin présenter les matériels et logiciels couramment utilisés.</p>
+<hr>
+<h2 id="les-ondes-radio">Les ondes radio<a href="#les-ondes-radio" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Une onde radioélectrique, ou <strong>onde radio</strong>, est une onde électromagnétique inférieure à 300 GHz, cela inclut les bandes FM, AM, VHF, les Takie-Walkie, les liaisons satellite, GSM, etc.</p>
+<p>Ci dessous, un tableau donnant leur appelation en fonction de leur fréquence:</p>
+<figure align="center">
+    <img alt="Fréquences radio" title="Fréquences radio" src="/posts/introduction_sdr/images/frequences_radio.png">
+	<figcaption>Fréquences radio</figcaption>
+</figure>
+<p><em>Source: <a href="https://fr.wikipedia.org/wiki/Onde_radio">Wikipedia</a> - Des spectres plus détaillés sont disponibles <a href="https://www.anfr.fr/fileadmin/medias/institutionnel/ANFR-spectre-frequences-juin-2020.pdf">ici</a> et <a href="https://www.emitech.fr/en/radiofrequency-testing">ici</a>.</em></p>
+<p>Il est possible, avec un matériel adapté, de capter ces fréquences à moindre coût.</p>
+<hr>
+<h2 id="partie-juridique">Partie juridique<a href="#partie-juridique" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Attention !</b>
+        </div>
+        <div class="admonition-content">Cette partie s&rsquo;applique en France uniquement !</div>
+    </aside>
+<p>Comme tout est réglementé, et l&rsquo;émission d&rsquo;ondes radio n&rsquo;en étant pas excepté, il faut connaître la législation en vigueur pour ne pas faire n&rsquo;importe quoi, il faut également garder en tête qu&rsquo;elle peut changer d&rsquo;un pays à un autre, aux abord des zones sensibles (zones militaires, aéroports, etc.) en même fonction des métropoles.</p>
+<h3 id="autorité">Autorité<a href="#autorité" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>L&rsquo;autorité qui s&rsquo;occuper des ondes radio en France est l&rsquo;Agence Nationale des Fréquences Radio (ANFR).</p>
+<p>Elle a cinq missions principales:</p>
+<ul>
+<li><strong>Planifier</strong> l&rsquo;usage des fréquences</li>
+<li><strong>Gérer</strong> les fréquences sites et données</li>
+<li><strong>Contrôler</strong> le spectre</li>
+<li><strong>Protéger</strong> les utilisateurs et services</li>
+<li><strong>Maîtriser</strong> l&rsquo;exposition du public aux ondes</li>
+</ul>
+<p>Bien que l&rsquo;Agence ne puisse pas directement donner d&rsquo;amendes, elle peut enquêter et intervenir en qualité d&rsquo;experte technique sur les cas d&rsquo;usage repréhensibles des ondes radio (brouillage, empiétement de fréquence, radio pirate, etc.).</p>
+<p>Elle travaille conjointement avec l&rsquo;<a href="https://www.arcep.fr">ARCEP</a> et l&rsquo;<a href="https://www.arcom.fr">ARCOM</a>.</p>
+
+    <aside class="admonition danger">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>Attention !</b>
+        </div>
+        <div class="admonition-content">La peine encouru en cas d&rsquo;infraction peut aller jusqu&rsquo;a 6 mois de prison et 30 000€ d&rsquo;amende !</div>
+    </aside>
+<h3 id="réception">Réception<a href="#réception" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Pour ce qui est de la réception, il n&rsquo;y a pas vraiment de restrictions, seul le déchiffrement de communications (notamment militaire ou du réseau <a href="https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio">Tetra</a>) est interdit.</p>
+<p>Cependant, même en cas de simple captation de communications (chiffrées ou non), l&rsquo;ANFR peut venir vérifier que vous ne faîtes rien d&rsquo;illégale.</p>
+<h3 id="emission">Emission<a href="#emission" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Concernant l&rsquo;émission, la règle générale est d&rsquo;aller vérifier, en fonction de la bande de fréquences utilisée:</p>
+<ul>
+<li>Si on en a le <strong>droit</strong>, en prenant en compte la localisation</li>
+<li>Pendant combien de <strong>temps</strong></li>
+<li>A quelle <strong>puissance</strong></li>
+</ul>
+<p>Car cela peut fortement varier d&rsquo;une bande de fréquences à une autre.</p>
+<p>Par exemple, pour le <strong>LoRa</strong> (fréquences de 4330.5MHz à 434.79MHz et 863MHz à 868.6MHz), le taux d&rsquo;utilisation maximum est limité à <strong>1%</strong> du temps sur une heure glissante (en gros, pas plus de <strong>36s</strong> par heure) avec une puissance maximale de <strong>25mW</strong>.</p>
+<p><em>Des documents très complets sont disponibles sur le site de l&rsquo;<a href="https://www.anfr.fr/planifier/le-tnrbf/lautorisation-dutilisation">ANFR</a> et de l&rsquo;<a href="https://www.arcep.fr/la-regulation/grands-dossiers-reseaux-mobiles/le-guichet-start-up-et-innovation/le-portail-bandes-libres.html">ARCEP</a>.</em></p>
+<hr>
+<h2 id="le-matériel">Le matériel<a href="#le-matériel" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Afin de pouvoir écouter ces ondes, il faut pouvoir les capter, et pour ça, il existe beaucoup de matériels différents comme les clés <strong>RTL-SDR</strong>, le <strong>Flipper Zero</strong>, le <strong>HackRF</strong>, le <strong>BladeRF</strong>, le <strong>Lime-SDR</strong>, le <strong>KrakenRF</strong>, etc.</p>
+<p>Concernant quoi choisir.. tout dépend de vos besoins et de votre budget, voici une liste non exhaustive des matériels couramment utilisés:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center"><strong>Hardware</strong></th>
+          <th style="text-align: center"><strong>RX/TX</strong></th>
+          <th style="text-align: center"><strong>Duplex</strong></th>
+          <th style="text-align: center"><strong>Radio spectrum</strong></th>
+          <th style="text-align: center"><strong>Bandwidth</strong></th>
+          <th style="text-align: center"><strong>Price</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">Clé RTL-SDR</td>
+          <td style="text-align: center">RX</td>
+          <td style="text-align: center">Half</td>
+          <td style="text-align: center">~ 24MHz - 1.766GHz</td>
+          <td style="text-align: center">6.7MHz - 8MHz</td>
+          <td style="text-align: center">~ 30€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Flipper Zero</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Half</td>
+          <td style="text-align: center">300MHz-348MHz, 387MHz-464MHz, 779MHz-928MHz</td>
+          <td style="text-align: center">58KHz - 812KHz</td>
+          <td style="text-align: center">~ 200€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">HackRF</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Half</td>
+          <td style="text-align: center">30MHz - 6GHz</td>
+          <td style="text-align: center">20MHz</td>
+          <td style="text-align: center">~ 320€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">BladeRF</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">300MHz - 3.8GHz</td>
+          <td style="text-align: center">28MHz</td>
+          <td style="text-align: center">~ 780€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">USRP</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">50MHz - 6GHz</td>
+          <td style="text-align: center">16MHz - 61.44MHz</td>
+          <td style="text-align: center">~ 2k€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Lime-SDR</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">~ 30MHz - 3.8GHz</td>
+          <td style="text-align: center">~ 40MHz - 120MHz</td>
+          <td style="text-align: center">~ 340€ - 20k€</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">KrakenSDR</td>
+          <td style="text-align: center">RX/TX</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">24MHz - 1766MHz</td>
+          <td style="text-align: center">2.56MHz</td>
+          <td style="text-align: center">~ 500€</td>
+      </tr>
+  </tbody>
+</table>
+<p>Comme on peut le voir, chaque solution à ses avantages et inconvenients.</p>
+<p>Si vous débutez dans le monde de la SDR, je ne peux que vous conseiller la clé RTL-SDR car ça coute moins de 30€, ça à une plage d&rsquo;utilisation très large, une antenne est fournie avec, c&rsquo;est petit et compatible avec tout !</p>
+<p>Il y en a ici aussi une pléthore, je vous conseille cependant d&rsquo;utiliser une <strong>Clé USB RTL2832 avec tuner R860</strong> (disponible sur <a href="https://www.passion-radio.fr/recepteurs-sdr/rtl-sdr-r820t2-248.html">Passion radio</a> et <a href="https://www.amazon.fr/R%C3%A9cepteur-ventouse-adaptateur-femelle-r%C3%A9cepteur/dp/B094ZJ3VVN/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&amp;crid=J5HBVVQTMDV6&amp;keywords=Cl%C3%A9+USB+RTL2832&amp;qid=1687622893&amp;sprefix=cl%C3%A9+usb+rtl2832%2Caps%2C223&amp;sr=8-4">Amazon</a>), elle à un spectre assez large, de 24MHz à 1,766GHz, et posséde le chipset <strong>Realtek RTL2832U</strong> ainsi que le tuner <strong>Rafael Micro R860</strong> qui sont faits pour la SDR.</p>
+<hr>
+<h2 id="les-outils-logiciels">Les outils logiciels<a href="#les-outils-logiciels" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Voici grossiérement la liste des logiciels les plus utilisés:</p>
+<ul>
+<li><a href="https://github.com/gnuradio/gnuradio">GNURadio</a></li>
+<li><a href="https://github.com/gqrx-sdr/gqrx">GQRX</a> (ou <a href="https://airspy.com/">Airspy</a> pour Windows)</li>
+<li><a href="https://github.com/antirez/dump1090">Dump1090</a></li>
+</ul>
+<p>Ils sont open-source (excepté Airspy) et disponibles sur Linux et Windows.</p>
+<p><strong>GQRX</strong> (ou <strong>Airpsy</strong>) permettent d&rsquo;analyser un spectre, de le démoduler selon certaines modulations et de l&rsquo;écouter/enregistrer.</p>
+<p><strong>Dump1090</strong> est spécifique à la récupération des trames des balises d&rsquo;avions (<strong>ADS-B</strong>), il permet de visualiser les informations qu&rsquo;elles contiennent et afficher les appareils sur une carte.</p>
+<p>Enfin, <strong>GnuRadio</strong> est LE logiciel de SDR, il permet de faire littéralement ce qu&rsquo;on veut, en réception ou en émission !</p>
+<hr>
+<h2 id="conclusion">Conclusion<a href="#conclusion" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Voila qui clos cette introduction à la SDR, vous savez maintenant à peu près de quoi il s&rsquo;agit, la réglementation en vigeur, le matériel nécessaire ainsi que les logiciels couramment utilisés.</p>
+<p>Dans un prochain chapitre, nous allons voir comment utiliser ces logiciels ainsi que quelques exemples concrets.</p>
+<hr>
+<h2 id="sources">Sources<a href="#sources" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><a href="https://fr.wikipedia.org/wiki/Onde_radio">https://fr.wikipedia.org/wiki/Onde_radio</a></p>
+<p><a href="https://anfr.fr">https://anfr.fr</a></p>
+<p><a href="https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentation.pdf">https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentation.pdf</a></p>
+<p><a href="https://arcep.fr">https://arcep.fr</a></p>
+<p><a href="https://arcom.fr">https://arcom.fr</a></p>
+<p><a href="https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio">https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio</a></p>
+<p><a href="http://www.taylorkillian.com/2013/08/sdr-showdown-hackrf-vs-bladerf-vs-usrp.html">http://www.taylorkillian.com/2013/08/sdr-showdown-hackrf-vs-bladerf-vs-usrp.html</a></p>
+<p><a href="https://docs.flipper.net/">https://docs.flipper.net/</a></p>
+<p><a href="https://limemicro.com/">https://limemicro.com/</a></p>
+<p><a href="https://www.krakenrf.com/">https://www.krakenrf.com/</a></p>
+<p><a href="https://github.com/krakenrf/krakensdr_docs/wiki#technical-specifications">https://github.com/krakenrf/krakensdr_docs/wiki#technical-specifications</a></p>
+<p><a href="https://www.passion-radio.org/blog/sdr-sharp-dongle-rtl2832-r820t-e4000/76466">https://www.passion-radio.org/blog/sdr-sharp-dongle-rtl2832-r820t-e4000/76466</a></p>
+<p><a href="https://homepages.uni-regensburg.de/~erc24492/SDR/Data_rtl2832u.pdf">https://homepages.uni-regensburg.de/~erc24492/SDR/Data_rtl2832u.pdf</a></p>
+<p><a href="https://github.com/gnuradio/gnuradio">https://github.com/gnuradio/gnuradio</a></p>
+<p><a href="https://github.com/gqrx-sdr/gqrx">https://github.com/gqrx-sdr/gqrx</a></p>
+<p><a href="https://airspy.com/">https://airspy.com/</a></p>
+<p><a href="https://github.com/antirez/dump1090">https://github.com/antirez/dump1090</a></p>
+
+			</div>
+
+		</article>
+		<aside id="toc">
+			<div class="toc-title"></div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#les-ondes-radio">Les ondes radio</a></li>
+    <li><a href="#partie-juridique">Partie juridique</a>
+      <ul>
+        <li><a href="#autorité">Autorité</a></li>
+        <li><a href="#réception">Réception</a></li>
+        <li><a href="#emission">Emission</a></li>
+      </ul>
+    </li>
+    <li><a href="#le-matériel">Le matériel</a></li>
+    <li><a href="#les-outils-logiciels">Les outils logiciels</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="prev-post" href="http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</span>
+			</a>
 		</div>
 	</main>
 

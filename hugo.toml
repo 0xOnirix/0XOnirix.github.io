@@ -78,6 +78,14 @@ expiryDate = ["expiryDate"]
     name = "github"
     url = "https://github.com/0xOnirix"
 
+  [[params.socialLinks]]
+    name = "email"
+    url = "mailto:onirix.contact@protonmail.com"
+
+  [[params.socialLinks]]
+    name = "discord"
+    url = "discordapp.com/users/275297786184859648"
+
 [menu]
 
   [[menu.main]]

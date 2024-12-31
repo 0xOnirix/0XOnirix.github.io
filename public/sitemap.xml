@@ -3,7 +3,34 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/categories/</loc>
-    <lastmod>2024-07-12T09:16:24+02:00</lastmod>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/gnuradio/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/gqrx/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/radio/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/categories/radio/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/sdr/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/</loc>
+    <lastmod>2024-12-06T11:04:20+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/ctf/</loc>
     <lastmod>2024-07-12T09:16:24+02:00</lastmod>
@@ -11,22 +38,13 @@
     <loc>http://localhost:1313/tags/forensic/</loc>
     <lastmod>2024-07-12T09:16:24+02:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
-    <lastmod>2024-07-12T09:16:24+02:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/tags/phishing-2/2/</loc>
-    <lastmod>2024-07-12T09:16:24+02:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/</loc>
     <lastmod>2024-07-12T09:16:24+02:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/shutlock-2024/</loc>
     <lastmod>2024-07-12T09:16:24+02:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</loc>
-    <lastmod>2024-07-12T09:16:24+02:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/</loc>
     <lastmod>2024-07-12T09:16:24+02:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/write-up/</loc>
