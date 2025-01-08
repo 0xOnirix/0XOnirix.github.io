@@ -10,11 +10,11 @@
 		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>Introduction à la SDR</title>
-			<link>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</link>
+			<title>Introduction à la SDR 1/2</title>
+			<link>http://localhost:1313/posts/introduction_sdr_1-2/introduction_sdr_1-2/</link>
 			<pubDate>Fri, 06 Dec 2024 11:04:20 +0100</pubDate>
 			
-			<guid>http://localhost:1313/posts/introduction_sdr/introduction_sdr/</guid>
+			<guid>http://localhost:1313/posts/introduction_sdr_1-2/introduction_sdr_1-2/</guid>
 			<description><![CDATA[%!s(<nil>)]]></description>
 			<content type="html"><![CDATA[<p><em>&ldquo;La SDR (pour Software Defined Radio) est un récepteur et éventuellement émetteur radio réalisés principalement par logiciel et dans une moindre mesure par matériel&rdquo;</em> (merci <a href="https://fr.wikipedia.org/wiki/Radio_logicielle">Wikipédia</a>).</p>
 <p>Cet article est une introduction à la SDR orienté hacking, des principes de base au choix du matériel.</p>
@@ -22,12 +22,20 @@
 <hr>
 <h2 id="les-ondes-radio">Les ondes radio</h2>
 <p>Une onde radioélectrique, ou <strong>onde radio</strong>, est une onde électromagnétique inférieure à 300 GHz, cela inclut les bandes FM, AM, VHF, les Takie-Walkie, les liaisons satellite, GSM, etc.</p>
-<p>Ci dessous, un tableau donnant leur appelation en fonction de leur fréquence:</p>
 <figure align="center">
-    <img alt="Fréquences radio" title="Fréquences radio" src="/posts/introduction_sdr/images/frequences_radio.png">
-	<figcaption>Fréquences radio</figcaption>
+    <img alt="Bandes de fréquence radio" title="Bandes de fréquence radio" src="/posts/introduction_sdr/images/bands-radio-frequency-spectrum.jpg">
+	<figcaption>Bandes de fréquence radio - <a hreaf="https://www.britannica.com">Britannica</a></figcaption>
 </figure>
-<p><em>Source: <a href="https://fr.wikipedia.org/wiki/Onde_radio">Wikipedia</a> - Des spectres plus détaillés sont disponibles <a href="https://www.anfr.fr/fileadmin/medias/institutionnel/ANFR-spectre-frequences-juin-2020.pdf">ici</a> et <a href="https://www.emitech.fr/en/radiofrequency-testing">ici</a>.</em></p>
+<p>Ces ondes sont définit par 3 caractéristiques principales:</p>
+<ul>
+<li>La phase</li>
+<li>L&rsquo;amplitude</li>
+<li>La période (1/fréquence)</li>
+</ul>
+<figure align="center">
+    <img alt="Phase, Amplitude et Période" title="Phase, Amplitude et Période" src="/posts/introduction_sdr/images/amplitude_phase_period.svg">
+	<figcaption>Phase, Amplitude et Période d'un signal - <a href="https://pysdr.org/content/frequency_domain.html">PySDR</a></figcaption>
+</figure>
 <p>Il est possible, avec un matériel adapté, de capter ces fréquences à moindre coût.</p>
 <hr>
 <h2 id="partie-juridique">Partie juridique</h2>
@@ -63,17 +71,39 @@
 <p>Cependant, même en cas de simple captation de communications (chiffrées ou non), l&rsquo;ANFR peut venir vérifier que vous ne faîtes rien d&rsquo;illégale.</p>
 <h3 id="emission">Emission</h3>
 <p>Concernant l&rsquo;émission, la règle générale est d&rsquo;aller vérifier, en fonction de la bande de fréquences utilisée:</p>
-<ul>
+<ol>
 <li>Si on en a le <strong>droit</strong>, en prenant en compte la localisation</li>
 <li>Pendant combien de <strong>temps</strong></li>
 <li>A quelle <strong>puissance</strong></li>
-</ul>
+</ol>
 <p>Car cela peut fortement varier d&rsquo;une bande de fréquences à une autre.</p>
 <p>Par exemple, pour le <strong>LoRa</strong> (fréquences de 4330.5MHz à 434.79MHz et 863MHz à 868.6MHz), le taux d&rsquo;utilisation maximum est limité à <strong>1%</strong> du temps sur une heure glissante (en gros, pas plus de <strong>36s</strong> par heure) avec une puissance maximale de <strong>25mW</strong>.</p>
 <p><em>Des documents très complets sont disponibles sur le site de l&rsquo;<a href="https://www.anfr.fr/planifier/le-tnrbf/lautorisation-dutilisation">ANFR</a> et de l&rsquo;<a href="https://www.arcep.fr/la-regulation/grands-dossiers-reseaux-mobiles/le-guichet-start-up-et-innovation/le-portail-bandes-libres.html">ARCEP</a>.</em></p>
 <hr>
 <h2 id="le-matériel">Le matériel</h2>
-<p>Afin de pouvoir écouter ces ondes, il faut pouvoir les capter, et pour ça, il existe beaucoup de matériels différents comme les clés <strong>RTL-SDR</strong>, le <strong>Flipper Zero</strong>, le <strong>HackRF</strong>, le <strong>BladeRF</strong>, le <strong>Lime-SDR</strong>, le <strong>KrakenRF</strong>, etc.</p>
+<p>Afin de pouvoir écouter ces ondes, il faut pouvoir les capter, et pour ça, il existe beaucoup de matériels différents avec chacun leurs spécificités.</p>
+<p>Je vais d&rsquo;abord expliquer les spécificités les plus importantes avant de présenter les solutions les plus connus/utilisées.</p>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Attention !</b>
+        </div>
+        <div class="admonition-content">Il n&rsquo;existe pas de solution universelle, chaque produit à ses avantages et inconvenients, il faut le choisir en fonction des besoins du projet.</div>
+    </aside>
+<h3 id="spectre-radio">Spectre radio</h3>
+<p>Le spectre d&rsquo;un produit est la gamme de fréquence qu&rsquo;il est capable d&rsquo;écouter.</p>
+<p>Par exemple, pour du WiFi 6, c&rsquo;est aux alentours de <strong>2,4GHz</strong> et <strong>5GHz</strong>.</p>
+<p>Pour du NFC, c&rsquo;est la fréquence <strong>13,56MHz</strong>.</p>
+<h3 id="bande-passante">Bande passante</h3>
+<p>La bande passante définit la quantité d&rsquo;information que peut transmettre un signal à un temps T, plus elle est grande mieux c&rsquo;est mais plus ça sera chère.</p>
+<p>Pour avoir un ordre de grandeur, le WiFi 3 (2,4GHz) à une bande passante de <strong>20MHz</strong> et un débit max de <strong>54Mb/s</strong> tandis que le GSM (~ 900MHz) à une bande passante de <strong>200kHz</strong> et un débit max de <strong>271kb/s</strong>.</p>
+<h3 id="duplex">Duplex</h3>
+<p>Un duplex est un canal de communication, on parle de <strong>full-fuplex</strong> quand on peut transmettre et recevoir en même temps et de <strong>half-duplex</strong> quand ce n&rsquo;est pas le cas.</p>
+<p>Un cas concret d&rsquo;utilisation du half-duplex est le MITM (WiFi, GSM, etc) car on doit faire la passerelle entre l&rsquo;AP et l&rsquo;appareil victime en temps réel.</p>
+<h3 id="rxtx">RX/TX</h3>
+<p>RX signifie <strong>réception</strong> et TX <strong>Transmission</strong>, il faut juste garder en tête que tous les matériels ne peuvent pas transmettre.</p>
+<h3 id="matériel-connus">Matériel connus</h3>
+<p>De la <strong>clé RTL-SDR</strong>, en passant par le <strong>Flipper Zero</strong>, le <strong>HackRF</strong>, le <strong>BladeRF</strong>, le <strong>Lime-SDR</strong>, le <strong>KrakenRF</strong>, etc. Il existe une pléthore de matériel SDR, il y en aura donc forcémment un qui vous conviendra !</p>
 <p>Concernant quoi choisir.. tout dépend de vos besoins et de votre budget, voici une liste non exhaustive des matériels couramment utilisés:</p>
 <table>
   <thead>
@@ -147,19 +177,23 @@
 </table>
 <p>Comme on peut le voir, chaque solution à ses avantages et inconvenients.</p>
 <p>Si vous débutez dans le monde de la SDR, je ne peux que vous conseiller la clé RTL-SDR car ça coute moins de 30€, ça à une plage d&rsquo;utilisation très large, une antenne est fournie avec, c&rsquo;est petit et compatible avec tout !</p>
-<p>Il y en a ici aussi une pléthore, je vous conseille cependant d&rsquo;utiliser une <strong>Clé USB RTL2832 avec tuner R860</strong> (disponible sur <a href="https://www.passion-radio.fr/recepteurs-sdr/rtl-sdr-r820t2-248.html">Passion radio</a> et <a href="https://www.amazon.fr/R%C3%A9cepteur-ventouse-adaptateur-femelle-r%C3%A9cepteur/dp/B094ZJ3VVN/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&amp;crid=J5HBVVQTMDV6&amp;keywords=Cl%C3%A9+USB+RTL2832&amp;qid=1687622893&amp;sprefix=cl%C3%A9+usb+rtl2832%2Caps%2C223&amp;sr=8-4">Amazon</a>), elle à un spectre assez large, de 24MHz à 1,766GHz, et posséde le chipset <strong>Realtek RTL2832U</strong> ainsi que le tuner <strong>Rafael Micro R860</strong> qui sont faits pour la SDR.</p>
+<p>Il y en a ici aussi beaucoup, je vous conseille cependant d&rsquo;utiliser une <strong>Clé USB RTL2832 avec tuner R860</strong> (disponible sur <a href="https://www.passion-radio.fr/recepteurs-sdr/rtl-sdr-r820t2-248.html">Passion radio</a> et <a href="https://www.amazon.fr/R%C3%A9cepteur-ventouse-adaptateur-femelle-r%C3%A9cepteur/dp/B094ZJ3VVN/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&amp;crid=J5HBVVQTMDV6&amp;keywords=Cl%C3%A9+USB+RTL2832&amp;qid=1687622893&amp;sprefix=cl%C3%A9+usb+rtl2832%2Caps%2C223&amp;sr=8-4">Amazon</a>), elle à un spectre assez large, de 24MHz à 1,766GHz, et posséde le chipset <strong>Realtek RTL2832U</strong> ainsi que le tuner <strong>Rafael Micro R860</strong> qui sont faits pour la SDR.</p>
 <hr>
 <h2 id="les-outils-logiciels">Les outils logiciels</h2>
 <p>Voici grossiérement la liste des logiciels les plus utilisés:</p>
 <ul>
 <li><a href="https://github.com/gnuradio/gnuradio">GNURadio</a></li>
+<li><a href="https://github.com/jopohl/urh">Universal Radio Hacker (URH)</a></li>
+<li><a href="https://github.com/miek/inspectrum">Inspectrum</a></li>
 <li><a href="https://github.com/gqrx-sdr/gqrx">GQRX</a> (ou <a href="https://airspy.com/">Airspy</a> pour Windows)</li>
 <li><a href="https://github.com/antirez/dump1090">Dump1090</a></li>
 </ul>
 <p>Ils sont open-source (excepté Airspy) et disponibles sur Linux et Windows.</p>
 <p><strong>GQRX</strong> (ou <strong>Airpsy</strong>) permettent d&rsquo;analyser un spectre, de le démoduler selon certaines modulations et de l&rsquo;écouter/enregistrer.</p>
+<p><strong>Inspectrum</strong> est un outils d&rsquo;analyse de signaux déjà capturés.</p>
+<p><strong>Universal Radio Hacker (URH)</strong> est une suite complète pour les protocoles sans fils.</p>
 <p><strong>Dump1090</strong> est spécifique à la récupération des trames des balises d&rsquo;avions (<strong>ADS-B</strong>), il permet de visualiser les informations qu&rsquo;elles contiennent et afficher les appareils sur une carte.</p>
-<p>Enfin, <strong>GnuRadio</strong> est LE logiciel de SDR, il permet de faire littéralement ce qu&rsquo;on veut, en réception ou en émission !</p>
+<p>Enfin, <strong>GnuRadio</strong> est LE logiciel de SDR, il permet de tout faire mais il est très bas niveau.</p>
 <hr>
 <h2 id="conclusion">Conclusion</h2>
 <p>Voila qui clos cette introduction à la SDR, vous savez maintenant à peu près de quoi il s&rsquo;agit, la réglementation en vigeur, le matériel nécessaire ainsi que les logiciels couramment utilisés.</p>
@@ -171,6 +205,11 @@
 <p><a href="https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentation.pdf">https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentation.pdf</a></p>
 <p><a href="https://arcep.fr">https://arcep.fr</a></p>
 <p><a href="https://arcom.fr">https://arcom.fr</a></p>
+<p><a href="https://resources.altium.com/fr/p/whats-difference-between-data-rate-and-bandwidth">https://resources.altium.com/fr/p/whats-difference-between-data-rate-and-bandwidth</a></p>
+<p><a href="https://pysdr.org/">https://pysdr.org/</a></p>
+<p><a href="https://fr.wikipedia.org/wiki/D%C3%A9bits_et_port%C3%A9es">https://fr.wikipedia.org/wiki/D%C3%A9bits_et_port%C3%A9es</a></p>
+<p><a href="https://fr.wikipedia.org/wiki/IEEE_802.11n">https://fr.wikipedia.org/wiki/IEEE_802.11n</a></p>
+<p><a href="https://fr.wikipedia.org/wiki/Global_System_for_Mobile_Communications">https://fr.wikipedia.org/wiki/Global_System_for_Mobile_Communications</a></p>
 <p><a href="https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio">https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio</a></p>
 <p><a href="http://www.taylorkillian.com/2013/08/sdr-showdown-hackrf-vs-bladerf-vs-usrp.html">http://www.taylorkillian.com/2013/08/sdr-showdown-hackrf-vs-bladerf-vs-usrp.html</a></p>
 <p><a href="https://docs.flipper.net/">https://docs.flipper.net/</a></p>

@@ -1,5 +1,5 @@
 ---
-title: "Introduction à la SDR"
+title: "Introduction à la SDR 1/2"
 date: 2024-12-06T11:04:20+01:00
 draft: false
 toc: true
@@ -24,14 +24,21 @@ Je vais donc commencer par faire un court rappel sur ce que sont les ondes radio
 
 Une onde radioélectrique, ou **onde radio**, est une onde électromagnétique inférieure à 300 GHz, cela inclut les bandes FM, AM, VHF, les Takie-Walkie, les liaisons satellite, GSM, etc.
 
-Ci dessous, un tableau donnant leur appelation en fonction de leur fréquence:
-
 <figure align="center">
-    <img alt="Fréquences radio" title="Fréquences radio" src="/posts/introduction_sdr/images/frequences_radio.png">
-	<figcaption>Fréquences radio</figcaption>
+    <img alt="Bandes de fréquence radio" title="Bandes de fréquence radio" src="/posts/introduction_sdr/images/bands-radio-frequency-spectrum.jpg">
+	<figcaption>Bandes de fréquence radio - <a hreaf="https://www.britannica.com">Britannica</a></figcaption>
 </figure>
 
-*Source: [Wikipedia](https://fr.wikipedia.org/wiki/Onde_radio) - Des spectres plus détaillés sont disponibles [ici](https://www.anfr.fr/fileadmin/medias/institutionnel/ANFR-spectre-frequences-juin-2020.pdf) et [ici](https://www.emitech.fr/en/radiofrequency-testing).*
+Ces ondes sont définit par 3 caractéristiques principales:
+
+- La phase
+- L'amplitude
+- La période (1/fréquence)
+
+<figure align="center">
+    <img alt="Phase, Amplitude et Période" title="Phase, Amplitude et Période" src="/posts/introduction_sdr/images/amplitude_phase_period.svg">
+	<figcaption>Phase, Amplitude et Période d'un signal - <a href="https://pysdr.org/content/frequency_domain.html">PySDR</a></figcaption>
+</figure>
 
 Il est possible, avec un matériel adapté, de capter ces fréquences à moindre coût.
 
@@ -74,9 +81,9 @@ Cependant, même en cas de simple captation de communications (chiffrées ou non
 ### Emission
 
 Concernant l'émission, la règle générale est d'aller vérifier, en fonction de la bande de fréquences utilisée:
-- Si on en a le **droit**, en prenant en compte la localisation
-- Pendant combien de **temps**
-- A quelle **puissance**
+1. Si on en a le **droit**, en prenant en compte la localisation
+2. Pendant combien de **temps**
+3. A quelle **puissance**
 
 Car cela peut fortement varier d'une bande de fréquences à une autre.
 
@@ -87,7 +94,41 @@ Par exemple, pour le **LoRa** (fréquences de 4330.5MHz à 434.79MHz et 863MHz �
 ---
 ## Le matériel
 
-Afin de pouvoir écouter ces ondes, il faut pouvoir les capter, et pour ça, il existe beaucoup de matériels différents comme les clés **RTL-SDR**, le **Flipper Zero**, le **HackRF**, le **BladeRF**, le **Lime-SDR**, le **KrakenRF**, etc.
+Afin de pouvoir écouter ces ondes, il faut pouvoir les capter, et pour ça, il existe beaucoup de matériels différents avec chacun leurs spécificités.
+
+Je vais d'abord expliquer les spécificités les plus importantes avant de présenter les solutions les plus connus/utilisées.
+
+{{< admonition type=warning title="Attention !" >}}
+Il n'existe pas de solution universelle, chaque produit à ses avantages et inconvenients, il faut le choisir en fonction des besoins du projet.
+{{< /admonition >}}
+
+### Spectre radio
+
+Le spectre d'un produit est la gamme de fréquence qu'il est capable d'écouter.
+
+Par exemple, pour du WiFi 6, c'est aux alentours de **2,4GHz** et **5GHz**.
+
+Pour du NFC, c'est la fréquence **13,56MHz**.
+
+### Bande passante
+
+La bande passante définit la quantité d'information que peut transmettre un signal à un temps T, plus elle est grande mieux c'est mais plus ça sera chère.
+
+Pour avoir un ordre de grandeur, le WiFi 3 (2,4GHz) à une bande passante de **20MHz** et un débit max de **54Mb/s** tandis que le GSM (~ 900MHz) à une bande passante de **200kHz** et un débit max de **271kb/s**.
+
+### Duplex
+
+Un duplex est un canal de communication, on parle de **full-fuplex** quand on peut transmettre et recevoir en même temps et de **half-duplex** quand ce n'est pas le cas.
+
+Un cas concret d'utilisation du half-duplex est le MITM (WiFi, GSM, etc) car on doit faire la passerelle entre l'AP et l'appareil victime en temps réel.
+
+### RX/TX
+
+RX signifie **réception** et TX **Transmission**, il faut juste garder en tête que tous les matériels ne peuvent pas transmettre.
+
+### Matériel connus
+
+De la **clé RTL-SDR**, en passant par le **Flipper Zero**, le **HackRF**, le **BladeRF**, le **Lime-SDR**, le **KrakenRF**, etc. Il existe une pléthore de matériel SDR, il y en aura donc forcémment un qui vous conviendra !
 
 Concernant quoi choisir.. tout dépend de vos besoins et de votre budget, voici une liste non exhaustive des matériels couramment utilisés:
 
@@ -106,7 +147,7 @@ Comme on peut le voir, chaque solution à ses avantages et inconvenients.
 
 Si vous débutez dans le monde de la SDR, je ne peux que vous conseiller la clé RTL-SDR car ça coute moins de 30€, ça à une plage d'utilisation très large, une antenne est fournie avec, c'est petit et compatible avec tout !
 
-Il y en a ici aussi une pléthore, je vous conseille cependant d'utiliser une **Clé USB RTL2832 avec tuner R860** (disponible sur [Passion radio](https://www.passion-radio.fr/recepteurs-sdr/rtl-sdr-r820t2-248.html) et [Amazon](https://www.amazon.fr/R%C3%A9cepteur-ventouse-adaptateur-femelle-r%C3%A9cepteur/dp/B094ZJ3VVN/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=J5HBVVQTMDV6&keywords=Cl%C3%A9+USB+RTL2832&qid=1687622893&sprefix=cl%C3%A9+usb+rtl2832%2Caps%2C223&sr=8-4)), elle à un spectre assez large, de 24MHz à 1,766GHz, et posséde le chipset **Realtek RTL2832U** ainsi que le tuner **Rafael Micro R860** qui sont faits pour la SDR.
+Il y en a ici aussi beaucoup, je vous conseille cependant d'utiliser une **Clé USB RTL2832 avec tuner R860** (disponible sur [Passion radio](https://www.passion-radio.fr/recepteurs-sdr/rtl-sdr-r820t2-248.html) et [Amazon](https://www.amazon.fr/R%C3%A9cepteur-ventouse-adaptateur-femelle-r%C3%A9cepteur/dp/B094ZJ3VVN/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=J5HBVVQTMDV6&keywords=Cl%C3%A9+USB+RTL2832&qid=1687622893&sprefix=cl%C3%A9+usb+rtl2832%2Caps%2C223&sr=8-4)), elle à un spectre assez large, de 24MHz à 1,766GHz, et posséde le chipset **Realtek RTL2832U** ainsi que le tuner **Rafael Micro R860** qui sont faits pour la SDR.
 
 ---
 ## Les outils logiciels
@@ -114,6 +155,8 @@ Il y en a ici aussi une pléthore, je vous conseille cependant d'utiliser une **
 Voici grossiérement la liste des logiciels les plus utilisés:
 
 - [GNURadio](https://github.com/gnuradio/gnuradio)
+- [Universal Radio Hacker (URH)](https://github.com/jopohl/urh)
+- [Inspectrum](https://github.com/miek/inspectrum)
 - [GQRX](https://github.com/gqrx-sdr/gqrx) (ou [Airspy](https://airspy.com/) pour Windows)
 - [Dump1090](https://github.com/antirez/dump1090)
 
@@ -121,9 +164,13 @@ Ils sont open-source (excepté Airspy) et disponibles sur Linux et Windows.
 
 **GQRX** (ou **Airpsy**) permettent d'analyser un spectre, de le démoduler selon certaines modulations et de l'écouter/enregistrer.
 
+**Inspectrum** est un outils d'analyse de signaux déjà capturés.
+
+**Universal Radio Hacker (URH)** est une suite complète pour les protocoles sans fils.
+
 **Dump1090** est spécifique à la récupération des trames des balises d'avions (**ADS-B**), il permet de visualiser les informations qu'elles contiennent et afficher les appareils sur une carte.
 
-Enfin, **GnuRadio** est LE logiciel de SDR, il permet de faire littéralement ce qu'on veut, en réception ou en émission !
+Enfin, **GnuRadio** est LE logiciel de SDR, il permet de tout faire mais il est très bas niveau.
 
 ---
 ## Conclusion
@@ -144,6 +191,16 @@ https://www.radioamateurs-france.fr/wp-content/uploads/2015/07/A-ANFR-presentati
 https://arcep.fr
 
 https://arcom.fr
+
+https://resources.altium.com/fr/p/whats-difference-between-data-rate-and-bandwidth
+
+https://pysdr.org/
+
+https://fr.wikipedia.org/wiki/D%C3%A9bits_et_port%C3%A9es
+
+https://fr.wikipedia.org/wiki/IEEE_802.11n
+
+https://fr.wikipedia.org/wiki/Global_System_for_Mobile_Communications
 
 https://fr.wikipedia.org/wiki/Terrestrial_Trunked_Radio
 
