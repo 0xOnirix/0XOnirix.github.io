@@ -20,10 +20,10 @@
     <loc>http://localhost:1313/posts/</loc>
     <lastmod>2024-12-06T11:04:20+01:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/radio/</loc>
+    <loc>http://localhost:1313/categories/radio/</loc>
     <lastmod>2024-12-06T11:04:20+01:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/radio/</loc>
+    <loc>http://localhost:1313/tags/radio/</loc>
     <lastmod>2024-12-06T11:04:20+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/sdr/</loc>

@@ -84,7 +84,7 @@ expiryDate = ["expiryDate"]
 
   [[params.socialLinks]]
     name = "discord"
-    url = "discordapp.com/users/275297786184859648"
+    url = "https://discord.com/users/275297786184859648"
 
 [menu]
 
