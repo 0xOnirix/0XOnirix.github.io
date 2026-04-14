@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Untagged on Onirix - Blog</title>
+    <title>Untagged on Onirix</title>
     <link>http://localhost:1313/tags/untagged/</link>
-    <description>Recent content in Untagged on Onirix - Blog</description>
+    <description>Recent content in Untagged on Onirix</description>
     <generator>Hugo</generator>
     <language>fr</language>
     <copyright>CC BY-NC 4.0</copyright>
-    <lastBuildDate>Fri, 28 Jun 2024 14:59:41 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 14 Apr 2026 10:52:57 +0200</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/untagged/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Test</title>
-      <link>http://localhost:1313/articles/test/</link>
-      <pubDate>Fri, 28 Jun 2024 14:59:41 +0200</pubDate>
-      <guid>http://localhost:1313/articles/test/</guid>
+      <title>Fcsc2026_transport_me</title>
+      <link>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</link>
+      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+      <guid>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</guid>
       <description></description>
-    </item>
-    <item>
-      <title>Post</title>
-      <link>http://localhost:1313/articles/post/</link>
-      <pubDate>Wed, 28 Feb 2024 12:59:09 +0200</pubDate>
-      <guid>http://localhost:1313/articles/post/</guid>
-      <description>Blablabla </description>
     </item>
   </channel>
 </rss>

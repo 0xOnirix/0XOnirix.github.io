@@ -7,8 +7,57 @@
     <generator>Hugo</generator>
     <language>fr</language>
     <copyright>CC BY-NC 4.0</copyright>
-    <lastBuildDate>Fri, 06 Dec 2024 11:04:20 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 14 Apr 2026 10:52:57 +0200</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FCSC</title>
+      <link>http://localhost:1313/tags/fcsc/</link>
+      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+      <guid>http://localhost:1313/tags/fcsc/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>FCSC 2026</title>
+      <link>http://localhost:1313/tags/fcsc-2026/</link>
+      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+      <guid>http://localhost:1313/tags/fcsc-2026/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Intro</title>
+      <link>http://localhost:1313/tags/intro/</link>
+      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+      <guid>http://localhost:1313/tags/intro/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Transport Me</title>
+      <link>http://localhost:1313/tags/transport-me/</link>
+      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+      <guid>http://localhost:1313/tags/transport-me/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Write-Up</title>
+      <link>http://localhost:1313/tags/write-up/</link>
+      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+      <guid>http://localhost:1313/tags/write-up/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Misc</title>
+      <link>http://localhost:1313/tags/misc/</link>
+      <pubDate>Sun, 12 Apr 2026 12:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/misc/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Tunnel Routier 1/2</title>
+      <link>http://localhost:1313/tags/tunnel-routier-1/2/</link>
+      <pubDate>Sun, 12 Apr 2026 12:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/tunnel-routier-1/2/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Gnuradio</title>
       <link>http://localhost:1313/tags/gnuradio/</link>
@@ -28,55 +77,6 @@
       <link>http://localhost:1313/tags/radio/</link>
       <pubDate>Fri, 06 Dec 2024 11:04:20 +0100</pubDate>
       <guid>http://localhost:1313/tags/radio/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>SDR</title>
-      <link>http://localhost:1313/tags/sdr/</link>
-      <pubDate>Fri, 06 Dec 2024 11:04:20 +0100</pubDate>
-      <guid>http://localhost:1313/tags/sdr/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Forensic</title>
-      <link>http://localhost:1313/tags/forensic/</link>
-      <pubDate>Fri, 12 Jul 2024 09:16:24 +0200</pubDate>
-      <guid>http://localhost:1313/tags/forensic/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Phishing 2/2</title>
-      <link>http://localhost:1313/tags/phishing-2/2/</link>
-      <pubDate>Fri, 12 Jul 2024 09:16:24 +0200</pubDate>
-      <guid>http://localhost:1313/tags/phishing-2/2/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Shutlock 2024</title>
-      <link>http://localhost:1313/tags/shutlock-2024/</link>
-      <pubDate>Fri, 12 Jul 2024 09:16:24 +0200</pubDate>
-      <guid>http://localhost:1313/tags/shutlock-2024/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Write-Up</title>
-      <link>http://localhost:1313/tags/write-up/</link>
-      <pubDate>Fri, 12 Jul 2024 09:16:24 +0200</pubDate>
-      <guid>http://localhost:1313/tags/write-up/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Phishing 1/2</title>
-      <link>http://localhost:1313/tags/phishing-1/2/</link>
-      <pubDate>Fri, 12 Jul 2024 08:20:30 +0200</pubDate>
-      <guid>http://localhost:1313/tags/phishing-1/2/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Debian</title>
-      <link>http://localhost:1313/tags/debian/</link>
-      <pubDate>Mon, 08 Jul 2024 16:04:20 +0200</pubDate>
-      <guid>http://localhost:1313/tags/debian/</guid>
       <description></description>
     </item>
   </channel>

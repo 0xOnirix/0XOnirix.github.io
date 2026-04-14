@@ -7,8 +7,22 @@
     <generator>Hugo</generator>
     <language>fr</language>
     <copyright>CC BY-NC 4.0</copyright>
-    <lastBuildDate>Fri, 12 Jul 2024 09:16:24 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 12 Apr 2026 12:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/write-up/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FCSC 2026 - Tunnel Routier 1/2</title>
+      <link>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</link>
+      <pubDate>Sun, 12 Apr 2026 12:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</guid>
+      <description>&lt;div&gt;&#xA;  &lt;img src=&#34;http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/images/logo_fcsc.svg&#34; alt=&#34;Logo_FCSC&#34; style=&#34;width: 50%&#34;&gt;&#xA;  &lt;/br&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;Ceci est le write-up de la première partie du challenge Misc &lt;strong&gt;Tunnel Routier&lt;/strong&gt; du CTF &lt;a href=&#34;https://fcsc.fr/&#34;&gt;FCSC&lt;/a&gt; édition 2026 organisé par l&amp;rsquo;ANSSI.&lt;/p&gt;&#xA;&lt;h2 id=&#34;énoncé&#34;&gt;Énoncé&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;Dans cette première partie de l&amp;rsquo;épreuve, vous devez retrouver un token caché dans les données d&amp;rsquo;identification de l&amp;rsquo;automate pour vous permettre d&amp;rsquo;accéder à la deuxième partie de l&amp;rsquo;épreuve.&lt;/p&gt;&#xA;&lt;p&gt;Note: La description du système est disponible sur une &lt;a href=&#34;https://fcsc.fr/tunnel-routier-76bea48861178b0c&#34;&gt;page dédiée&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;code&gt;nc tunnel-routier.fcsc.fr 502&lt;/code&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h3 id=&#34;documentation&#34;&gt;Documentation&lt;/h3&gt;&#xA;&lt;p&gt;Voici la documentation présente à l&amp;rsquo;adresse: &lt;a href=&#34;https://fcsc.fr/tunnel-routier-76bea48861178b0c&#34;&gt;https://fcsc.fr/tunnel-routier-76bea48861178b0c&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>FCSC 2026 - Tunnel Routier 2/2</title>
+      <link>http://localhost:1313/posts/fcsc2026_tunnel_routier_2-2/fcsc2026_tunnel_routier_2-2/</link>
+      <pubDate>Sun, 12 Apr 2026 12:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/fcsc2026_tunnel_routier_2-2/fcsc2026_tunnel_routier_2-2/</guid>
+      <description>&lt;div&gt;&#xA;  &lt;img src=&#34;http://localhost:1313/posts/fcsc2026_tunnel_routier_2-2/images/logo_fcsc.svg&#34; alt=&#34;Logo_FCSC&#34; style=&#34;width: 50%&#34;&gt;&#xA;  &lt;/br&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;Ceci est le write-up de la deuxième partie du challenge Misc &lt;strong&gt;Tunnel Routier&lt;/strong&gt; du CTF &lt;a href=&#34;https://fcsc.fr/&#34;&gt;FCSC&lt;/a&gt; édition 2026 organisé par l&amp;rsquo;ANSSI.&lt;/p&gt;&#xA;&lt;h2 id=&#34;énoncé&#34;&gt;Énoncé&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;Dans cette deuxième partie de l&amp;rsquo;épreuve, vous devez envoyer des consignes à l&amp;rsquo;automate afin d&amp;rsquo;obtenir des valeurs de process répondant aux normes de sureté (fournie dans la description détaillée), le tout en moins d&amp;rsquo;une minute. Vous avez également accès à l&amp;rsquo;interface SCADA en lecture seule via le token récupéré dans la première partie de l&amp;rsquo;épreuve.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Shutlock 2024 - Enquête sur le phishing des JO : Retracer l&#39;attaque 2/2</title>
       <link>http://localhost:1313/posts/shutlock2024_phishing_2-2/shutlock2024_phishing_2-2/</link>

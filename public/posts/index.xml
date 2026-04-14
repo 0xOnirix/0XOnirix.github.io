@@ -6,8 +6,503 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>fr</language>
 		<copyright>CC BY-NC 4.0</copyright>
-		<lastBuildDate>Fri, 06 Dec 2024 11:04:20 +0100</lastBuildDate>
+		<lastBuildDate>Tue, 14 Apr 2026 10:52:57 +0200</lastBuildDate>
 		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Fcsc2026_transport_me</title>
+			<link>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</link>
+			<pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
+			
+			<guid>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[]]></content>
+		</item>
+		
+		<item>
+			<title>FCSC 2026 - Tunnel Routier 1/2</title>
+			<link>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</link>
+			<pubDate>Sun, 12 Apr 2026 12:00:00 +0000</pubDate>
+			
+			<guid>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<div>
+  <img src="/posts/fcsc2026_tunnel_routier_1-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
+  </br>
+</div>
+<p>Ceci est le write-up de la première partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<h2 id="énoncé">Énoncé</h2>
+<blockquote>
+<p>Dans cette première partie de l&rsquo;épreuve, vous devez retrouver un token caché dans les données d&rsquo;identification de l&rsquo;automate pour vous permettre d&rsquo;accéder à la deuxième partie de l&rsquo;épreuve.</p>
+<p>Note: La description du système est disponible sur une <a href="https://fcsc.fr/tunnel-routier-76bea48861178b0c">page dédiée</a></p>
+<p><code>nc tunnel-routier.fcsc.fr 502</code></p>
+</blockquote>
+<h3 id="documentation">Documentation</h3>
+<p>Voici la documentation présente à l&rsquo;adresse: <a href="https://fcsc.fr/tunnel-routier-76bea48861178b0c">https://fcsc.fr/tunnel-routier-76bea48861178b0c</a></p>
+<p><strong>Tunnel routier : documentation</strong></p>
+<p>Le tunnel de Grenelle d&rsquo;une longueur de 5km doit être inauguré ce jour, pour cela des responsables locaux ont fait le déplacement pour assister à sa première mise en service. Le système de contrôle-commande de ce tunnel est assuré par un automate programmable industriel (PLC) communiquant avec le SCADA au travers d&rsquo;un protocole industriel sur le port TCP/502. Ce système permet de réguler des valeurs de process offrant une traversée du tunnel en toute sécurité pour les usagers. Les valeurs de process régulés de cet automate sont les suivantes :</p>
+<ul>
+<li>Le taux de C02 (PPM)</li>
+<li>La luminance (cd/m2)</li>
+<li>La température (°C)</li>
+</ul>
+<p>Pour que le tunnel puisse être mis en service, il doit respecter les normes de sureté en vigueur, soit un taux de C02 inférieur ou égal à 800 PPM, une luminance supérieure ou égale à 300 cd/m2 et une température inférieure ou égale à 25 C°, et ce, dans les sections NORD et SUD du tunnel.</p>
+<p>Alors que tout semblait normal la veille lors des vérifications, les équipes de conduite du tunnel découvrent avec stupéfaction, le matin même l&rsquo;inauguration, que les ventilateurs et les spots sont éteints et que le poste Enedis de Grenelle alimentant le tunnel est hors service. Ils se sont alors empressés d&rsquo;allumer le groupe électrogène de secours puis de redémarrer le process de régulation du tunnel via l&rsquo;interface SCADA. Cependant, au moment de se connecter sur l&rsquo;interface via le compte ayant les privilèges pour envoyer des consignes, ils se sont aperçus que le compte avait été supprimé pendant la nuit et qu&rsquo;ils n&rsquo;ont à présent accès qu&rsquo;au compte en lecture seule.</p>
+<p>Sans solutions, les épuipes de conduite font appel à vos compétences pour remettre le tunnel en service avant l&rsquo;arrivée des VIP. A votre arrivée tardive, il ne vous reste qu&rsquo;une minute pour remédier à la situation. Il n&rsquo;y a pas une minute à perdre&hellip;</p>
+<p>Dans cette première partie de l&rsquo;épreuve, vous devez retrouvez un token caché dans les données d&rsquo;identification de l&rsquo;automate pour vous permettre d&rsquo;accèder à la deuxième partie de l&rsquo;épreuve.</p>
+<p>Dans cette deuxième partie de l&rsquo;épreuve, vous devez envoyer des consignes à l&rsquo;automate afin d&rsquo;obtenir des valeurs de process répondant aux normes de sureté (déjà fournies au dessus), le tout en moins d&rsquo;une minute. Vous avez également accès à l&rsquo;interface SCADA en lecture seule via le token récupéré dans la première partie de l&rsquo;épreuve.</p>
+<p>Ces serveurs sont accessibles à ces adresses :</p>
+<ul>
+<li>automate : <code>nc tunnel-routier.fcsc.fr 502</code></li>
+<li>interface web SCADA du tunnel : <a href="https://tunnel-routier.fcsc.fr/">https://tunnel-routier.fcsc.fr/</a>.</li>
+</ul>
+<p>Important. Chaque nouvelle connexion TCP à l&rsquo;automate sur le port 502 implique la réinitialisation de l&rsquo;automate, ainsi, un nouveau token est généré à chaque nouvelle connexion. Pour compléter les deux étapes de ce challenge dans le temps imparti, vous ne devrez donc pas couper votre connexion TCP et effectuer toutes vos requêtes dans la même connexion TCP.</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_1-2/images/tunnel.png" alt="tunnel">
+  </br>
+</div>
+<h3 id="interface-scada">Interface SCADA</h3>
+<p>Voici l&rsquo;interface SCADA à l&rsquo;adresse <a href="https://tunnel-routier.fcsc.fr/">https://tunnel-routier.fcsc.fr/</a> mentionnée dans le document.</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_1-2/images/scada-1.png" alt="tunnel">
+  </br>
+</div>
+<hr>
+<h2 id="résolution">Résolution</h2>
+<p>Dans cette première partie, on cherche simplement à récupérer le token d&rsquo;accès à l&rsquo;automate SCADA, ce token serait caché dans les <strong>données d&rsquo;identification</strong> de ce dernier.</p>
+<h3 id="protocole-de-communication">Protocole de communication</h3>
+<p>Avant toute chose, il faut savoir quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
+<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;ont va utiliser.</p>
+<h3 id="registre">Registre</h3>
+<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;ont veut.</p>
+<h3 id="code-python">Code Python</h3>
+<p>Maintenant qu&rsquo;on a toutes les informations dont on a besoin, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
+<p>En cherchant <strong>Read Device Identification</strong> dans la <a href="https://pymodbus.readthedocs.io/en/latest/">documentation</a> de PyModbus on trouve la fonction <a href="https://pymodbus.readthedocs.io/en/latest/source/client.html#pymodbus.client.mixin.ModbusClientMixin.read_device_information">read_device_information</a>.</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Le fait d&rsquo;utiliser result.information est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
+    </aside>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">client</span> <span class="o">=</span> <span class="n">ModbusTcpClient</span><span class="p">(</span><span class="s1">&#39;tunnel-routier.fcsc.fr&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read_device_information</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">information</span><span class="p">)</span>
+</span></span></code></pre></div><p>On a en retour notre token:</p>
+<p><code>{0: b'Siemens AG ', 1: b'S7-300 315-2EH13-0AB0 (Your token is : d3699c7e454f5fb5deeb7c6c637e44c5)', 2: b'3.0.33'}</code></p>
+<h3 id="flag">Flag</h3>
+<p>On a plus qu&rsquo;a le rentrer dans l&rsquo;<a href="https://tunnel-routier.fcsc.fr/">interface SCADA</a> et voici notre flag.</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_1-2/images/scada-2.png" alt="tunnel">
+</div>
+<hr>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml</a></li>
+<li><a href="https://pymodbus.readthedocs.io/en/latest/">https://pymodbus.readthedocs.io/en/latest/</a></li>
+<li><a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse</a></li>
+<li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf</a></li>
+</ul>
+]]></content>
+		</item>
+		
+		<item>
+			<title>FCSC 2026 - Tunnel Routier 2/2</title>
+			<link>http://localhost:1313/posts/fcsc2026_tunnel_routier_2-2/fcsc2026_tunnel_routier_2-2/</link>
+			<pubDate>Sun, 12 Apr 2026 12:00:00 +0000</pubDate>
+			
+			<guid>http://localhost:1313/posts/fcsc2026_tunnel_routier_2-2/fcsc2026_tunnel_routier_2-2/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<div>
+  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
+  </br>
+</div>
+<p>Ceci est le write-up de la deuxième partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<h2 id="énoncé">Énoncé</h2>
+<blockquote>
+<p>Dans cette deuxième partie de l&rsquo;épreuve, vous devez envoyer des consignes à l&rsquo;automate afin d&rsquo;obtenir des valeurs de process répondant aux normes de sureté (fournie dans la description détaillée), le tout en moins d&rsquo;une minute. Vous avez également accès à l&rsquo;interface SCADA en lecture seule via le token récupéré dans la première partie de l&rsquo;épreuve.</p>
+<p>Note: La description du système est disponible sur une <a href="https://fcsc.fr/tunnel-routier-76bea48861178b0c">page dédiée</a>.</p>
+<p><code>nc tunnel-routier.fcsc.fr 502</code></p>
+</blockquote>
+<h3 id="documentation">Documentation</h3>
+<p>Voici la documentation présente à l&rsquo;adresse: <a href="https://fcsc.fr/tunnel-routier-76bea48861178b0c">https://fcsc.fr/tunnel-routier-76bea48861178b0c</a></p>
+<p><strong>Tunnel routier : documentation</strong></p>
+<p>Le tunnel de Grenelle d&rsquo;une longueur de 5km doit être inauguré ce jour, pour cela des responsables locaux ont fait le déplacement pour assister à sa première mise en service. Le système de contrôle-commande de ce tunnel est assuré par un automate programmable industriel (PLC) communiquant avec le SCADA au travers d&rsquo;un protocole industriel sur le port TCP/502. Ce système permet de réguler des valeurs de process offrant une traversée du tunnel en toute sécurité pour les usagers. Les valeurs de process régulés de cet automate sont les suivantes :</p>
+<ul>
+<li>Le taux de C02 (PPM)</li>
+<li>La luminance (cd/m²)</li>
+<li>La température (°C)</li>
+</ul>
+<p>Pour que le tunnel puisse être mis en service, il doit respecter les normes de sureté en vigueur, soit un taux de C02 inférieur ou égal à 800 PPM, une luminance supérieure ou égale à 300 cd/m2 et une température inférieure ou égale à 25 C°, et ce, dans les sections NORD et SUD du tunnel.</p>
+<p>Alors que tout semblait normal la veille lors des vérifications, les équipes de conduite du tunnel découvrent avec stupéfaction, le matin même l&rsquo;inauguration, que les ventilateurs et les spots sont éteints et que le poste Enedis de Grenelle alimentant le tunnel est hors service. Ils se sont alors empressés d&rsquo;allumer le groupe électrogène de secours puis de redémarrer le process de régulation du tunnel via l&rsquo;interface SCADA. Cependant, au moment de se connecter sur l&rsquo;interface via le compte ayant les privilèges pour envoyer des consignes, ils se sont aperçus que le compte avait été supprimé pendant la nuit et qu&rsquo;ils n&rsquo;ont à présent accès qu&rsquo;au compte en lecture seule.</p>
+<p>Sans solutions, les épuipes de conduite font appel à vos compétences pour remettre le tunnel en service avant l&rsquo;arrivée des VIP. A votre arrivée tardive, il ne vous reste qu&rsquo;une minute pour remédier à la situation. Il n&rsquo;y a pas une minute à perdre&hellip;</p>
+<p>Dans cette première partie de l&rsquo;épreuve, vous devez retrouvez un token caché dans les données d&rsquo;identification de l&rsquo;automate pour vous permettre d&rsquo;accèder à la deuxième partie de l&rsquo;épreuve.</p>
+<p>Dans cette deuxième partie de l&rsquo;épreuve, vous devez envoyer des consignes à l&rsquo;automate afin d&rsquo;obtenir des valeurs de process répondant aux normes de sureté (déjà fournies au dessus), le tout en moins d&rsquo;une minute. Vous avez également accès à l&rsquo;interface SCADA en lecture seule via le token récupéré dans la première partie de l&rsquo;épreuve.</p>
+<p>Ces serveurs sont accessibles à ces adresses :</p>
+<ul>
+<li>automate : <code>nc tunnel-routier.fcsc.fr 502</code></li>
+<li>interface web SCADA du tunnel : <a href="https://tunnel-routier.fcsc.fr/">https://tunnel-routier.fcsc.fr/</a>.</li>
+</ul>
+<p>Important. Chaque nouvelle connexion TCP à l&rsquo;automate sur le port 502 implique la réinitialisation de l&rsquo;automate, ainsi, un nouveau token est généré à chaque nouvelle connexion. Pour compléter les deux étapes de ce challenge dans le temps imparti, vous ne devrez donc pas couper votre connexion TCP et effectuer toutes vos requêtes dans la même connexion TCP.</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/tunnel.png" alt="tunnel">
+  </br>
+</div>
+<hr>
+<h2 id="identification">Identification</h2>
+<p>Dans cette 2ème partie, on doit remettre en fonctionnement le tunnel en moins de <strong>1 minute</strong>.</p>
+<p>Pour ça, on doit agir sur 3 grandeurs physiques:</p>
+<ul>
+<li>Le taux de C02 (PPM)</li>
+<li>La luminance (cd/m2)</li>
+<li>La température (°C)</li>
+</ul>
+<p>Pour commencer, on doit identifier deux choses:</p>
+<ul>
+<li>Le registre des capteurs</li>
+<li>Le registre des actionneurs</li>
+</ul>
+<h3 id="identification-des-types-de-registres">Identification des types de registres</h3>
+<p>Le tableau de la section <strong>4.3 MODBUS Data model</strong> de la <a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">documentation</a> MODBUS nous donne le détail des différents registres:</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/register_table.png" alt="tunnel">
+  </br>
+</div>
+<p>Commençont par le registre des <strong>capteurs</strong>, on sait que:</p>
+<ul>
+<li>Ce sont des <em>Input</em></li>
+<li>Très probablement en lecture seule</li>
+<li>Que ce sont des valeurs sur plus d&rsquo;un bit</li>
+</ul>
+<p>D&rsquo;après le tableau, tout porte à croire qu&rsquo;il s&rsquo;agit du <strong>Input Registers</strong>.</p>
+<p>Pour celui des <strong>actionneurs</strong>, on sait que:</p>
+<ul>
+<li>Ils doivent être modifiable (Read-Write)</li>
+<li>Ils doivent être sur plus d&rsquo;un bit</li>
+</ul>
+<p>D&rsquo;après le tableau, tout porte à croire qu&rsquo;il s&rsquo;agit du <strong>Holding Registers</strong>.</p>
+<p>Chaque registre (capteurs ou actionneurs) peut avoir 65536 adresses, chaque adresse contient 16 octets (bytes) de données (cf. le tableau).</p>
+<p>Si on regarde le schéma dans l&rsquo;interface SCADA, on voit qu&rsquo;il y a <strong>3 capteurs</strong> et <strong>8 actionneurs</strong> (4 lumières et 4 ventilateurs) par tunnel (Nord et Sud), soit un total de <strong>6 capteurs</strong> et <strong>16 actionneurs</strong>.</p>
+<h3 id="identification-des-adresses-du-registre-des-capteurs">Identification des adresses du registre des capteurs</h3>
+<p>Notre but ici est de savoir à qu&rsquo;elle adresse est stockée qu&rsquo;elle valeur de quel capteur, on commence par lire le registre <strong>Input Registers</strong>:</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Pour <code>client.read_input_registers()</code>, le paramètre <code>address</code> indique l&rsquo;adresse de départ et <code>count</code> le nombre de valeur à afficher, sachant qu&rsquo;on a 6 capteurs en tout on met <code>count=6</code></div>
+    </aside>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Initialise la connexion Modbus</span>
+</span></span><span class="line"><span class="cl"><span class="n">client</span> <span class="o">=</span> <span class="n">ModbusTcpClient</span><span class="p">(</span><span class="s1">&#39;tunnel-routier.fcsc.fr&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Lis les 6 adresses du input registers à l&#39;adresse 0</span>
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read_input_registers</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span></code></pre></div><p>Ce qui nous donne: <code>ReadInputRegistersResponse(dev_id=1, transaction_id=1, address=0, count=0, bits=[], registers=[1600, 1600, 0, 0, 32, 32], status=1, retries=0)</code></p>
+<p>Or, on veut juste la partie <code>registers</code>, on ajuste alors le script en modifiant <code>print(result)</code> en <code>print(result.registers)</code>, ce qui nous donne:</p>
+<p><code>[1600, 1600, 0, 0, 32, 32]</code></p>
+<p>D&rsquo;après l&rsquo;odre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
+Il est aussi très probable que le première de la paire concerne le tunnel nord et le second le tunnel sud.</p>
+<p>Pour résumer:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center"><strong>Adresse</strong></th>
+          <th style="text-align: center"><strong>Capteur</strong></th>
+          <th style="text-align: center"><strong>Tunnel</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">CO2</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">CO2</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">Luminance</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">Luminance</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">Température</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">Température</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+  </tbody>
+</table>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">On pourra vérifier ce tableau lors de l&rsquo;identification des actionneurs</div>
+    </aside>
+<h3 id="identification-des-adresses-du-registres-des-actionneurs">Identification des adresses du registres des actionneurs</h3>
+<p>Ensuite, on s&rsquo;occupe du registre <strong>Holding Registers</strong>. Cette fois je vais écrire une valeur à une adresse et regarder sur quel actionneur ça agit sur le tableau de bord:</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Ici on ne précise pas <em>holding registers</em> car c&rsquo;est le seul registre écrivable (oui c&rsquo;est moche mais ça existe), sinon c&rsquo;est un <em>coil</em>.</div>
+    </aside>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Initialise la connexion Modbus</span>
+</span></span><span class="line"><span class="cl"><span class="n">client</span> <span class="o">=</span> <span class="n">ModbusTcpClient</span><span class="p">(</span><span class="s1">&#39;tunnel-routier.fcsc.fr&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Affiche le token</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">read_device_information</span><span class="p">()</span><span class="o">.</span><span class="n">information</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Ecrit la valeur 200 à l&#39;adresse 0</span>
+</span></span><span class="line"><span class="cl"><span class="n">client</span><span class="o">.</span><span class="n">write_register</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</span></span></code></pre></div><p>Quand on regarde le tableau de bord, on peut voir que le premier ventilateur du tunnel nord s&rsquo;est allumé avec pour valeur <strong>200</strong> (surement en tours/min):</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/dashboard-1.png" alt="tunnel">
+  </br>
+</div>
+<p>On continue à tester les adresses jusqu&rsquo;a les avoir toutes mappées, ce qui donne:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center"><strong>Adresse</strong></th>
+          <th style="text-align: center"><strong>Actionneur</strong></th>
+          <th style="text-align: center"><strong>Numéro</strong></th>
+          <th style="text-align: center"><strong>Tunnel</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">7</td>
+          <td style="text-align: center">Ventilateur</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">9</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">11</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">Nord</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">13</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">14</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">15</td>
+          <td style="text-align: center">Spots</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">Sud</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="résolution">Résolution</h2>
+<p>Maintenant qu&rsquo;on à tous les éléments, on va pouvoir écire le script finale pour résoudre ce challenge.</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content"><p>Pour rappel, on doit avoir:</p>
+<ul>
+<li>CO2 &lt;= 800</li>
+<li>Luminance &gt;= 300</li>
+<li>Température &lt;= 25</li>
+</ul>
+<p>A noter que l&rsquo;on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 ET la température.</p>
+</div>
+    </aside>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_token</span><span class="p">(</span><span class="n">client</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Retrieve the token from the device information.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    client (ModbusTcpClient): Instance of ModbusTcpClient for TCP communication.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns: 
+</span></span></span><span class="line"><span class="cl"><span class="s2">    str: The access token.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">token</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">read_device_information</span><span class="p">()</span><span class="o">.</span><span class="n">information</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&#34;Your token is :\s([A-Za-z0-9]+)&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">token</span> <span class="o">=</span> <span class="k">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">token</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">start_fans</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Set the speed (RPM) for each fan of the North and South tunnel.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    client (ModbusTcpClient): Instance of ModbusTcpClient for TCP communication.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    value (int): The RPM to set for the fans.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">client</span><span class="o">.</span><span class="n">write_register</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">turn_on_lights</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Set the luminance for each light of the North and South tunnel.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    client (ModbusTcpClient): Instance of ModbusTcpClient for TCP communication.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    value (int): The luminance to set for the lights.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">client</span><span class="o">.</span><span class="n">write_register</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">client</span> <span class="o">=</span> <span class="n">ModbusTcpClient</span><span class="p">(</span><span class="s1">&#39;tunnel-routier.fcsc.fr&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">token</span> <span class="o">=</span> <span class="n">get_token</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># The value of the fans has been tested manually until it works</span>
+</span></span><span class="line"><span class="cl">    <span class="n">start_fans</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="mi">1400</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># The value of the light is a simple addition (we need 300/tunnel with 4 lights)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">turn_on_lights</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">sensors</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read_input_registers</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">co2_north</span> <span class="o">=</span> <span class="n">sensors</span><span class="o">.</span><span class="n">registers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">co2_south</span> <span class="o">=</span> <span class="n">sensors</span><span class="o">.</span><span class="n">registers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">temp_north</span> <span class="o">=</span> <span class="n">sensors</span><span class="o">.</span><span class="n">registers</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">temp_south</span> <span class="o">=</span> <span class="n">sensors</span><span class="o">.</span><span class="n">registers</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">co2_north</span> <span class="o">&lt;=</span> <span class="mi">800</span> <span class="ow">and</span> <span class="n">co2_south</span> <span class="o">&lt;=</span> <span class="mi">800</span> <span class="ow">and</span> <span class="n">temp_north</span> <span class="o">&lt;=</span> <span class="mi">25</span> <span class="ow">and</span> <span class="n">temp_south</span> <span class="o">&lt;=</span> <span class="mi">25</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Let&#39;s get that flag: https://tunnel-routier.fcsc.fr/</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></div><p>Ce script va allumer les ventilateurs à <strong>1400 tr/min</strong> (j&rsquo;ai trouvé la valeur &ldquo;manuellement&rdquo; en testant jusqu&rsquo;a que ça fonctionne dans le temps impartis), les spots à <strong>75 cd/m²</strong> (on a besoin de 300cd/m² par tunnel et on a 4 spots par tunnel, donc 300/4) et va lire les valeurs des capteurs jusqu&rsquo;a ce qu&rsquo;elles soient dans les normes.</p>
+<p>Une fois ces valeurs atteintes, il va afficher un lien avec token pour récupérer le flag.</p>
+<hr>
+<h2 id="flag">Flag</h2>
+<p>On peut alors récupérer le flag via le lien donné par le script:</p>
+<div>
+  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/second_flag.png" alt="tunnel">
+  </br>
+</div>
+<p>On pourrait aussi récupérer automatiquement le flag via la balise <code>&lt;div id=&quot;flag&quot;&gt;&lt;/div&gt;</code> sur le site.</p>
+<hr>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml</a></li>
+<li><a href="https://pymodbus.readthedocs.io/en/latest/">https://pymodbus.readthedocs.io/en/latest/</a></li>
+<li><a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse</a></li>
+<li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf</a></li>
+</ul>
+]]></content>
+		</item>
 		
 		<item>
 			<title>Introduction à la SDR 1/2</title>
