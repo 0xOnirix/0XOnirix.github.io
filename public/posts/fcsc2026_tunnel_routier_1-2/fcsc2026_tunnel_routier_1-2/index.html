@@ -16,18 +16,18 @@
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c"><meta name="author" content="Onirix"><meta name="description" content="Blog d&#39;Onirix">
 
   <meta itemprop="name" content="FCSC 2026 - Tunnel Routier 1/2">
-  <meta itemprop="description" content="Ceci est le write-up de la première partie du challenge Misc Tunnel Routier du CTF FCSC édition 2026 organisé par l’ANSSI.
+  <meta itemprop="description" content="Ceci est le write-up de la première partie du challenge Misc Tunnel Routier du CTF France CyberSecurity Challenge (FCSC) édition 2026 organisé par l’ANSSI.
 Énoncé Dans cette première partie de l’épreuve, vous devez retrouver un token caché dans les données d’identification de l’automate pour vous permettre d’accéder à la deuxième partie de l’épreuve.
 Note: La description du système est disponible sur une page dédiée
 nc tunnel-routier.fcsc.fr 502
 Documentation Voici la documentation présente à l’adresse: https://fcsc.fr/tunnel-routier-76bea48861178b0c">
   <meta itemprop="datePublished" content="2026-04-12T12:00:00+00:00">
   <meta itemprop="dateModified" content="2026-04-12T12:00:00+00:00">
-  <meta itemprop="wordCount" content="820">
+  <meta itemprop="wordCount" content="822">
   <meta itemprop="keywords" content="FCSC 2026,FCSC,Misc,Tunnel Routier 1/2,Write-Up"><meta property="og:url" content="http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/">
   <meta property="og:site_name" content="Onirix">
   <meta property="og:title" content="FCSC 2026 - Tunnel Routier 1/2">
-  <meta property="og:description" content="Ceci est le write-up de la première partie du challenge Misc Tunnel Routier du CTF FCSC édition 2026 organisé par l’ANSSI.
+  <meta property="og:description" content="Ceci est le write-up de la première partie du challenge Misc Tunnel Routier du CTF France CyberSecurity Challenge (FCSC) édition 2026 organisé par l’ANSSI.
 Énoncé Dans cette première partie de l’épreuve, vous devez retrouver un token caché dans les données d’identification de l’automate pour vous permettre d’accéder à la deuxième partie de l’épreuve.
 Note: La description du système est disponible sur une page dédiée
 nc tunnel-routier.fcsc.fr 502
@@ -45,7 +45,7 @@ Documentation Voici la documentation présente à l’adresse: https://fcsc.fr/t
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="FCSC 2026 - Tunnel Routier 1/2">
-  <meta name="twitter:description" content="Ceci est le write-up de la première partie du challenge Misc Tunnel Routier du CTF FCSC édition 2026 organisé par l’ANSSI.
+  <meta name="twitter:description" content="Ceci est le write-up de la première partie du challenge Misc Tunnel Routier du CTF France CyberSecurity Challenge (FCSC) édition 2026 organisé par l’ANSSI.
 Énoncé Dans cette première partie de l’épreuve, vous devez retrouver un token caché dans les données d’identification de l’automate pour vous permettre d’accéder à la deuxième partie de l’épreuve.
 Note: La description du système est disponible sur une page dédiée
 nc tunnel-routier.fcsc.fr 502
@@ -133,7 +133,7 @@ Documentation Voici la documentation présente à l’adresse: https://fcsc.fr/t
     
     
     
-    3 Minutes, 43 Seconds</p>
+    3 Minutes, 44 Seconds</p>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>12-04-2026</p></div>
 			<hr class="post-end">
 			<div class="content">
@@ -141,7 +141,7 @@ Documentation Voici la documentation présente à l’adresse: https://fcsc.fr/t
   <img src="/posts/fcsc2026_tunnel_routier_1-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
   </br>
 </div>
-<p>Ceci est le write-up de la première partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<p>Ceci est le write-up de la première partie du challenge <a href="/tags/misc/">Misc</a> <strong>Tunnel Routier</strong> du CTF <strong>France CyberSecurity Challenge</strong> (<a href="https://fcsc.fr/">FCSC</a>) édition 2026 organisé par l&rsquo;ANSSI.</p>
 <h2 id="énoncé">Énoncé<a href="#énoncé" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <blockquote>
 <p>Dans cette première partie de l&rsquo;épreuve, vous devez retrouver un token caché dans les données d&rsquo;identification de l&rsquo;automate pour vous permettre d&rsquo;accéder à la deuxième partie de l&rsquo;épreuve.</p>
@@ -182,19 +182,19 @@ Documentation Voici la documentation présente à l’adresse: https://fcsc.fr/t
 <h2 id="résolution">Résolution<a href="#résolution" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>Dans cette première partie, on cherche simplement à récupérer le token d&rsquo;accès à l&rsquo;automate SCADA, ce token serait caché dans les <strong>données d&rsquo;identification</strong> de ce dernier.</p>
 <h3 id="protocole-de-communication">Protocole de communication<a href="#protocole-de-communication" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<p>Avant toute chose, il faut savoir quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
-<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;ont va utiliser.</p>
+<p>Avant toute chose, il faut déterminer quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
+<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (registre gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;on va utiliser.</p>
 <h3 id="registre">Registre<a href="#registre" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;ont veut.</p>
+<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;on veut.</p>
 <h3 id="code-python">Code Python<a href="#code-python" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<p>Maintenant qu&rsquo;on a toutes les informations dont on a besoin, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
+<p>Avec toutes ces informations, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
 <p>En cherchant <strong>Read Device Identification</strong> dans la <a href="https://pymodbus.readthedocs.io/en/latest/">documentation</a> de PyModbus on trouve la fonction <a href="https://pymodbus.readthedocs.io/en/latest/source/client.html#pymodbus.client.mixin.ModbusClientMixin.read_device_information">read_device_information</a>.</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
             <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
         </div>
-        <div class="admonition-content">Le fait d&rsquo;utiliser result.information est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
+        <div class="admonition-content">Le fait d&rsquo;utiliser <code>result.information</code> pour afficher le token est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
 </span></span><span class="line"><span class="cl">
@@ -249,7 +249,8 @@ Documentation Voici la documentation présente à l’adresse: https://fcsc.fr/t
 		&copy; 2026 <a href="http://localhost:1313/">Onirix</a>
 		&#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>
 		&#183; Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
-		&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a></p>
+		&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a>
+		&#183; <a href="http://localhost:1313/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></p>
 
 </footer>
 <script async src="http://localhost:1313/js/bundle.min.c7c384e4d29d192bbac6811ae4660bb01767194a5bea56baca77e8260f93ea16.js" integrity="sha256-x8OE5NKdGSu6xoEa5GYLsBdnGUpb6la6ynfoJg+T6hY=" crossorigin="anonymous"></script>

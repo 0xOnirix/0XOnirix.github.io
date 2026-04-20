@@ -19,7 +19,7 @@ categories:
   </br>
 </div>
 
-Ceci est le write-up de la première partie du challenge Misc **Tunnel Routier** du CTF [FCSC](https://fcsc.fr/) édition 2026 organisé par l'ANSSI.
+Ceci est le write-up de la première partie du challenge [Misc](/tags/misc/) **Tunnel Routier** du CTF **France CyberSecurity Challenge** ([FCSC](https://fcsc.fr/)) édition 2026 organisé par l'ANSSI.
 
 ## Énoncé
 
@@ -81,22 +81,22 @@ Dans cette première partie, on cherche simplement à récupérer le token d'acc
 
 ### Protocole de communication
 
-Avant toute chose, il faut savoir quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l'OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.
+Avant toute chose, il faut déterminer quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l'OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.
 
-D'après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre [IANA](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) (gérant, entre autre, les assignation de ports) et en cherchant le port **502**, on peut voir qu'il est réservé à **Modbus**, c'est donc ce que l'ont va utiliser.
+D'après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre [IANA](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) (registre gérant, entre autre, les assignation de ports) et en cherchant le port **502**, on peut voir qu'il est réservé à **Modbus**, c'est donc ce que l'on va utiliser.
 
 ### Registre
 
-Il faut maintenant identifier le registre à lire. En regardant la [documentation](https://www.modbus.org/file/secure/modbusprotocolspecification.pdf) de Modbus, on peut voir la fonction **43 / 14 (0x2B / 0x0E) Read Device Identification** qui est exactement ce que l'ont veut.
+Il faut maintenant identifier le registre à lire. En regardant la [documentation](https://www.modbus.org/file/secure/modbusprotocolspecification.pdf) de Modbus, on peut voir la fonction **43 / 14 (0x2B / 0x0E) Read Device Identification** qui est exactement ce que l'on veut.
 
 ### Code Python
 
-Maintenant qu'on a toutes les informations dont on a besoin, on peut écrire notre code Python en utilisant la librairie [PyModbus](https://pymodbus.readthedocs.io/en/latest/).
+Avec toutes ces informations, on peut écrire notre code Python en utilisant la librairie [PyModbus](https://pymodbus.readthedocs.io/en/latest/).
 
 En cherchant **Read Device Identification** dans la [documentation](https://pymodbus.readthedocs.io/en/latest/) de PyModbus on trouve la fonction [read_device_information](https://pymodbus.readthedocs.io/en/latest/source/client.html#pymodbus.client.mixin.ModbusClientMixin.read_device_information).
 
 {{< admonition type=note title="Note" >}}
-Le fait d'utiliser result.information est une information assez difficile à trouver, on peut voir que `read_device_information` retourne le dictionnaire **information** [ici](https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse)
+Le fait d'utiliser `result.information` pour afficher le token est une information assez difficile à trouver, on peut voir que `read_device_information` retourne le dictionnaire **information** [ici](https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse)
 {{< /admonition >}}
 
 ```py

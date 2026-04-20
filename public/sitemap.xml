@@ -2,7 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://localhost:1313/categories/</loc>
+    <lastmod>2026-04-14T10:52:57+02:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/categories/ctf/</loc>
+    <lastmod>2026-04-14T10:52:57+02:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/fcsc/</loc>
+    <lastmod>2026-04-14T10:52:57+02:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/fcsc-2026/</loc>
+    <lastmod>2026-04-14T10:52:57+02:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</loc>
+    <lastmod>2026-04-14T10:52:57+02:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/intro/</loc>
     <lastmod>2026-04-14T10:52:57+02:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/</loc>
@@ -14,20 +29,11 @@
     <loc>http://localhost:1313/tags/</loc>
     <lastmod>2026-04-14T10:52:57+02:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/untagged/</loc>
+    <loc>http://localhost:1313/tags/transport-me/</loc>
     <lastmod>2026-04-14T10:52:57+02:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
-    <lastmod>2026-04-12T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/ctf/</loc>
-    <lastmod>2026-04-12T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/fcsc/</loc>
-    <lastmod>2026-04-12T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/fcsc-2026/</loc>
-    <lastmod>2026-04-12T12:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/tags/write-up/</loc>
+    <lastmod>2026-04-14T10:52:57+02:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</loc>
     <lastmod>2026-04-12T12:00:00+00:00</lastmod>
@@ -39,9 +45,6 @@
     <lastmod>2026-04-12T12:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/tunnel-routier-1/2/</loc>
-    <lastmod>2026-04-12T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/write-up/</loc>
     <lastmod>2026-04-12T12:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/gnuradio/</loc>

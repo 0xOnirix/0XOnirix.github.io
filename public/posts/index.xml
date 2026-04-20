@@ -10,7 +10,7 @@
 		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>Fcsc2026_transport_me</title>
+			<title>FCSC 2026 - Transport me</title>
 			<link>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</link>
 			<pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
 			
@@ -30,7 +30,7 @@
   <img src="/posts/fcsc2026_tunnel_routier_1-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
   </br>
 </div>
-<p>Ceci est le write-up de la première partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<p>Ceci est le write-up de la première partie du challenge <a href="/tags/misc/">Misc</a> <strong>Tunnel Routier</strong> du CTF <strong>France CyberSecurity Challenge</strong> (<a href="https://fcsc.fr/">FCSC</a>) édition 2026 organisé par l&rsquo;ANSSI.</p>
 <h2 id="énoncé">Énoncé</h2>
 <blockquote>
 <p>Dans cette première partie de l&rsquo;épreuve, vous devez retrouver un token caché dans les données d&rsquo;identification de l&rsquo;automate pour vous permettre d&rsquo;accéder à la deuxième partie de l&rsquo;épreuve.</p>
@@ -71,19 +71,19 @@
 <h2 id="résolution">Résolution</h2>
 <p>Dans cette première partie, on cherche simplement à récupérer le token d&rsquo;accès à l&rsquo;automate SCADA, ce token serait caché dans les <strong>données d&rsquo;identification</strong> de ce dernier.</p>
 <h3 id="protocole-de-communication">Protocole de communication</h3>
-<p>Avant toute chose, il faut savoir quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
-<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;ont va utiliser.</p>
+<p>Avant toute chose, il faut déterminer quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
+<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (registre gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;on va utiliser.</p>
 <h3 id="registre">Registre</h3>
-<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;ont veut.</p>
+<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;on veut.</p>
 <h3 id="code-python">Code Python</h3>
-<p>Maintenant qu&rsquo;on a toutes les informations dont on a besoin, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
+<p>Avec toutes ces informations, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
 <p>En cherchant <strong>Read Device Identification</strong> dans la <a href="https://pymodbus.readthedocs.io/en/latest/">documentation</a> de PyModbus on trouve la fonction <a href="https://pymodbus.readthedocs.io/en/latest/source/client.html#pymodbus.client.mixin.ModbusClientMixin.read_device_information">read_device_information</a>.</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
             <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
         </div>
-        <div class="admonition-content">Le fait d&rsquo;utiliser result.information est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
+        <div class="admonition-content">Le fait d&rsquo;utiliser <code>result.information</code> pour afficher le token est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
 </span></span><span class="line"><span class="cl">
@@ -120,7 +120,7 @@
   <img src="/posts/fcsc2026_tunnel_routier_2-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
   </br>
 </div>
-<p>Ceci est le write-up de la deuxième partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<p>Ceci est le write-up de la deuxième partie du challenge <a href="/tags/misc/">Misc</a> <strong>Tunnel Routier</strong> du CTF <strong>France CyberSecurity Challenge</strong> (<a href="https://fcsc.fr/">FCSC</a>) édition 2026 organisé par l&rsquo;ANSSI.</p>
 <h2 id="énoncé">Énoncé</h2>
 <blockquote>
 <p>Dans cette deuxième partie de l&rsquo;épreuve, vous devez envoyer des consignes à l&rsquo;automate afin d&rsquo;obtenir des valeurs de process répondant aux normes de sureté (fournie dans la description détaillée), le tout en moins d&rsquo;une minute. Vous avez également accès à l&rsquo;interface SCADA en lecture seule via le token récupéré dans la première partie de l&rsquo;épreuve.</p>
@@ -181,10 +181,10 @@
 <p>Pour celui des <strong>actionneurs</strong>, on sait que:</p>
 <ul>
 <li>Ils doivent être modifiable (Read-Write)</li>
-<li>Ils doivent être sur plus d&rsquo;un bit</li>
+<li>Ils doivent être sur plus d&rsquo;un bit (car pas simplement on/off)</li>
 </ul>
 <p>D&rsquo;après le tableau, tout porte à croire qu&rsquo;il s&rsquo;agit du <strong>Holding Registers</strong>.</p>
-<p>Chaque registre (capteurs ou actionneurs) peut avoir 65536 adresses, chaque adresse contient 16 octets (bytes) de données (cf. le tableau).</p>
+<p>Chaque registre (capteur ou actionneur) peut avoir 65536 adresses, chaque adresse contient <strong>16 bits</strong> de données (voir le tableau des registres ci-dessus).</p>
 <p>Si on regarde le schéma dans l&rsquo;interface SCADA, on voit qu&rsquo;il y a <strong>3 capteurs</strong> et <strong>8 actionneurs</strong> (4 lumières et 4 ventilateurs) par tunnel (Nord et Sud), soit un total de <strong>6 capteurs</strong> et <strong>16 actionneurs</strong>.</p>
 <h3 id="identification-des-adresses-du-registre-des-capteurs">Identification des adresses du registre des capteurs</h3>
 <p>Notre but ici est de savoir à qu&rsquo;elle adresse est stockée qu&rsquo;elle valeur de quel capteur, on commence par lire le registre <strong>Input Registers</strong>:</p>
@@ -193,7 +193,7 @@
         <div class="admonition-title">
             <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
         </div>
-        <div class="admonition-content">Pour <code>client.read_input_registers()</code>, le paramètre <code>address</code> indique l&rsquo;adresse de départ et <code>count</code> le nombre de valeur à afficher, sachant qu&rsquo;on a 6 capteurs en tout on met <code>count=6</code></div>
+        <div class="admonition-content">Pour <code>client.read_input_registers()</code>, le paramètre <code>address</code> indique l&rsquo;adresse de départ et <code>count</code> le nombre de valeur à afficher, sachant que l&rsquo;on a 6 capteurs en tout on met <code>count=6</code></div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
 </span></span><span class="line"><span class="cl">
@@ -201,13 +201,13 @@
 </span></span><span class="line"><span class="cl"><span class="n">client</span> <span class="o">=</span> <span class="n">ModbusTcpClient</span><span class="p">(</span><span class="s1">&#39;tunnel-routier.fcsc.fr&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Lis les 6 adresses du input registers à l&#39;adresse 0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Lit les 6 valeurs du input registers à l&#39;adresse 0</span>
 </span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read_input_registers</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </span></span></code></pre></div><p>Ce qui nous donne: <code>ReadInputRegistersResponse(dev_id=1, transaction_id=1, address=0, count=0, bits=[], registers=[1600, 1600, 0, 0, 32, 32], status=1, retries=0)</code></p>
 <p>Or, on veut juste la partie <code>registers</code>, on ajuste alors le script en modifiant <code>print(result)</code> en <code>print(result.registers)</code>, ce qui nous donne:</p>
 <p><code>[1600, 1600, 0, 0, 32, 32]</code></p>
-<p>D&rsquo;après l&rsquo;odre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
+<p>D&rsquo;après l&rsquo;ordre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
 Il est aussi très probable que le première de la paire concerne le tunnel nord et le second le tunnel sud.</p>
 <p>Pour résumer:</p>
 <table>
@@ -394,7 +394,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 </table>
 <hr>
 <h2 id="résolution">Résolution</h2>
-<p>Maintenant qu&rsquo;on à tous les éléments, on va pouvoir écire le script finale pour résoudre ce challenge.</p>
+<p>Maintenant que l&rsquo;on a tous les éléments, on va pouvoir écrire le script finale pour résoudre ce challenge.</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
@@ -406,7 +406,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 <li>Luminance &gt;= 300</li>
 <li>Température &lt;= 25</li>
 </ul>
-<p>A noter que l&rsquo;on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 ET la température.</p>
+<p>A noter que l&rsquo;on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 <strong>ET</strong> la température.</p>
 </div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
@@ -484,7 +484,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </span></span></code></pre></div><p>Ce script va allumer les ventilateurs à <strong>1400 tr/min</strong> (j&rsquo;ai trouvé la valeur &ldquo;manuellement&rdquo; en testant jusqu&rsquo;a que ça fonctionne dans le temps impartis), les spots à <strong>75 cd/m²</strong> (on a besoin de 300cd/m² par tunnel et on a 4 spots par tunnel, donc 300/4) et va lire les valeurs des capteurs jusqu&rsquo;a ce qu&rsquo;elles soient dans les normes.</p>
-<p>Une fois ces valeurs atteintes, il va afficher un lien avec token pour récupérer le flag.</p>
+<p>Une fois ces valeurs atteintes, il va afficher un lien avec le token pour récupérer le flag.</p>
 <hr>
 <h2 id="flag">Flag</h2>
 <p>On peut alors récupérer le flag via le lien donné par le script:</p>
@@ -492,7 +492,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
   <img src="/posts/fcsc2026_tunnel_routier_2-2/images/second_flag.png" alt="tunnel">
   </br>
 </div>
-<p>On pourrait aussi récupérer automatiquement le flag via la balise <code>&lt;div id=&quot;flag&quot;&gt;&lt;/div&gt;</code> sur le site.</p>
+<p>On pourrait aussi récupérer automatiquement le flag via la balise <code>&lt;div id=&quot;flag&quot;&gt;&lt;/div&gt;</code> dans le code HTML du tableau de bord.</p>
 <hr>
 <h2 id="sources">Sources</h2>
 <ul>
