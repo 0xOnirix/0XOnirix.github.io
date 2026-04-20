@@ -7,15 +7,8 @@
     <generator>Hugo</generator>
     <language>fr</language>
     <copyright>CC BY-NC 4.0</copyright>
-    <lastBuildDate>Tue, 14 Apr 2026 10:52:57 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 12 Apr 2026 12:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>FCSC 2026 - Transport me</title>
-      <link>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</link>
-      <pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
-      <guid>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</guid>
-      <description></description>
-    </item>
     <item>
       <title>FCSC 2026 - Tunnel Routier 1/2</title>
       <link>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</link>
@@ -63,7 +56,7 @@
       <link>http://localhost:1313/apropos/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/apropos/</guid>
-      <description>&lt;!DOCTYPE html&gt;&#xA;&lt;html&gt;&#xA;    &lt;head&gt;&#xA;        &lt;style&gt;&#xA;            h1 {&#xA;                font-size: 40px;&#xA;                display: flex;&#xA;                align-items: center;&#xA;                justify-content: center;&#xA;&#xA;            }&#xA;&#xA;            .texte{&#xA;                margin-left: 15%;&#xA;                margin-right: 15%;&#xA;                align-items: center;&#xA;                justify-content: center;&#xA;                text-align: justify;&#xA;                line-height: 1.8;&#xA;            }&#xA;        &lt;/style&gt;&#xA;    &lt;/head&gt;&#xA;    &lt;body&gt;&#xA;        &lt;h1&gt;Qui je suis ?&lt;/h1&gt;&#xA;        &lt;div class=&#34;texte&#34;&gt;&#xA;            Bonjour !&lt;br&gt;&lt;br&gt;&#xA;            &#xA;            Je m&#39;appelle Onirix, je suis étudiant en cybersécurité à l&#39;&lt;a href=&#34;https://esna.bzh/&#34;&gt;ESNA&lt;/a&gt; de Bretagne.&lt;br&gt;&#xA;            Ceci est mon blog ou je partage mes connaissances en informatique, cybersécurité ainsi que des Write-Up de CTF.&lt;br&gt;&lt;br&gt;&#xA;&#xA;            Vous pouvez me retrouver sur &lt;a href=&#34;https://www.root-me.org/Onirix&#34;&gt;Root-Me&lt;/a&gt; et &lt;a href=&#34;https://www.github.com/0xOnirix&#34;&gt;Github&lt;/a&gt; et me contacter par &lt;a href=&#34;mailto:onirix.contact@protonmail.com&#34;&gt;mail&lt;/a&gt; ou via &lt;a href=&#34;https://discord.com/users/275297786184859648&#34;&gt;Discord&lt;/a&gt;.&lt;br&gt;&lt;br&gt;&#xA;            Enjoy !&#xA;&#xA;        &lt;/div&gt;&#xA;    &lt;/body&gt;&#xA;&lt;/html&gt;</description>
+      <description>&lt;!DOCTYPE html&gt;&#xA;&lt;html&gt;&#xA;    &lt;head&gt;&#xA;        &lt;style&gt;&#xA;            h1 {&#xA;                font-size: 40px;&#xA;                display: flex;&#xA;                align-items: center;&#xA;                justify-content: center;&#xA;&#xA;            }&#xA;&#xA;            .texte{&#xA;                margin-left: 15%;&#xA;                margin-right: 15%;&#xA;                align-items: center;&#xA;                justify-content: center;&#xA;                text-align: justify;&#xA;                line-height: 1.8;&#xA;            }&#xA;        &lt;/style&gt;&#xA;    &lt;/head&gt;&#xA;    &lt;body&gt;&#xA;        &lt;h1&gt;Qui je suis ?&lt;/h1&gt;&#xA;        &lt;div class=&#34;texte&#34;&gt;&#xA;            Bonjour !&lt;br&gt;&lt;br&gt;&#xA;            &#xA;            Je m&#39;appelle Onirix, nouvellement diplômé ingénieur cybersécurité de l&#39;&lt;a href=&#34;https://esna.bzh/&#34;&gt;ESNA&lt;/a&gt; de Bretagne.&lt;br&gt;&#xA;            Ceci est mon blog ou je partage mes connaissances en informatique, cybersécurité, des Write-Up de CTF ou tous ce qui est lien avec les technologies.&lt;br&gt;&lt;br&gt;&#xA;&#xA;            Vous pouvez me retrouver sur &lt;a href=&#34;https://www.root-me.org/Onirix&#34;&gt;Root-Me&lt;/a&gt; ou &lt;a href=&#34;https://www.github.com/0xOnirix&#34;&gt;Github&lt;/a&gt; et me contacter par &lt;a href=&#34;mailto:contact@0xonirix.fr&#34;&gt;mail&lt;/a&gt; ou via &lt;a href=&#34;https://discord.com/users/275297786184859648&#34;&gt;Discord&lt;/a&gt;.&lt;br&gt;&lt;br&gt;&#xA;            Enjoy !&#xA;&#xA;        &lt;/div&gt;&#xA;    &lt;/body&gt;&#xA;&lt;/html&gt;</description>
     </item>
   </channel>
 </rss>
