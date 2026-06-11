@@ -15,11 +15,11 @@ categories:
 ---
 
 <div>
-  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
+  <img src="/posts/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
   </br>
 </div>
 
-Ceci est le write-up de la deuxième partie du challenge Misc **Tunnel Routier** du CTF [FCSC](https://fcsc.fr/) édition 2026 organisé par l'ANSSI.
+Ceci est le write-up de la deuxième partie du challenge [Misc](/tags/misc/) **Tunnel Routier** du CTF **France CyberSecurity Challenge** ([FCSC](https://fcsc.fr/)) édition 2026 organisé par l'ANSSI.
 
 ## Énoncé
 
@@ -33,6 +33,7 @@ Ceci est le write-up de la deuxième partie du challenge Misc **Tunnel Routier**
 
 Voici la documentation présente à l'adresse: https://fcsc.fr/tunnel-routier-76bea48861178b0c
 
+<blockquote>
 
 **Tunnel routier : documentation**
 
@@ -63,6 +64,8 @@ Important. Chaque nouvelle connexion TCP à l'automate sur le port 502 implique 
   <img src="/posts/fcsc2026_tunnel_routier_2-2/images/tunnel.png" alt="tunnel">
   </br>
 </div>
+
+</blockquote>
 
 ---
 
@@ -101,11 +104,11 @@ D'après le tableau, tout porte à croire qu'il s'agit du **Input Registers**.
 Pour celui des **actionneurs**, on sait que:
 
 - Ils doivent être modifiable (Read-Write)
-- Ils doivent être sur plus d'un bit
+- Ils doivent être sur plus d'un bit (car pas simplement on/off)
 
 D'après le tableau, tout porte à croire qu'il s'agit du **Holding Registers**.
 
-Chaque registre (capteurs ou actionneurs) peut avoir 65536 adresses, chaque adresse contient 16 octets (bytes) de données (cf. le tableau).
+Chaque registre (capteur ou actionneur) peut avoir 65536 adresses, chaque adresse contient **16 bits** de données (voir le tableau des registres ci-dessus).
 
 Si on regarde le schéma dans l'interface SCADA, on voit qu'il y a **3 capteurs** et **8 actionneurs** (4 lumières et 4 ventilateurs) par tunnel (Nord et Sud), soit un total de **6 capteurs** et **16 actionneurs**.
 
@@ -114,7 +117,7 @@ Si on regarde le schéma dans l'interface SCADA, on voit qu'il y a **3 capteurs*
 Notre but ici est de savoir à qu'elle adresse est stockée qu'elle valeur de quel capteur, on commence par lire le registre **Input Registers**:
 
 {{< admonition type=note title="Note" >}}
-Pour `client.read_input_registers()`, le paramètre `address` indique l'adresse de départ et `count` le nombre de valeur à afficher, sachant qu'on a 6 capteurs en tout on met `count=6`
+Pour `client.read_input_registers()`, le paramètre `address` indique l'adresse de départ et `count` le nombre de valeur à afficher, sachant que l'on a 6 capteurs en tout on met `count=6`
 {{< /admonition >}}
 
 ```py
@@ -124,7 +127,7 @@ from pymodbus.client import ModbusTcpClient
 client = ModbusTcpClient('tunnel-routier.fcsc.fr')
 client.connect()
 
-# Lis les 6 adresses du input registers à l'adresse 0
+# Lit les 6 valeurs du input registers à l'adresse 0
 result = client.read_input_registers(address=0, count=6)
 print(result)
 ```
@@ -135,7 +138,7 @@ Or, on veut juste la partie `registers`, on ajuste alors le script en modifiant 
 
 `[1600, 1600, 0, 0, 32, 32]`
 
-D'après l'odre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
+D'après l'ordre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
 Il est aussi très probable que le première de la paire concerne le tunnel nord et le second le tunnel sud.
 
 Pour résumer:
@@ -207,7 +210,7 @@ On continue à tester les adresses jusqu'a les avoir toutes mappées, ce qui don
 
 ## Résolution
 
-Maintenant qu'on à tous les éléments, on va pouvoir écire le script finale pour résoudre ce challenge.
+Maintenant que l'on a tous les éléments, on va pouvoir écrire le script finale pour résoudre ce challenge.
 
 {{< admonition type=note title="Note" >}}
 Pour rappel, on doit avoir:
@@ -215,7 +218,7 @@ Pour rappel, on doit avoir:
 - Luminance >= 300
 - Température <= 25
 
-A noter que l'on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 ET la température.
+A noter que l'on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 **ET** la température.
 {{< /admonition >}}
 
 ```py
@@ -297,7 +300,7 @@ if __name__ == "__main__":
 
 Ce script va allumer les ventilateurs à **1400 tr/min** (j'ai trouvé la valeur "manuellement" en testant jusqu'a que ça fonctionne dans le temps impartis), les spots à **75 cd/m²** (on a besoin de 300cd/m² par tunnel et on a 4 spots par tunnel, donc 300/4) et va lire les valeurs des capteurs jusqu'a ce qu'elles soient dans les normes.
 
-Une fois ces valeurs atteintes, il va afficher un lien avec token pour récupérer le flag.
+Une fois ces valeurs atteintes, il va afficher un lien avec le token pour récupérer le flag.
 
 ---
 ## Flag
@@ -309,7 +312,7 @@ On peut alors récupérer le flag via le lien donné par le script:
   </br>
 </div>
 
-On pourrait aussi récupérer automatiquement le flag via la balise `<div id="flag"></div>` sur le site.
+On pourrait aussi récupérer automatiquement le flag via la balise `<div id="flag"></div>` dans le code HTML du tableau de bord.
 
 ---
 ## Sources

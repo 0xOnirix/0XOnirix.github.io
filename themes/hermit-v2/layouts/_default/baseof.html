@@ -1,7 +1,7 @@
 {{ $rootCtx := . }}
 
 <!DOCTYPE html>
-<html lang="{{.Site.LanguageCode}}">
+<html lang="{{.Site.Language.Locale}}">
 <head>
 {{- if .Site.Params.googleTagManager -}}{{- partial "googleTagManager_head.html" . -}}{{- end -}}
 {{- partial "analytics.html" . -}}

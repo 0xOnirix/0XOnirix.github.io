@@ -4,19 +4,1049 @@
 		<link>http://localhost:1313/posts/</link>
 		<description>Recent content in Posts on Onirix</description>
 		<generator>Hugo -- gohugo.io</generator>
-		<language>fr</language>
+		<language>fr-FR</language>
 		<copyright>CC BY-NC 4.0</copyright>
-		<lastBuildDate>Tue, 14 Apr 2026 10:52:57 +0200</lastBuildDate>
+		<lastBuildDate>Thu, 11 Jun 2026 16:34:04 +0200</lastBuildDate>
 		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>Fcsc2026_transport_me</title>
+			<title>FCSC 2026 - Transport me too</title>
+			<link>http://localhost:1313/posts/fcsc2026_transport_me_too/fcsc2026_transport_me_too/</link>
+			<pubDate>Thu, 11 Jun 2026 16:34:04 +0200</pubDate>
+			
+			<guid>http://localhost:1313/posts/fcsc2026_transport_me_too/fcsc2026_transport_me_too/</guid>
+			<description><![CDATA[%!s(<nil>)]]></description>
+			<content type="html"><![CDATA[<style>
+  [id]{
+    scroll-margin-top: 10vh;
+  }
+
+  figure {
+    text-align: center;
+  }
+</style>
+<div>
+  <img src="/posts/images/logo_fcsc.svg" alt="Logo FCSC" style="width: 50%">
+  </br>
+</div>
+<p>Ceci est le write-up du challenge Hardware <strong>Transport me too</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<hr>
+<h2 id="énoncé">Énoncé</h2>
+<blockquote>
+<p>Vous avez récupéré une carte de transport, basée sur une puce ST25TB512AC de chez STMicroElectronics. Apparemment, cette carte contenait initialement 10 voyages, mais ne peut pas être rechargée. La personne qui vous a donné cette carte a déjà effectué 5 voyages avec.</p>
+<p>Arriverez-vous à voyager 1000 fois ?</p>
+<p><strong>Note :</strong> Lors de l&rsquo;envoi d&rsquo;une commande brute à la carte, considérez qu&rsquo;elle est déjà sélectionnée par le lecteur.</p>
+<div>
+ <img src="/posts/fcsc2026_transport_me_too/images/card.png" alt="Card">
+ </br>
+</div>
+<p><code>nc challenges.fcsc.fr 2301</code></p>
+</blockquote>
+<hr>
+<p>Ce challenge est la suite, en version bien plus avancée, de <a href="/posts/fcsc2026_transport_me/fcsc2026_transport_me">Transport me</a>.</p>
+<h2 id="documentation">Documentation</h2>
+<p>L&rsquo;énoncé nous donne le modèle de la puce: <strong>ST25TB512AC</strong> de chez STMicroElectronics.</p>
+<p>On va alors récupérer la documentation sur le <a href="https://www.st.com/resource/en/datasheet/st25tb512-ac.pdf">site officiel</a>.</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Pour de la documentation hardware, on peut utiliser le terme <code>datasheet</code> dans un moteur de recherche pour en trouver plus facilement, comme ceci: <code>NomPuce datasheet</code>.</div>
+    </aside>
+
+    <aside class="admonition warning">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><b>Attention</b>
+        </div>
+        <div class="admonition-content"><p>Ce chapitre est un résumé section par section des informations importantes dans la <a href="https://www.st.com/resource/en/datasheet/st25tb512-ac.pdf">documentation</a> de la puce <strong>ST25TB512AC</strong> de chez STMicroElectronics.</p>
+<p>Il y aura des rappels au fur et à mesure du chapitre <a href="#r%C3%A9solution">Résolution</a> pour une lecture plus digeste. Dans un contexte réel, il est très important de bien lire la documentation avant de tenter de résoudre le challenge.</p>
+</div>
+    </aside>
+<details>
+ <summary style="font-weight: bold; text-decoration: underline; cursor: pointer;">Résumé de la documentation</summary>
+  <blockquote style="font-style: normal;">
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Les sections <strong>2. Signal description</strong>, <strong>5. ST25TB512-AC operation</strong>, <strong>7. Anticollision</strong>, <strong>9. Maximum ratings</strong>, <strong>10. RF electrical parameters</strong> et <strong>11. Ordering informations</strong> ne sont pas intéressantes pour la résolution du challenge car elles concernent uniquement les opérations bas niveau (modulation, trames, niveaux électriques, etc).</div>
+    </aside>
+<h3 id="sommaire">Sommaire</h3>
+<ul>
+<li><a href="#summary"><strong>Summary</strong></a></li>
+<li><a href="#1-description"><strong>1. Description</strong></a>
+<ul>
+<li><a href="#description-1">Figure 1 - Description 1</a></li>
+<li><a href="#description-2">Figure 2 - Description 2</a></li>
+</ul>
+</li>
+<li><a href="#3-data-transfer"><strong>3. Data transfer</strong></a>
+<ul>
+<li><a href="#crc-figure">Figure 3 - CRC</a></li>
+</ul>
+</li>
+<li><a href="#4-memory-mapping"><strong>4. Memory mapping</strong></a>
+<ul>
+<li><a href="#memory-mapping">Tableau 1 - Mappage mémoire</a></li>
+<li><a href="#411-block-0---4-resettable-otp-area"><strong>4.1.1. Block 0 - 4: resettable OTP area</strong></a>
+<ul>
+<li><a href="#eeprom-1">Figure 4 - Eeprom 1</a></li>
+<li><a href="#eeprom-2">Figure 5 - Eeprom 2</a></li>
+<li><a href="#reload-mode">Tableau 2 - Exemple d&rsquo;écriture en mode reload</a></li>
+</ul>
+</li>
+<li><a href="#42-32-bit-binary-counters"><strong>4.2. 32-bit binary counters</strong></a>
+<ul>
+<li><a href="#binary-counters-1">Figure 6 - Compteurs binaires 1</a></li>
+<li><a href="#binary-counters-2">Figure 7 - Compteurs binaires 2</a></li>
+</ul>
+</li>
+<li><a href="#431-otp_lock_reg"><strong>4.3.1. OTP_Lock_Reg</strong></a>
+<ul>
+<li><a href="#otp_lock_reg">Figure 8 - OTP_Lock_reg</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#6-st25tb512-ac-states"><strong>6. ST25TB512-AC states</strong></a>
+<ul>
+<li><a href="#states">Figure 9 - Liste des états</a></li>
+</ul>
+</li>
+<li><a href="#8-st25tb512-ac-commands"><strong>8. ST25TB512-AC commands</strong></a>
+<ul>
+<li><a href="#commandes">Tableau 3 - Codes des commandes</a></li>
+</ul>
+</li>
+<li><a href="#appendix-a-iso-14443-type-b-crc-calculation"><strong>Appendix A. ISO-14443 Type B CRC calculation</strong></a></li>
+<li><a href="#appendix-b-st25tb512-ac-command-brief"><strong>Appendix B. ST25TB512-AC command brief</strong></a>
+<ul>
+<li><a href="#exemple-select">Figure 10 - Exemple de la commande Select</a></li>
+<li><a href="#exemple-read">Figure 11 - Exemple de la commande Read_block</a></li>
+<li><a href="#exemple-write">Figure 12 - Exemple de la commande Write_block</a></li>
+<li><a href="#exemple-getuid">Figure 13 - Exemple de la commande GetUID</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="summary">Summary</h3>
+<p>La première page nous donne déjà quelques informations utiles sur la puce, comme:</p>
+<ul>
+<li>Les normes ISO utilisées (<strong>ISO 14443-2</strong> et <strong>ISO 14443-2</strong>)</li>
+<li>Le fait qu&rsquo;il y ait <strong>deux compteurs binaires</strong></li>
+<li>Qu&rsquo;il y a une fonction <strong>Read-block</strong> et <strong>Write_block</strong></li>
+<li>Que les blocs de ces dernières sont sur <strong>32 bits</strong></li>
+</ul>
+<hr>
+<h3 id="1-description">1. Description</h3>
+<p>Ici, nous avons les 9 commandes disponibles:</p>
+<ul>
+<li>Read_block</li>
+<li>Write_block</li>
+<li>Initiate</li>
+<li>Pcall 16</li>
+<li>Slot_marker</li>
+<li>Select</li>
+<li>Completion</li>
+<li>Reset_to_inventory</li>
+<li>Get_UID</li>
+</ul>
+<p>Ainsi que la taille des blocs: <strong>32 bits</strong></p>
+<figure id="description-1">
+  <img src="/posts/fcsc2026_transport_me_too/images/description_1.png" alt="Description 1">
+  </br>
+  <figcaption><i>Figure 1 - Description 1</i></figcaption>
+  </br>
+</figure>
+<p>Nous avons également des informations sur les 3 zones importantes de la mémoire:</p>
+<ul>
+<li><strong>Zone 1 - OTP (One time programmable):</strong> Décrémente en passant les bits à 0 un par un, une <strong>commande spéciale</strong> permet de tous les re-passer à 1</li>
+<li><strong>Zone 2 - Compteurs binaires:</strong> 2 compteurs binaires de 32bits, peuvent <strong>seulement être décrémentés</strong></li>
+<li><strong>Zone 3 - Mémoire EEPROM:</strong> Seulement accessible via des blocs de 32bits, il y a un <strong>cycle d&rsquo;auto-effacement</strong> à chaque commande d&rsquo;écriture</li>
+</ul>
+<p>Un <a href="#memory-mapping">tableau</a> détaillant ces zones est disponible dans la section <a href="#4-memory-mapping">4. Memory mapping</a>.</p>
+<figure id="description-2">
+  <img src="/posts/fcsc2026_transport_me_too/images/description_2.png" alt="Description 2">
+  </br>
+  <figcaption><i>Figure 2 - Description 2</i></figcaption>
+  </br>
+</figure>
+<hr>
+<h3 id="3-data-transfer">3. Data transfer</h3>
+<p>Cette section est principalement orientée bas niveau, on a cependant une information très importante qu&rsquo;est le détail du CRC.</p>
+<p>On y apprend que:</p>
+<ul>
+<li>Le CRC est généré en accord avec la norme <strong>ISO14443 Type B</strong></li>
+<li>Il est sur 2 octets (4 caractères)</li>
+<li>Il est à ajouter à la fin de chaque commande</li>
+<li>Il est ajouté à chaque réponse</li>
+<li>Il est obligatoire</li>
+</ul>
+<figure id="crc-figure">
+  <img src="/posts/fcsc2026_transport_me_too/images/crc.png" alt="CRC">
+  <br>
+  <figcaption><i>Figure 3 - CRC</i></figcaption>
+  </br>
+</figure>
+<hr>
+<h3 id="4-memory-mapping">4. Memory mapping</h3>
+<p>Cette section nous donne le mappage des différents blocs avec leur <strong>adresse</strong>, leur <strong>taille</strong>, <strong>type</strong> ainsi qu&rsquo;une <strong>description</strong>:</p>
+<figure id="memory-mapping">
+  <img src="/posts/fcsc2026_transport_me_too/images/memory_mapping.png" alt="Memory mapping">
+  </br>
+  <figcaption><i>Tableau 1 - Mappage mémoire</i></figcaption>
+  </br>
+</figure>
+<h4 id="411-block-0---4-resettable-otp-area">4.1.1. Block 0 - 4: resettable OTP area</h4>
+<p>Cette partie est centrée sur la zone OTP (One Time Programmable) réinitialisable.</p>
+<p>On apprend qu&rsquo;il n&rsquo;est <strong>pas directement possible d&rsquo;écrire</strong> dans les adresses de cette zone, pour ça, il faut que la commande d&rsquo;écriture soit précédée d&rsquo;un <strong>auto-erase cycle</strong>.</p>
+<figure id="eeprom-1">
+  <img src="/posts/fcsc2026_transport_me_too/images/eeprom_1.png" alt="Eeprom 1">
+  </br>
+  <figcaption><i>Figure 4 - Eeprom 1</i></figcaption>
+  </br>
+</figure>
+<p>On apprend également qu&rsquo;un <strong>cycle d&rsquo;effacement</strong> est ajouté à chaque fois que le mode <strong>reload</strong> est activé. Ce mode est implémenté via une modification spécifique du <strong>compteur binaire</strong> au <strong>bloc d&rsquo;adresse 6</strong>.</p>
+<figure id="eeprom-2">
+  <img src="/posts/fcsc2026_transport_me_too/images/eeprom_2.png" alt="Eeprom 2">
+  </br>
+  <figcaption><i>Figure 5 - Eeprom 2</i></figcaption>
+  </br>
+</figure>
+<p>On nous donne aussi un tableau précisant le comportement de la commande d&rsquo;écriture en mode <strong>reload</strong>.</p>
+<figure id="reload-mode">
+  <img src="/posts/fcsc2026_transport_me_too/images/reload_mode.png" alt="Reload mode">
+  </br>
+  <figcaption><i>Tableau 2 - Exemple d'écriture en mode reload</i></figcaption>
+  </br>
+</figure>
+<h4 id="42-32-bit-binary-counters">4.2. 32-bit binary counters</h4>
+<p>Cette sous-section concerne les 2 compteurs binaires avec l&rsquo;adresse de bloc 5 et 6.</p>
+<p>On y apprend que:</p>
+<ul>
+<li>On peut actualiser ces compteurs uniquement avec une valeur inférieur à la précédente (de 1 ou plus)</li>
+<li>La valeur initiale du compteur 5 est <strong>FFFF FFFE</strong> et <strong>FFFF FFFF</strong> pour le 6</li>
+<li>Quand un compteur arrive à 0000 0000 il n&rsquo;est plus possible de l&rsquo;actualiser (du tout, pas de magie)</li>
+<li>Ils peuvent être protégés en écriture par le <strong>OTP_Lock_Reg bits</strong> (bloc 255)</li>
+</ul>
+<figure id="binary-counters-1">
+  <img src="/posts/fcsc2026_transport_me_too/images/binary_counters_1.png" alt="Binary counters 1">
+  </br>
+  <figcaption><i>Figure 6 - Compteurs binaires 1</i></figcaption>
+  </br>
+</figure>
+<p>Plus bas, il est expliqué que le <strong>compteur 6</strong> contrôle le <strong>mode reload</strong> de la <strong>zone OTP réinitialisable</strong>. Quand un de ses 11 premiers bits (b31 à b21) est actualisé (modifié), la puce ajoute un <strong>cycle d&rsquo;effacement</strong> à la commande d&rsquo;<strong>écriture</strong> dans la zone OTP.</p>
+<p>Ce cycle d&rsquo;effacement reste actif jusqu&rsquo;a l&rsquo;<strong>arrêt</strong> de la carte ou l&rsquo;utilisation de la commande <strong>select</strong>. On nous précise aussi que la zone OTP peut être <strong>reloaded</strong> (rechargée) 2047 fois.</p>
+<figure id="binary-counters-2">
+  <img src="/posts/fcsc2026_transport_me_too/images/binary_counters_2.png" alt="Binary counters 2">
+  </br>
+  <figcaption><i>Figure 7 - Compteurs binaires 2</i></figcaption>
+  </br>
+</figure>
+<h4 id="431-otp_lock_reg">4.3.1. OTP_Lock_Reg</h4>
+<p>Ici, l&rsquo;attention est portée sur le <strong>OTP_Lock_reg</strong>, ce registre permet de verrouiller certains blocs.</p>
+<p>On y apprend qu&quot;il y a une correspondance entre les bits <strong>b16 à b31</strong> du registre et les blocs aux <strong>adresses de 0 à 15</strong> (par exemple b16 correspondant à l&rsquo;adresse de bloc 0, dans la zone OTP).</p>
+<p>Si le bit du registre est à 0, le blox à l&rsquo;adresse correspondante passe en <strong>lecture seule</strong>.</p>
+<p>Une fois fait il n&rsquo;y a <strong>aucune moyen</strong> de revenir en arrière.</p>
+<p>De plus, une fois qu&rsquo;une modification à cette adresse de bloc à été réalisée, il faut envoyer une commande <strong>select</strong> pour l&rsquo;ajouter à la logique de la puce.</p>
+<figure id="otp_lock_reg">
+  <img src="/posts/fcsc2026_transport_me_too/images/otp_lock_reg.png" alt="OTP_Lock_reg">
+  </br>
+  <figcaption><i>Figure 8 - OTP_Lock_Reg</i></figcaption>
+  </br>
+</figure>
+<hr>
+<h3 id="6-st25tb512-ac-states">6. ST25TB512-AC states</h3>
+<p>Ici, nous avons les différents états de la puce ainsi que l&rsquo;ordre de &ldquo;d&rsquo;intialisation&rdquo; à respecter pour qu&rsquo;elle fonctionne, on a donc:</p>
+<ul>
+<li>1 - Power-off state</li>
+<li>2 - Ready state</li>
+<li>3 - Inventory state</li>
+<li>4 - Selected state</li>
+<li>5 - Deselected state</li>
+</ul>
+<figure id="states">
+  <img src="/posts/fcsc2026_transport_me_too/images/states.png" alt="states list">
+  </br>
+  <figcaption><i>Figure 9 - Liste des états</i></figcaption>
+  </br>
+</figure>
+<p>En lisant les descriptions des états, on remarque que pour arriver à l&rsquo;état <strong>Selected state</strong>, qui nous permet d&rsquo;effectuer des opération de lecture et d&rsquo;écriture, on doit effectuer les commandes suivants:</p>
+<p><code>Initiate() -&gt; (Initiate() OU Pcall16() OU Slot_marker()) -&gt; Select(Chip_ID)</code></p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Dans l&rsquo;énoncé, la note nous dis <code>Lors de l'envoi d'une commande brute à la carte, considérez qu'elle est déjà sélectionnée par le lecteur.</code>, nous sommes alors dans l&rsquo;état <strong>Selected state</strong> par défaut (Ouf !).</div>
+    </aside>
+<hr>
+<h3 id="8-st25tb512-ac-commands">8. ST25TB512-AC commands</h3>
+<p>Ici, le tableau <strong>Table 10. Command code</strong> nous donne la liste des commandes disponible ainsi que leur code hexadécimal respectifs:</p>
+<figure id="commandes">
+  <img src="/posts/fcsc2026_transport_me_too/images/command_code_table.png" alt="command code table">
+  </br>
+  <figcatpion><i>Tableau 3 - Codes des commandes</i></figcaption>
+</figure>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content"><p>le <code>h</code> après les valeurs signifie simplement que c&rsquo;est de l&rsquo;hexadécimal, un tiret signifie que la commande est sur 2 octets, par exemple pour la commande <code>Read_block()</code> et <code>Initiate()</code>:</p>
+<ul>
+<li><code>08h</code> -&gt; <code>08</code></li>
+<li><code>06h-00h</code> -&gt; <code>0600</code></li>
+</ul>
+<p>Un <code>x</code> est une variable, pour <code>x6h -&gt; slot_marker()</code>, cela indique ou mettre le numéro de l&rsquo;emplacement à utiliser (par exemple <code>176</code> pour l&rsquo;emplacement <code>17</code>)</p>
+</div>
+    </aside>
+<hr>
+<h3 id="appendix-a-iso-14443-type-b-crc-calculation">Appendix A. ISO-14443 Type B CRC calculation</h3>
+<p>Cette annexe nous donne le code C pour calculer le CRC <strong>ISO-14443 Type B</strong> de chaque commande:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;ctype.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define BYTE unsigned char
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define USHORT unsigned short
+</span></span></span><span class="line"><span class="cl"><span class="kt">unsigned</span> <span class="kt">short</span> <span class="nf">UpdateCrc</span><span class="p">(</span><span class="n">BYTE</span> <span class="n">ch</span><span class="p">,</span> <span class="n">USHORT</span> <span class="o">*</span><span class="n">lpwCrc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">ch</span> <span class="o">=</span> <span class="p">(</span><span class="n">ch</span><span class="o">^</span><span class="p">(</span><span class="n">BYTE</span><span class="p">)((</span><span class="o">*</span><span class="n">lpwCrc</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x00FF</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">ch</span> <span class="o">=</span> <span class="p">(</span><span class="n">ch</span><span class="o">^</span><span class="p">(</span><span class="n">ch</span><span class="o">&lt;&lt;</span><span class="mi">4</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="n">lpwCrc</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">lpwCrc</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span><span class="o">^</span><span class="p">((</span><span class="n">USHORT</span><span class="p">)</span><span class="n">ch</span> <span class="o">&lt;&lt;</span>
+</span></span><span class="line"><span class="cl"><span class="mi">8</span><span class="p">)</span><span class="o">^</span><span class="p">((</span><span class="n">USHORT</span><span class="p">)</span><span class="n">ch</span><span class="o">&lt;&lt;</span><span class="mi">3</span><span class="p">)</span><span class="o">^</span><span class="p">((</span><span class="n">USHORT</span><span class="p">)</span><span class="n">ch</span><span class="o">&gt;&gt;</span><span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span><span class="p">(</span><span class="o">*</span><span class="n">lpwCrc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">ComputeCrc</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">Data</span><span class="p">,</span> <span class="kt">int</span> <span class="n">Length</span><span class="p">,</span> <span class="n">BYTE</span> <span class="o">*</span><span class="n">TransmitFirst</span><span class="p">,</span> <span class="n">BYTE</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="n">TransmitSecond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">BYTE</span> <span class="n">chBlock</span><span class="p">;</span> <span class="n">USHORTt</span> <span class="n">wCrc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">wCrc</span> <span class="o">=</span> <span class="mh">0xFFFF</span><span class="p">;</span> <span class="c1">// ISO 3309
+</span></span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">chBlock</span> <span class="o">=</span> <span class="o">*</span><span class="n">Data</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">UpdateCrc</span><span class="p">(</span><span class="n">chBlock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wCrc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="n">Length</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">wCrc</span> <span class="o">=</span> <span class="o">~</span><span class="n">wCrc</span><span class="p">;</span> <span class="c1">// ISO 3309
+</span></span></span><span class="line"><span class="cl"><span class="o">*</span><span class="n">TransmitFirst</span> <span class="o">=</span> <span class="p">(</span><span class="n">BYTE</span><span class="p">)</span> <span class="p">(</span><span class="n">wCrc</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="n">TransmitSecond</span> <span class="o">=</span> <span class="p">(</span><span class="n">BYTE</span><span class="p">)</span> <span class="p">((</span><span class="n">wCrc</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">BYTE</span> <span class="n">BuffCRC_B</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mh">0x0A</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x34</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">},</span> <span class="n">First</span><span class="p">,</span> <span class="n">Second</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Crc-16 G(x) = x^16 + x^12 + x^5 + 1”);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;CRC_B of [ &#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;%02X &#34;</span><span class="p">,</span><span class="n">BuffCRC_B</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">ComputeCrc</span><span class="p">(</span><span class="n">BuffCRC_B</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">First</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Second</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;] Transmitted: %02X then %02X.”, First, Second);</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span></code></pre></div><p>Je l&rsquo;ai utilisé uniquement pour vérifier les librairies Python que je trouvais, si vous voulez vous en servir, il faut corriger le code comme ceci:</p>
+<ul>
+<li>Ligne 18: changer le <strong>USHORTt</strong> en <strong>USHORT</strong></li>
+<li>Ligne 33: Changer le <strong>&raquo;</strong> en <strong>&quot;</strong></li>
+<li>Ligne 38: Changer le <strong>&raquo;</strong> en <strong>&quot;</strong></li>
+<li>Dernière ligne: Ajouter un <strong>}</strong> a la fin du <strong>int main(void)</strong></li>
+</ul>
+<p>Pour le faire fonctionner, il faut:</p>
+<ul>
+<li>Modifier la taille ainsi que les valeurs du tableau <strong>BYTE BuffCRC_B[10]</strong></li>
+<li>Modifier la condition du <strong>for(i=0; i&lt;4; i++)</strong></li>
+<li>Modifier le deuxième paramétre de <strong>ComputeCRC()</strong> comme la condition du <strong>for</strong></li>
+</ul>
+<hr>
+<h3 id="appendix-b-st25tb512-ac-command-brief">Appendix B. ST25TB512-AC command brief</h3>
+<p>Cette annexe, nous avons des exemples de commandes correctement formatées.</p>
+<p>Par exemple, pour les commandes:</p>
+<ul>
+<li><strong>Select</strong>:</li>
+</ul>
+<figure id="exemple-select">
+  <img src="/posts/fcsc2026_transport_me_too/images/select_exemple.png" alt="Select exemple">
+  </br>
+  <figcaption><i>Figure 10 - Exemple de la commande Select</i></figcaption>
+  </br>
+</figure>
+<ul>
+<li><strong>Read_block</strong>:</li>
+</ul>
+<figure id="exemple-read">
+  <img src="/posts/fcsc2026_transport_me_too/images/read_exemple.png" alt="Read exemple">
+  </br>
+  <figcaption><i>Figure 11 - Exemple de la commande Read_block</i></figcaption>
+  </br>
+</figure>
+<ul>
+<li><strong>Write_block</strong>:</li>
+</ul>
+<figure id="exemple-write">
+  <img src="/posts/fcsc2026_transport_me_too/images/write_exemple.png" alt="Write exemple">
+  </br>
+  <figcaption><i>Figure 12 - Exemple de la commande Write_block</i></figcaption>
+  </br>
+</figure>
+<ul>
+<li><strong>GetUID</strong>:</li>
+</ul>
+<figure id="exemple-getuid">
+  <img src="/posts/fcsc2026_transport_me_too/images/getuid_exemple.png" alt="GetUID exemple">
+  </br>
+  <figcaption><i>Figure 13 - Exemple de la commande GetUID</i></figcaption>
+  </br>
+</figure>
+</blockquote>
+</details>
+<hr>
+<h2 id="investigation">Investigation</h2>
+<p>La première chose (après lire la documentation) est de se connecter au challenge et regarder qu&rsquo;elles sont les commandes que l&rsquo;ont peut envoyer.</p>
+<h3 id="menu-de-commandes">Menu de commandes</h3>
+<p>Après la connexion, on à ce menu</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span></code></pre></div><p>Via le premier sous-menu <strong>1. Travel</strong>, on peut voyager 5 fois avant d&rsquo;arriver a court de tickets:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">1 travel completed, 999 more to go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">2 travel completed, 998 more to go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">3 travel completed, 997 more to go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">4 travel completed, 996 more to go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">5 travel completed, 995 more to go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">No more valid tickets.
+</span></span></code></pre></div><p>Pour le second, <strong>2. Send command</strong>, on peut envoyer des commandes en <strong>hexadecimal</strong> à la puce:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 2
+</span></span><span class="line"><span class="cl">Command to send to the tag (hexadecimal): 
+</span></span><span class="line"><span class="cl">Empty response
+</span></span></code></pre></div><p>Et enfin pour le 3ème <strong>3. Quit</strong>, cela clôt la connexion.</p>
+<hr>
+<h3 id="formattage-des-commandes">Formattage des commandes</h3>
+<p>Comme on peut voir dans la section <a href="#appendix-b-st25tb512-ac-command-brief">8. ST25TB512-AC commands</a>, le formattage des commandes ressemble à ceci:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">+-----+----------+--------+------+------+-----+
+</span></span><span class="line"><span class="cl">| SOF | Commande | Option | CRCL | CRCH | EOF |
+</span></span><span class="line"><span class="cl">+-----+----------+--------+------+------+-----+
+</span></span></code></pre></div><p>Avec:</p>
+<ul>
+<li><strong>SOF</strong> et <strong>EOF</strong>: Respectivement le début et fin (<strong>\n</strong>) de la trame</li>
+<li><strong>Commande</strong>: Commande en hexadécimal comme donnée dans le <a href="#commandes">Tableau 3 - Codes des commandes</a></li>
+<li><strong>Option</strong>: Facultatif, dépend de la commande, peut être une adresse, une valeur, etc</li>
+<li><strong>CRCL</strong> et <strong>CRCH</strong>: Less Significant Bit (LSB) et Most Significant Bit (MSB) du CRC</li>
+</ul>
+<h3 id="crc">CRC</h3>
+<p>Le CRC est obligatoire pour chaque commande (et réponse) et est généré en accord avec la norme <a href="https://en.wikipedia.org/wiki/ISO/IEC_14443">ISO 14443 Type B</a> (voir la section <a href="#3-data-transfer">3. Data transfer</a>).</p>
+<p>Dans l&rsquo;<a href="#appendix-a-iso-14443-type-b-crc-calculation">annexe B</a>, un code en C nous est donné pour calculer ce CRC, étant donné que j&rsquo;utilise un script Python j&rsquo;ai cherché une librairie gérant cette partie.</p>
+<p>Cette librairie est <a href="https://github.com/MartinScharrer/crccheck">crccheck</a> de <strong>Martin Scharrer</strong> (disponible sur PyPI) et plus précisement le module <strong>Crc16IbmSdlc</strong>.</p>
+<p>Le problème est que cette fonction ne prend que des données de type <strong>bytes</strong> en entrée alors que j&rsquo;utilise des <strong>strings</strong> dans le reste de mon code. Pour pouvoir l&rsquo;utiliser nativement j&rsquo;ai donc créé cette fonction:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">crc</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  Return the command with the CRC compliant to the ISO 14443 Type B norm.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">  Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">  command (str): The raw hexadecimal command.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">  Returns:
+</span></span></span><span class="line"><span class="cl"><span class="s2">  str: The command with the CRC.
+</span></span></span><span class="line"><span class="cl"><span class="s2">  &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Convert the str command to bytes</span>
+</span></span><span class="line"><span class="cl">  <span class="n">commande_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Calculate the CRC</span>
+</span></span><span class="line"><span class="cl">  <span class="n">crc</span> <span class="o">=</span> <span class="n">Crc16IbmSdlc</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">commande_bytes</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Format the ouput (command + CRC) with the LSB first</span>
+</span></span><span class="line"><span class="cl">  <span class="n">result</span> <span class="o">=</span> <span class="n">command</span> <span class="o">+</span> <span class="n">crc</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span></code></pre></div><p>Voici ce qu&rsquo;elle fait:</p>
+<ul>
+<li>Prend une commande en entrée, par exemple <code>0800</code> (lecture de l&rsquo;adresse 00)</li>
+<li>Convertit la commande de <strong>str</strong> en <strong>bytes</strong> en la considérant comme de l&rsquo;hexadecimal (<code>b'\x08\x00'</code>)</li>
+<li>Calcul le CRC via la fonction <strong>Crc16IbmSdlc</strong> de <strong>crccheck</strong></li>
+<li>Retourne la commande avec son CRC (LSB en premier), comme le veut la norme <strong>ISO</strong> (<code>080087c1</code>)</li>
+</ul>
+<hr>
+<h2 id="résolution">Résolution</h2>
+<p>OK !</p>
+<p>Maintenant que nous avons tous ces éléments, on va pouvoir commencer à interagir avec la puce afin de voyager 1000 fois.</p>
+<h3 id="identification-du-compteur">Identification du compteur</h3>
+<p>La première chose qu&rsquo;il nous faut est savoir est l&rsquo;adresse du bloc contenant le nombre de voyage et comment il fonctionne (est-ce qu&rsquo;il contient les voyages restants ou alors le nombre de voyages effectués).</p>
+<p>Dans la section <strong>4. Memory mapping</strong> de la documentation, on peut voir le <a href="#memory-mapping">Tableau 1 - Mappage mémoire</a>, tableau qui liste toutes les adresses de la mémoire ainsi que des informations les concernants.</p>
+<p>Parmis tout ça, on remarque la zone <strong>Resettable OTP bit</strong>, en lisant la <a href="#description-2">deuxième partie</a> de la description, il est indiqué que cette zone peut uniquement passer de 0 à 1, sauf via une <strong>commande spéciale</strong>.</p>
+<p>Des différentes &ldquo;zones&rdquo; c&rsquo;est celle qui a l&rsquo;air la plus prometteuse pour contenir notre compteur de voyages car il s&rsquo;agit d&rsquo;un <strong>compteur réinitialisable</strong> (pour rappelle, il s&rsquo;agit d&rsquo;une puce sur une carte de transport donc rechargeable).</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content"><p>Pour arriver à cette conclusion, j&rsquo;ai procédé par élimination:</p>
+<ul>
+<li>La zone <strong>Lockable EEPROM</strong>, <strong>System OTP bits</strong> et <strong>ROM</strong> ne sont pas des compteurs: possible qu&rsquo;ils contiennent la donnée mais peu probable</li>
+<li>Les <strong>compteurs binaires</strong> sont des compteurs mais ne peuvent pas être réinitalisés (voir la section <a href="#42-32-bit-binary-counters">4.2. 32-bits binary counters</a>)</li>
+</ul></div>
+    </aside>
+<p>On va donc faire un script pour lire les 5 adresses de la zone (on réutilise la fonction de CRC vu plus haut):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">crccheck.crc</span> <span class="kn">import</span> <span class="n">Crc16IbmSdlc</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">socket</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">crc</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  Return the command with the CRC compliant to the ISO 14443 Type B norm.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">  Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">  command (str): The raw hexadecimal command.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">  Returns:
+</span></span></span><span class="line"><span class="cl"><span class="s2">  str: The command with the CRC.
+</span></span></span><span class="line"><span class="cl"><span class="s2">  &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Convert the str command to bytes</span>
+</span></span><span class="line"><span class="cl">  <span class="n">commande_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Calculate the CRC</span>
+</span></span><span class="line"><span class="cl">  <span class="n">crc</span> <span class="o">=</span> <span class="n">Crc16IbmSdlc</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">commande_bytes</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Format the ouput (command + CRC) with the LSB first</span>
+</span></span><span class="line"><span class="cl">  <span class="n">result</span> <span class="o">=</span> <span class="n">command</span> <span class="o">+</span> <span class="n">crc</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Open a socket to the challenge URL</span>
+</span></span><span class="line"><span class="cl"><span class="n">socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s2">&#34;challenges.fcsc.fr&#34;</span><span class="p">,</span> <span class="mi">2301</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Send the read commande (08h) for the addresses 0 to 5 and print the result</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Go to the second menu &#34;Send command&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">((</span><span class="s2">&#34;2</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># Create and send the command</span>
+</span></span><span class="line"><span class="cl">  <span class="n">message</span> <span class="o">=</span> <span class="n">crc</span><span class="p">(</span><span class="s2">&#34;08&#34;</span><span class="o">+</span><span class="s2">&#34;0&#34;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">+</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span> 
+</span></span><span class="line"><span class="cl">  <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">data</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+</span></span></code></pre></div>
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">On doit inclure le retour à la ligne (<code>\n</code>) afin d&rsquo;émuler l&rsquo;appuie sur la touche d&rsquo;<code>Entrée</code>, ce qui permet d&rsquo;indiquer au serveur que la commande est finie.</div>
+    </aside>
+<p>Ce qui nous donne:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Command to send to the tag (hexadecimal): Response: ffffffff470f
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Command to send to the tag (hexadecimal): Response: ffffffff470f
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 
+</span></span><span class="line"><span class="cl">Command to send to the tag (hexadecimal): Response: ffffffff470f
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 
+</span></span><span class="line"><span class="cl">Command to send to the tag (hexadecimal): Response: 1f000000868d
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. Travel
+</span></span><span class="line"><span class="cl">2. Send command
+</span></span><span class="line"><span class="cl">3. Quit
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 
+</span></span><span class="line"><span class="cl">Command to send to the tag (hexadecimal): Response: ffffffff470f
+</span></span></code></pre></div>
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">Dans les trames de l&rsquo;<a href="#appendix-b-st25tb512-ac-command-brief">annexe B</a>, on voit qu&rsquo;il y a aussi un CRC de 2 octets dans la réponse.
+Il faut donc enlever les 4 derniers caractères pour avoir la valeur réelle.</div>
+    </aside>
+<p>On voit clairement ici que le seul compteur ayant une valeur différente est le compteur à <strong>l&rsquo;adresse 03</strong>.</p>
+<p>Pour confirmer que c&rsquo;est bien lui on va voyager et regarder sa valeur:</p>
+<ul>
+<li>Voyage 0: <strong>1f000000</strong></li>
+<li>Voyage 1: <strong>0f000000</strong></li>
+<li>Voyage 2: <strong>07000000</strong></li>
+<li>Voyage 3: <strong>03000000</strong></li>
+<li>Voyage 4: <strong>01000000</strong></li>
+<li>Voyage 5: <strong>00000000</strong></li>
+</ul>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content"><p>La décrémentation peut ne pas sembler linéaire (1f, 0f, 07, etc) mais si on regarder dans la <a href="#1-description">description</a>, on peut voir que les compteurs de la <strong>Zone 1 - OTP (One time programmable)</strong> décrémente en passant à zéro un bit, ce qui donne en binaire:</p>
+<ul>
+<li>1111100 -&gt; 1f</li>
+<li>1111000 -&gt; 0f</li>
+<li>1110000 -&gt; 07</li>
+<li>1100000 -&gt; 03</li>
+<li>1000000 -&gt; 01</li>
+<li>0000000 -&gt; 00</li>
+</ul></div>
+    </aside>
+<h3 id="manipulation-du-compteur">Manipulation du compteur</h3>
+<p>Afin d&rsquo;augmenter le nombre de voyage possible, on va devoir manipuler ce compteur et le passer à la valeur <strong>FFFF FFFF</strong>. Bien que dans la documentation il est indiqué qu&rsquo;il ne peut que décrémenter, il y a une commande spéciale permettant de passer tous les bits à 1 (voir la section <a href="#411-block-0---4-resettable-otp-area">4.1.1. Block 0 - 4: resettable OTP area</a>).</p>
+<p>Dans cette section, on voit qu&rsquo;il n&rsquo;est pas possible de changer la valeur du compteur avec une commande <strong>write_block</strong> si il n&rsquo;est pas précédé d&rsquo;un <strong>erase_cycle</strong>. Ce dernier est induit à l&rsquo;activation d&rsquo;un <strong>reload mode</strong> via les compteur binaires (adresse 5 et 6).</p>
+<p>En lisant la doc de ces compteurs, on apprend que:</p>
+<ul>
+<li>Il sont écrivables (toujours aussi môche) via la commande <strong>write_block</strong></li>
+<li>Ils ne peuvent que être décrémentés</li>
+<li>Qu&rsquo;une fois à zéro il est impossible de les remettre à 1 (il est donc modifiable 2047 fois)</li>
+<li>Que la modification d&rsquo;un des bits <strong>b31 à 21</strong> du compteur n°6 active le <strong>reload mode</strong> (et donc un <strong>erase cycle</strong>) pour les compteur de l&rsquo;adresse 0 à 4</li>
+<li>Que ce <strong>erase cycle</strong> reste actif jusqu&rsquo;a l&rsquo;extinction du système ou une commande <strong>select</strong></li>
+</ul>
+<p><strong>On peut alors modifier la valeur du compteur n°3 à sa valeur max (FFFF FFFF) !</strong></p>
+<p>Cependant, on ne pourra voyager que 32 fois (FFFF FFFF donne 32 bits à 1 en binaire). Il faudra alors répéter l&rsquo;opération 32 fois pour voyager 1000 fois.</p>
+<p>Synthétiquement, cela donne ce schéma:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">                   ┌───────────────────────┐      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   ▼                       │      
+</span></span><span class="line"><span class="cl">     ┌────────────────────────────┐        │      
+</span></span><span class="line"><span class="cl">     │ Modification d&#39;un des bits │        │      
+</span></span><span class="line"><span class="cl">     │                            │        │      
+</span></span><span class="line"><span class="cl">     │ n°31 à 21 du compteur n°6  │        │      
+</span></span><span class="line"><span class="cl">     └────────────────────────────┘        │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │ x32       
+</span></span><span class="line"><span class="cl">                   ▼                       │         
+</span></span><span class="line"><span class="cl">     ┌──────────────────────────────┐      │      
+</span></span><span class="line"><span class="cl">     │ Modification de la valeur du │      │    
+</span></span><span class="line"><span class="cl">     │                              │      │      
+</span></span><span class="line"><span class="cl">     │   compteur n°3 à FFFF FFFF   │      │      
+</span></span><span class="line"><span class="cl">     └─────────────┬────────────────┘      │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   │                       │      
+</span></span><span class="line"><span class="cl">                   ▼                       │      
+</span></span><span class="line"><span class="cl">          ┌─────────────────┐              │      
+</span></span><span class="line"><span class="cl">          │ Voyager 32 fois │──────────────┘
+</span></span><span class="line"><span class="cl">          └─────────────────┘                                                                               
+</span></span></code></pre></div><h3 id="script">Script</h3>
+<p>Enfin, on a tous les éléments pour écrire notre script, voici ma version:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">crccheck.crc</span> <span class="kn">import</span> <span class="n">Crc16IbmSdlc</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">socket</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">empty_buffer</span><span class="p">(</span><span class="n">socket</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Empty the buffer.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    socket (socket): Socket object of the connexion.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span>
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">crc</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Return the given command with the CRC compliant to the ISO 14443 Type B norm.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    command (str): The raw hexadecimal command.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    str: The command with the CRC.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Convert the str command to bytes</span>
+</span></span><span class="line"><span class="cl">    <span class="n">commande_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Calculate the CRC</span>
+</span></span><span class="line"><span class="cl">    <span class="n">crc</span> <span class="o">=</span> <span class="n">Crc16IbmSdlc</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">commande_bytes</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Format the ouput (command + CRC) with the LSB first</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">command</span> <span class="o">+</span> <span class="n">crc</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Read the value of a given addresse.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    socket (socket): Socket object of the connexion.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    address (str): The address where to read.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    str: The hexadecimal value contained at the address.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">((</span><span class="s2">&#34;2</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">message</span> <span class="o">=</span> <span class="n">crc</span><span class="p">(</span><span class="s2">&#34;08&#34;</span><span class="o">+</span><span class="n">address</span><span class="p">)</span><span class="o">+</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&#34;Response:\s+(.*)&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Write an hexadecimal value at the given address.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    socket (socket): Socket object of the connexion.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    address (str): The address where to write.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    data (str): The hexadecimal value to write.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    str: The return string of the command by the card.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">((</span><span class="s2">&#34;2</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">message</span> <span class="o">=</span> <span class="n">crc</span><span class="p">(</span><span class="s2">&#34;09&#34;</span><span class="o">+</span><span class="n">block</span><span class="o">+</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">travel</span><span class="p">(</span><span class="n">socket</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Select the travel menu.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Parameters:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    socket (socket): Socket object of the connexion.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">((</span><span class="s2">&#34;1</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s2">&#34;challenges.fcsc.fr&#34;</span><span class="p">,</span> <span class="mi">2301</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">block_6_value</span> <span class="o">=</span> <span class="s2">&#34;ffffffff&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">33</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Calculate the 1bit decrement of the value of counter n°6</span>
+</span></span><span class="line"><span class="cl">    <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block_6_value</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">value</span> <span class="o">-=</span> <span class="mh">0x00000001</span>
+</span></span><span class="line"><span class="cl">    <span class="n">block_6_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">08x</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Modify the value of counter n°6 and n°3</span>
+</span></span><span class="line"><span class="cl">    <span class="n">write</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span><span class="s2">&#34;06&#34;</span><span class="p">,</span><span class="n">block_6_value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">write</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span><span class="s2">&#34;03&#34;</span><span class="p">,</span><span class="s2">&#34;ffffffff&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Travel 32x</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">33</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">31</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">empty_buffer</span><span class="p">(</span><span class="n">socket</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">travel</span><span class="p">(</span><span class="n">socket</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">2048</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+</span></span></code></pre></div><p>Voici un récap des fonctions:</p>
+<table>
+	<thead>
+			<tr>
+					<th><strong>Fonction</strong></th>
+					<th><strong>Description</strong></th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>empty_buffer</td>
+					<td>Permet de vider le buffer de l&rsquo;objet <strong>socket</strong>, sans ça, une fois plein il n&rsquo;enregistre plus les nouveaux éléments de la sortie</td>
+			</tr>
+			<tr>
+					<td>crc</td>
+					<td>Calcul le CRC (ISO14443 Type B) de la comande en entrée et retourne la commande avec son CRC prêt à être utilisée</td>
+			</tr>
+			<tr>
+					<td>get_uid</td>
+					<td>Récupère l&rsquo;UID de la carte car il change à chaque redémarrage (dans le contexte du CTF, à chaque nouvelle connexion) ou après une commande</td>
+			</tr>
+			<tr>
+					<td>select</td>
+					<td>Permet la remise à zéro du cycle d&rsquo;effacement vu plus haut</td>
+			</tr>
+			<tr>
+					<td>read</td>
+					<td>Va lire la valeur à l&rsquo;adresse donnée en entrée, envoie la commande via le sous-menu <strong>2. Send command</strong></td>
+			</tr>
+			<tr>
+					<td>write</td>
+					<td>Va écrire la valeur à l&rsquo;adresse, toutes les deux données en entrée, envoie la commande via le sous-menu <strong>2. Send command</strong></td>
+			</tr>
+			<tr>
+					<td>travel</td>
+					<td>Effectue un voyage en activant le sous-menu <strong>1. Travel</strong></td>
+			</tr>
+	</tbody>
+</table>
+<p>Le script en lui même va fonctionner comme cela:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl"> ┌──────────────────────────┐           
+</span></span><span class="line"><span class="cl"> │ Se connecte au chall via │           
+</span></span><span class="line"><span class="cl"> │                          │           
+</span></span><span class="line"><span class="cl"> │   la librairie socket    │           
+</span></span><span class="line"><span class="cl"> └────────────┬─────────────┘           
+</span></span><span class="line"><span class="cl">              │                         
+</span></span><span class="line"><span class="cl">              │                         
+</span></span><span class="line"><span class="cl">              ▼                             
+</span></span><span class="line"><span class="cl"> ┌─────────────────────────┐          
+</span></span><span class="line"><span class="cl"> │ Calcul le décrément de  │          
+</span></span><span class="line"><span class="cl"> │                         │◄─────┐     
+</span></span><span class="line"><span class="cl"> │ 1 bit du compteur n°6   │      │     
+</span></span><span class="line"><span class="cl"> └────────────┬────────────┘      │     
+</span></span><span class="line"><span class="cl">              │                   │  
+</span></span><span class="line"><span class="cl">              │                   │     
+</span></span><span class="line"><span class="cl">              ▼                   │     
+</span></span><span class="line"><span class="cl"> ┌────────────────────────┐       │     
+</span></span><span class="line"><span class="cl"> │  Modifie la valeur des │       │  x32   
+</span></span><span class="line"><span class="cl"> │                        │       │     
+</span></span><span class="line"><span class="cl"> │  compteurs n°6 et n°3  │       │     
+</span></span><span class="line"><span class="cl"> └────────────┬───────────┘       │     
+</span></span><span class="line"><span class="cl">              │                   │     
+</span></span><span class="line"><span class="cl">              │                   │     
+</span></span><span class="line"><span class="cl">              ▼                   │     
+</span></span><span class="line"><span class="cl">    ┌─────────────────┐           │     
+</span></span><span class="line"><span class="cl">    │  Voyage 32 fois ├───────────┘     
+</span></span><span class="line"><span class="cl">    └─────────┬───────┘                 
+</span></span><span class="line"><span class="cl">              │                         
+</span></span><span class="line"><span class="cl">              │                         
+</span></span><span class="line"><span class="cl">              ▼                         
+</span></span><span class="line"><span class="cl">    ┌─────────────────┐                 
+</span></span><span class="line"><span class="cl">    │ Affiche le flag │                 
+</span></span><span class="line"><span class="cl">    └─────────────────┘                 
+</span></span></code></pre></div><h3 id="flag">Flag</h3>
+<p>En executant le script, le flag nous est donné:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">Congratulations, here is the flag: FCSC{6d6371c7c7ab08a021df2f031b9b50034d12060febf8645d93c4ee81f6fb1b34}
+</span></span></code></pre></div><hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>Ce challenge hardware était aussi dense qu&rsquo;intéressant, le fait de le calquer sur un équipement réel et largement utilisé le rend encore plus immersif.</p>
+<p>La &ldquo;faille&rdquo; utilisée ici est plus une fonctionnalité qu&rsquo;autre chose. En effet, le fait de pouvoir recharger la carte est voulu dans le design de la puce, il peut même être empêché si besoin (voir la section <a href="#431-otp_lock_reg">4.3.1. OTP_Lock_Reg</a>).</p>
+<p>Le problème ici est l&rsquo;utilisation de la carte, pour empêcher son exploitation il aurait fallut:</p>
+<ul>
+<li>Soit utiliser un identifiant unique stocké dans la partie <strong>Lockable EEPROM</strong> et passé en lecture seule via le <strong>OTP_Lock_Reg</strong> (un serveur distant gérerait alors le nombre de voyage ainsi que sa validation)</li>
+<li>Soit utiliser une autre carte/puce avec un fonctionnement différent</li>
+</ul>
+<p>Merci à <a href="https://github.com/ElyKar">ElyKar</a> pour le chall !</p>
+<hr>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://www.st.com/resource/en/datasheet/st25tb512-ac.pdf">https://www.st.com/resource/en/datasheet/st25tb512-ac.pdf</a></li>
+<li><a href="https://docs.python.org/fr/3/howto/sockets.html">https://docs.python.org/fr/3/howto/sockets.html</a></li>
+<li><a href="https://www.geeksforgeeks.org/python/bytes-fromhex-method-python/">https://www.geeksforgeeks.org/python/bytes-fromhex-method-python/</a></li>
+<li><a href="https://www.geeksforgeeks.org/python/to-bytes-in-python/">https://www.geeksforgeeks.org/python/to-bytes-in-python/</a></li>
+<li><a href="https://www.askpython.com/python/examples/python-bit-manipulation-masking-techniques">https://www.askpython.com/python/examples/python-bit-manipulation-masking-techniques</a></li>
+</ul>
+]]></content>
+		</item>
+		
+		<item>
+			<title>FCSC 2026 - Transport me</title>
 			<link>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</link>
 			<pubDate>Tue, 14 Apr 2026 10:52:57 +0200</pubDate>
 			
 			<guid>http://localhost:1313/posts/fcsc2026_transport_me/fcsc2026_transport_me/</guid>
 			<description><![CDATA[%!s(<nil>)]]></description>
-			<content type="html"><![CDATA[]]></content>
+			<content type="html"><![CDATA[<div>
+  <img src="/posts/images/logo_fcsc.svg" alt="Logo FCSC" style="width: 50%">
+  </br>
+</div>
+<p>Ceci est le write-up du challenge Intro Hardware <strong>Transport me</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<hr>
+<h2 id="énoncé">Énoncé</h2>
+<blockquote>
+<p>Vous avez récupéré une carte de transport en commun, mais il ne reste que deux voyages dessus. Vous avez la possibilité d&rsquo;interagir directement avec la carte. Pour obtenir le flag, vous devez réussir à voyager 5 fois.</p>
+<p>Pour interagir avec la carte, veuillez vous connecter au service en ligne indiqué.</p>
+<div>
+ <img src="/posts/fcsc2026_transport_me/images/card.png" alt="Card">
+ </br>
+</div>
+<p><code>nc challenges.fcsc.fr 2300</code></p>
+</blockquote>
+<hr>
+<h2 id="résolution">Résolution</h2>
+<p>Notre objectif sur ce challenge est donc de voyager 5 fois avec une carte de transport n&rsquo;ayant plus que 2 voyages.</p>
+<h3 id="investigation">Investigation</h3>
+<p>L&rsquo;énoncé ne nous donnant pas plus d&rsquo;informations et étant donné qu&rsquo;il n&rsquo;y a pas de documentation, on va se connecter sur l&rsquo;adresse du challenge pour essayer d&rsquo;en apprendre plus sur son fonctionnement.</p>
+<p>On tombe alors sur un menu:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span></code></pre></div><p>Et plus intéressant encore, le choix <strong>0. Informations sur la carte</strong>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">Les cartes du modèle FCSC-64B4 possèdent un identifiant (UID) de 32 bits, ainsi que quatre blocs de 16 bits réinscriptibles.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Le modèle mémoire est le suivant:
+</span></span><span class="line"><span class="cl">+---------------+----------------+------------------------+
+</span></span><span class="line"><span class="cl">| Adresse bloc  |    Contenu     |      Description       |
+</span></span><span class="line"><span class="cl">+---------------+----------------+------------------------+
+</span></span><span class="line"><span class="cl">|             0 | valeur 16 bits | Bloc 0                 |
+</span></span><span class="line"><span class="cl">|             1 | valeur 16 bits | Bloc 1                 |
+</span></span><span class="line"><span class="cl">|             2 | valeur 16 bits | Bloc 2                 |
+</span></span><span class="line"><span class="cl">|             3 | valeur 16 bits | Bloc 3                 |
+</span></span><span class="line"><span class="cl">|             4 | UID[15:0]      | Octets 1 et 0 de l&#39;UID |
+</span></span><span class="line"><span class="cl">|             5 | UID[31:16]     | Octets 3 et 2 de l&#39;UID |
+</span></span><span class="line"><span class="cl">+---------------+----------------+------------------------+
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Les commandes exposées par la carte permettent de lire et d&#39;écrire un bloc, ou bien de lire l&#39;UID.
+</span></span></code></pre></div><p>Ce sous-menu nous donne les caractéristiques de la carte, le plus intéressant ici est bien évidemment le tableau. On comprend qu&rsquo;il s&rsquo;agit d&rsquo;une carte programmable simplifiée (normale car c&rsquo;est un challenge d&rsquo;intro) avec seulement <strong>4 blocs</strong> de 16 bits contenant de la donnée et <strong>accessible en lecture et en écriture</strong>.</p>
+<h3 id="identification-du-bloc-compteur-de-voyage">Identification du bloc compteur de voyage</h3>
+<p>En utilisant les commandes du menu, on va alors identifier le bloc comptant le nombre de voyage restant.</p>
+<p>Pour cela, on va simplement les lire un par un, on cherche soit la valeur 2 (<code>00 02</code> car sur 16 bits) soit la valeur 65533 (<code>FF FD</code>).</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">La valeur <code>00 02</code> indiquerait explicitement le nombre de voyage restant la ou <code>FF FD</code> indiquerait le nombre de voyage maximum, il manquerait <code>2</code> pour arriver à <code>FF FD</code> (moins probable).</div>
+    </aside>
+<p>Ce qui donne en résumé:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">+---------------+----------------+
+</span></span><span class="line"><span class="cl">| Adresse bloc  |    Contenu     |
+</span></span><span class="line"><span class="cl">+---------------+----------------+
+</span></span><span class="line"><span class="cl">|             0 |          FF FF |
+</span></span><span class="line"><span class="cl">|             1 |          00 02 |
+</span></span><span class="line"><span class="cl">|             2 |          FF FF |
+</span></span><span class="line"><span class="cl">|             3 |          FF FF |
+</span></span><span class="line"><span class="cl">+---------------+----------------+
+</span></span></code></pre></div><p>On voit clairement apparaître le <strong>bloc 1</strong> qui contient la valeur <strong>00 02</strong>.</p>
+<h3 id="ecriture-du-bloc-1">Ecriture du bloc 1</h3>
+<p>Maintenant qu&rsquo;on a identifié le bloc contenant le nombre de voyages restants, on va pouvoir le modifier.</p>
+<p>Pour cela, on va:</p>
+<ul>
+<li>Sélectionner le sous-menu <strong>4. Ecriture d&rsquo;un bloc</strong></li>
+<li>Préciser le <strong>bloc 1</strong></li>
+<li>Ecrire une valeur égale ou supérieur à <code>00 05</code></li>
+</ul>
+<p>Soit:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 4
+</span></span><span class="line"><span class="cl">Adresse du bloc à écrire: 1
+</span></span><span class="line"><span class="cl">Valeur à écrire, en hexadécimal (p.e., &#39;ffff&#39;): FFFF
+</span></span><span class="line"><span class="cl">Ecriture effectuée
+</span></span></code></pre></div><hr>
+<h2 id="flag">Flag</h2>
+<p>Maintenant que l&rsquo;on a rempli le compteur de voyages restants, on va pouvoir voyager 5 fois avec le sous-menu <strong>1. Voyage</strong>.</p>
+<p>On voit alors le flag apparaître:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">Voyage effectué
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">Voyage effectué
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">Voyage effectué
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">Voyage effectué
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0. Informations sur la carte
+</span></span><span class="line"><span class="cl">1. Voyage
+</span></span><span class="line"><span class="cl">2. Lecture UID
+</span></span><span class="line"><span class="cl">3. Lecture d&#39;un bloc
+</span></span><span class="line"><span class="cl">4. Ecriture d&#39;un bloc
+</span></span><span class="line"><span class="cl">5. Quitter
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1
+</span></span><span class="line"><span class="cl">Voyage effectué
+</span></span><span class="line"><span class="cl">Bravo, voilà le flag: FCSC{0519152bbd38a7a3c0fe98cbdb2f98d74a48598660718fe8b3695935ede5b37f}
+</span></span></code></pre></div>]]></content>
 		</item>
 		
 		<item>
@@ -27,10 +1057,10 @@
 			<guid>http://localhost:1313/posts/fcsc2026_tunnel_routier_1-2/fcsc2026_tunnel_routier_1-2/</guid>
 			<description><![CDATA[%!s(<nil>)]]></description>
 			<content type="html"><![CDATA[<div>
-  <img src="/posts/fcsc2026_tunnel_routier_1-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
+  <img src="/posts/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
   </br>
 </div>
-<p>Ceci est le write-up de la première partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<p>Ceci est le write-up de la première partie du challenge <a href="/tags/misc/">Misc</a> <strong>Tunnel Routier</strong> du CTF <strong>France CyberSecurity Challenge</strong> (<a href="https://fcsc.fr/">FCSC</a>) édition 2026 organisé par l&rsquo;ANSSI.</p>
 <h2 id="énoncé">Énoncé</h2>
 <blockquote>
 <p>Dans cette première partie de l&rsquo;épreuve, vous devez retrouver un token caché dans les données d&rsquo;identification de l&rsquo;automate pour vous permettre d&rsquo;accéder à la deuxième partie de l&rsquo;épreuve.</p>
@@ -39,6 +1069,7 @@
 </blockquote>
 <h3 id="documentation">Documentation</h3>
 <p>Voici la documentation présente à l&rsquo;adresse: <a href="https://fcsc.fr/tunnel-routier-76bea48861178b0c">https://fcsc.fr/tunnel-routier-76bea48861178b0c</a></p>
+<blockquote style="font-style: normal;">
 <p><strong>Tunnel routier : documentation</strong></p>
 <p>Le tunnel de Grenelle d&rsquo;une longueur de 5km doit être inauguré ce jour, pour cela des responsables locaux ont fait le déplacement pour assister à sa première mise en service. Le système de contrôle-commande de ce tunnel est assuré par un automate programmable industriel (PLC) communiquant avec le SCADA au travers d&rsquo;un protocole industriel sur le port TCP/502. Ce système permet de réguler des valeurs de process offrant une traversée du tunnel en toute sécurité pour les usagers. Les valeurs de process régulés de cet automate sont les suivantes :</p>
 <ul>
@@ -61,6 +1092,8 @@
   <img src="/posts/fcsc2026_tunnel_routier_1-2/images/tunnel.png" alt="tunnel">
   </br>
 </div>
+</blockquote>
+<hr>
 <h3 id="interface-scada">Interface SCADA</h3>
 <p>Voici l&rsquo;interface SCADA à l&rsquo;adresse <a href="https://tunnel-routier.fcsc.fr/">https://tunnel-routier.fcsc.fr/</a> mentionnée dans le document.</p>
 <div>
@@ -71,19 +1104,19 @@
 <h2 id="résolution">Résolution</h2>
 <p>Dans cette première partie, on cherche simplement à récupérer le token d&rsquo;accès à l&rsquo;automate SCADA, ce token serait caché dans les <strong>données d&rsquo;identification</strong> de ce dernier.</p>
 <h3 id="protocole-de-communication">Protocole de communication</h3>
-<p>Avant toute chose, il faut savoir quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
-<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;ont va utiliser.</p>
+<p>Avant toute chose, il faut déterminer quel protocole on va devoir utiliser pour communiquer avec le SCADA, entre le Modbus TCP, l&rsquo;OPC-UA et les protocoles propriétaires, il y a beaucoup de possibilitées.</p>
+<p>D&rsquo;après la documentation, on sait que la communication entre le PLC et le SCADA se fait via le port TCP/502, en regardant dans le registre <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">IANA</a> (registre gérant, entre autre, les assignation de ports) et en cherchant le port <strong>502</strong>, on peut voir qu&rsquo;il est réservé à <strong>Modbus</strong>, c&rsquo;est donc ce que l&rsquo;on va utiliser.</p>
 <h3 id="registre">Registre</h3>
-<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;ont veut.</p>
+<p>Il faut maintenant identifier le registre à lire. En regardant la <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf">documentation</a> de Modbus, on peut voir la fonction <strong>43 / 14 (0x2B / 0x0E) Read Device Identification</strong> qui est exactement ce que l&rsquo;on veut.</p>
 <h3 id="code-python">Code Python</h3>
-<p>Maintenant qu&rsquo;on a toutes les informations dont on a besoin, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
+<p>Avec toutes ces informations, on peut écrire notre code Python en utilisant la librairie <a href="https://pymodbus.readthedocs.io/en/latest/">PyModbus</a>.</p>
 <p>En cherchant <strong>Read Device Identification</strong> dans la <a href="https://pymodbus.readthedocs.io/en/latest/">documentation</a> de PyModbus on trouve la fonction <a href="https://pymodbus.readthedocs.io/en/latest/source/client.html#pymodbus.client.mixin.ModbusClientMixin.read_device_information">read_device_information</a>.</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
             <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
         </div>
-        <div class="admonition-content">Le fait d&rsquo;utiliser result.information est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
+        <div class="admonition-content">Le fait d&rsquo;utiliser <code>result.information</code> pour afficher le token est une information assez difficile à trouver, on peut voir que <code>read_device_information</code> retourne le dictionnaire <strong>information</strong> <a href="https://pymodbus.readthedocs.io/en/latest/source/library/pymodbus.html#pymodbus.pdu.mei_message.ReadDeviceInformationResponse">ici</a></div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
 </span></span><span class="line"><span class="cl">
@@ -117,10 +1150,10 @@
 			<guid>http://localhost:1313/posts/fcsc2026_tunnel_routier_2-2/fcsc2026_tunnel_routier_2-2/</guid>
 			<description><![CDATA[%!s(<nil>)]]></description>
 			<content type="html"><![CDATA[<div>
-  <img src="/posts/fcsc2026_tunnel_routier_2-2/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
+  <img src="/posts/images/logo_fcsc.svg" alt="Logo_FCSC" style="width: 50%">
   </br>
 </div>
-<p>Ceci est le write-up de la deuxième partie du challenge Misc <strong>Tunnel Routier</strong> du CTF <a href="https://fcsc.fr/">FCSC</a> édition 2026 organisé par l&rsquo;ANSSI.</p>
+<p>Ceci est le write-up de la deuxième partie du challenge <a href="/tags/misc/">Misc</a> <strong>Tunnel Routier</strong> du CTF <strong>France CyberSecurity Challenge</strong> (<a href="https://fcsc.fr/">FCSC</a>) édition 2026 organisé par l&rsquo;ANSSI.</p>
 <h2 id="énoncé">Énoncé</h2>
 <blockquote>
 <p>Dans cette deuxième partie de l&rsquo;épreuve, vous devez envoyer des consignes à l&rsquo;automate afin d&rsquo;obtenir des valeurs de process répondant aux normes de sureté (fournie dans la description détaillée), le tout en moins d&rsquo;une minute. Vous avez également accès à l&rsquo;interface SCADA en lecture seule via le token récupéré dans la première partie de l&rsquo;épreuve.</p>
@@ -129,6 +1162,7 @@
 </blockquote>
 <h3 id="documentation">Documentation</h3>
 <p>Voici la documentation présente à l&rsquo;adresse: <a href="https://fcsc.fr/tunnel-routier-76bea48861178b0c">https://fcsc.fr/tunnel-routier-76bea48861178b0c</a></p>
+<blockquote>
 <p><strong>Tunnel routier : documentation</strong></p>
 <p>Le tunnel de Grenelle d&rsquo;une longueur de 5km doit être inauguré ce jour, pour cela des responsables locaux ont fait le déplacement pour assister à sa première mise en service. Le système de contrôle-commande de ce tunnel est assuré par un automate programmable industriel (PLC) communiquant avec le SCADA au travers d&rsquo;un protocole industriel sur le port TCP/502. Ce système permet de réguler des valeurs de process offrant une traversée du tunnel en toute sécurité pour les usagers. Les valeurs de process régulés de cet automate sont les suivantes :</p>
 <ul>
@@ -151,6 +1185,7 @@
   <img src="/posts/fcsc2026_tunnel_routier_2-2/images/tunnel.png" alt="tunnel">
   </br>
 </div>
+</blockquote>
 <hr>
 <h2 id="identification">Identification</h2>
 <p>Dans cette 2ème partie, on doit remettre en fonctionnement le tunnel en moins de <strong>1 minute</strong>.</p>
@@ -181,10 +1216,10 @@
 <p>Pour celui des <strong>actionneurs</strong>, on sait que:</p>
 <ul>
 <li>Ils doivent être modifiable (Read-Write)</li>
-<li>Ils doivent être sur plus d&rsquo;un bit</li>
+<li>Ils doivent être sur plus d&rsquo;un bit (car pas simplement on/off)</li>
 </ul>
 <p>D&rsquo;après le tableau, tout porte à croire qu&rsquo;il s&rsquo;agit du <strong>Holding Registers</strong>.</p>
-<p>Chaque registre (capteurs ou actionneurs) peut avoir 65536 adresses, chaque adresse contient 16 octets (bytes) de données (cf. le tableau).</p>
+<p>Chaque registre (capteur ou actionneur) peut avoir 65536 adresses, chaque adresse contient <strong>16 bits</strong> de données (voir le tableau des registres ci-dessus).</p>
 <p>Si on regarde le schéma dans l&rsquo;interface SCADA, on voit qu&rsquo;il y a <strong>3 capteurs</strong> et <strong>8 actionneurs</strong> (4 lumières et 4 ventilateurs) par tunnel (Nord et Sud), soit un total de <strong>6 capteurs</strong> et <strong>16 actionneurs</strong>.</p>
 <h3 id="identification-des-adresses-du-registre-des-capteurs">Identification des adresses du registre des capteurs</h3>
 <p>Notre but ici est de savoir à qu&rsquo;elle adresse est stockée qu&rsquo;elle valeur de quel capteur, on commence par lire le registre <strong>Input Registers</strong>:</p>
@@ -193,7 +1228,7 @@
         <div class="admonition-title">
             <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
         </div>
-        <div class="admonition-content">Pour <code>client.read_input_registers()</code>, le paramètre <code>address</code> indique l&rsquo;adresse de départ et <code>count</code> le nombre de valeur à afficher, sachant qu&rsquo;on a 6 capteurs en tout on met <code>count=6</code></div>
+        <div class="admonition-content">Pour <code>client.read_input_registers()</code>, le paramètre <code>address</code> indique l&rsquo;adresse de départ et <code>count</code> le nombre de valeur à afficher, sachant que l&rsquo;on a 6 capteurs en tout on met <code>count=6</code></div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
 </span></span><span class="line"><span class="cl">
@@ -201,55 +1236,55 @@
 </span></span><span class="line"><span class="cl"><span class="n">client</span> <span class="o">=</span> <span class="n">ModbusTcpClient</span><span class="p">(</span><span class="s1">&#39;tunnel-routier.fcsc.fr&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Lis les 6 adresses du input registers à l&#39;adresse 0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Lit les 6 valeurs du input registers à l&#39;adresse 0</span>
 </span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read_input_registers</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </span></span></code></pre></div><p>Ce qui nous donne: <code>ReadInputRegistersResponse(dev_id=1, transaction_id=1, address=0, count=0, bits=[], registers=[1600, 1600, 0, 0, 32, 32], status=1, retries=0)</code></p>
 <p>Or, on veut juste la partie <code>registers</code>, on ajuste alors le script en modifiant <code>print(result)</code> en <code>print(result.registers)</code>, ce qui nous donne:</p>
 <p><code>[1600, 1600, 0, 0, 32, 32]</code></p>
-<p>D&rsquo;après l&rsquo;odre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
+<p>D&rsquo;après l&rsquo;ordre de grandeur, on peut en déduire que les deux premiers sont les capteurs de CO2, les deux suivants de luminance et enfin les deux derniers de température.
 Il est aussi très probable que le première de la paire concerne le tunnel nord et le second le tunnel sud.</p>
 <p>Pour résumer:</p>
 <table>
-  <thead>
-      <tr>
-          <th style="text-align: center"><strong>Adresse</strong></th>
-          <th style="text-align: center"><strong>Capteur</strong></th>
-          <th style="text-align: center"><strong>Tunnel</strong></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">CO2</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">CO2</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">2</td>
-          <td style="text-align: center">Luminance</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">Luminance</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">4</td>
-          <td style="text-align: center">Température</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">5</td>
-          <td style="text-align: center">Température</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th style="text-align: center"><strong>Adresse</strong></th>
+					<th style="text-align: center"><strong>Capteur</strong></th>
+					<th style="text-align: center"><strong>Tunnel</strong></th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: center">0</td>
+					<td style="text-align: center">CO2</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">1</td>
+					<td style="text-align: center">CO2</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">2</td>
+					<td style="text-align: center">Luminance</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">3</td>
+					<td style="text-align: center">Luminance</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">4</td>
+					<td style="text-align: center">Température</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">5</td>
+					<td style="text-align: center">Température</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+	</tbody>
 </table>
 
     <aside class="admonition note">
@@ -285,116 +1320,116 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 </div>
 <p>On continue à tester les adresses jusqu&rsquo;a les avoir toutes mappées, ce qui donne:</p>
 <table>
-  <thead>
-      <tr>
-          <th style="text-align: center"><strong>Adresse</strong></th>
-          <th style="text-align: center"><strong>Actionneur</strong></th>
-          <th style="text-align: center"><strong>Numéro</strong></th>
-          <th style="text-align: center"><strong>Tunnel</strong></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">2</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">2</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">4</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">4</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">5</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">2</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">6</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">7</td>
-          <td style="text-align: center">Ventilateur</td>
-          <td style="text-align: center">4</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">8</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">9</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">2</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">10</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">11</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">4</td>
-          <td style="text-align: center">Nord</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">12</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">13</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">2</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">14</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">15</td>
-          <td style="text-align: center">Spots</td>
-          <td style="text-align: center">4</td>
-          <td style="text-align: center">Sud</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th style="text-align: center"><strong>Adresse</strong></th>
+					<th style="text-align: center"><strong>Actionneur</strong></th>
+					<th style="text-align: center"><strong>Numéro</strong></th>
+					<th style="text-align: center"><strong>Tunnel</strong></th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: center">0</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">1</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">1</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">2</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">2</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">3</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">3</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">4</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">4</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">1</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">5</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">2</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">6</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">3</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">7</td>
+					<td style="text-align: center">Ventilateur</td>
+					<td style="text-align: center">4</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">8</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">1</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">9</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">2</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">10</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">3</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">11</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">4</td>
+					<td style="text-align: center">Nord</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">12</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">1</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">13</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">2</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">14</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">3</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">15</td>
+					<td style="text-align: center">Spots</td>
+					<td style="text-align: center">4</td>
+					<td style="text-align: center">Sud</td>
+			</tr>
+	</tbody>
 </table>
 <hr>
 <h2 id="résolution">Résolution</h2>
-<p>Maintenant qu&rsquo;on à tous les éléments, on va pouvoir écire le script finale pour résoudre ce challenge.</p>
+<p>Maintenant que l&rsquo;on a tous les éléments, on va pouvoir écrire le script finale pour résoudre ce challenge.</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
@@ -406,7 +1441,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 <li>Luminance &gt;= 300</li>
 <li>Température &lt;= 25</li>
 </ul>
-<p>A noter que l&rsquo;on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 ET la température.</p>
+<p>A noter que l&rsquo;on a que 2 actionneurs pour 3 capteurs, les ventilateurs vont donc agir sur le taux de CO2 <strong>ET</strong> la température.</p>
 </div>
     </aside>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pymodbus.client</span> <span class="kn">import</span> <span class="n">ModbusTcpClient</span>
@@ -484,7 +1519,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </span></span></code></pre></div><p>Ce script va allumer les ventilateurs à <strong>1400 tr/min</strong> (j&rsquo;ai trouvé la valeur &ldquo;manuellement&rdquo; en testant jusqu&rsquo;a que ça fonctionne dans le temps impartis), les spots à <strong>75 cd/m²</strong> (on a besoin de 300cd/m² par tunnel et on a 4 spots par tunnel, donc 300/4) et va lire les valeurs des capteurs jusqu&rsquo;a ce qu&rsquo;elles soient dans les normes.</p>
-<p>Une fois ces valeurs atteintes, il va afficher un lien avec token pour récupérer le flag.</p>
+<p>Une fois ces valeurs atteintes, il va afficher un lien avec le token pour récupérer le flag.</p>
 <hr>
 <h2 id="flag">Flag</h2>
 <p>On peut alors récupérer le flag via le lien donné par le script:</p>
@@ -492,7 +1527,7 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
   <img src="/posts/fcsc2026_tunnel_routier_2-2/images/second_flag.png" alt="tunnel">
   </br>
 </div>
-<p>On pourrait aussi récupérer automatiquement le flag via la balise <code>&lt;div id=&quot;flag&quot;&gt;&lt;/div&gt;</code> sur le site.</p>
+<p>On pourrait aussi récupérer automatiquement le flag via la balise <code>&lt;div id=&quot;flag&quot;&gt;&lt;/div&gt;</code> dans le code HTML du tableau de bord.</p>
 <hr>
 <h2 id="sources">Sources</h2>
 <ul>
@@ -601,74 +1636,74 @@ Il est aussi très probable que le première de la paire concerne le tunnel nord
 <p>De la <strong>clé RTL-SDR</strong>, en passant par le <strong>Flipper Zero</strong>, le <strong>HackRF</strong>, le <strong>BladeRF</strong>, le <strong>Lime-SDR</strong>, le <strong>KrakenRF</strong>, etc. Il existe une pléthore de matériel SDR, il y en aura donc forcémment un qui vous conviendra !</p>
 <p>Concernant quoi choisir.. tout dépend de vos besoins et de votre budget, voici une liste non exhaustive des matériels couramment utilisés:</p>
 <table>
-  <thead>
-      <tr>
-          <th style="text-align: center"><strong>Hardware</strong></th>
-          <th style="text-align: center"><strong>RX/TX</strong></th>
-          <th style="text-align: center"><strong>Duplex</strong></th>
-          <th style="text-align: center"><strong>Radio spectrum</strong></th>
-          <th style="text-align: center"><strong>Bandwidth</strong></th>
-          <th style="text-align: center"><strong>Price</strong></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: center">Clé RTL-SDR</td>
-          <td style="text-align: center">RX</td>
-          <td style="text-align: center">Half</td>
-          <td style="text-align: center">~ 24MHz - 1.766GHz</td>
-          <td style="text-align: center">6.7MHz - 8MHz</td>
-          <td style="text-align: center">~ 30€</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">Flipper Zero</td>
-          <td style="text-align: center">RX/TX</td>
-          <td style="text-align: center">Half</td>
-          <td style="text-align: center">300MHz-348MHz, 387MHz-464MHz, 779MHz-928MHz</td>
-          <td style="text-align: center">58KHz - 812KHz</td>
-          <td style="text-align: center">~ 200€</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">HackRF</td>
-          <td style="text-align: center">RX/TX</td>
-          <td style="text-align: center">Half</td>
-          <td style="text-align: center">30MHz - 6GHz</td>
-          <td style="text-align: center">20MHz</td>
-          <td style="text-align: center">~ 320€</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">BladeRF</td>
-          <td style="text-align: center">RX/TX</td>
-          <td style="text-align: center">Full</td>
-          <td style="text-align: center">300MHz - 3.8GHz</td>
-          <td style="text-align: center">28MHz</td>
-          <td style="text-align: center">~ 780€</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">USRP</td>
-          <td style="text-align: center">RX/TX</td>
-          <td style="text-align: center">Full</td>
-          <td style="text-align: center">50MHz - 6GHz</td>
-          <td style="text-align: center">16MHz - 61.44MHz</td>
-          <td style="text-align: center">~ 2k€</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">Lime-SDR</td>
-          <td style="text-align: center">RX/TX</td>
-          <td style="text-align: center">Full</td>
-          <td style="text-align: center">~ 30MHz - 3.8GHz</td>
-          <td style="text-align: center">~ 40MHz - 120MHz</td>
-          <td style="text-align: center">~ 340€ - 20k€</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">KrakenSDR</td>
-          <td style="text-align: center">RX/TX</td>
-          <td style="text-align: center">Full</td>
-          <td style="text-align: center">24MHz - 1766MHz</td>
-          <td style="text-align: center">2.56MHz</td>
-          <td style="text-align: center">~ 500€</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th style="text-align: center"><strong>Hardware</strong></th>
+					<th style="text-align: center"><strong>RX/TX</strong></th>
+					<th style="text-align: center"><strong>Duplex</strong></th>
+					<th style="text-align: center"><strong>Radio spectrum</strong></th>
+					<th style="text-align: center"><strong>Bandwidth</strong></th>
+					<th style="text-align: center"><strong>Price</strong></th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: center">Clé RTL-SDR</td>
+					<td style="text-align: center">RX</td>
+					<td style="text-align: center">Half</td>
+					<td style="text-align: center">~ 24MHz - 1.766GHz</td>
+					<td style="text-align: center">6.7MHz - 8MHz</td>
+					<td style="text-align: center">~ 30€</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">Flipper Zero</td>
+					<td style="text-align: center">RX/TX</td>
+					<td style="text-align: center">Half</td>
+					<td style="text-align: center">300MHz-348MHz, 387MHz-464MHz, 779MHz-928MHz</td>
+					<td style="text-align: center">58KHz - 812KHz</td>
+					<td style="text-align: center">~ 200€</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">HackRF</td>
+					<td style="text-align: center">RX/TX</td>
+					<td style="text-align: center">Half</td>
+					<td style="text-align: center">30MHz - 6GHz</td>
+					<td style="text-align: center">20MHz</td>
+					<td style="text-align: center">~ 320€</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">BladeRF</td>
+					<td style="text-align: center">RX/TX</td>
+					<td style="text-align: center">Full</td>
+					<td style="text-align: center">300MHz - 3.8GHz</td>
+					<td style="text-align: center">28MHz</td>
+					<td style="text-align: center">~ 780€</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">USRP</td>
+					<td style="text-align: center">RX/TX</td>
+					<td style="text-align: center">Full</td>
+					<td style="text-align: center">50MHz - 6GHz</td>
+					<td style="text-align: center">16MHz - 61.44MHz</td>
+					<td style="text-align: center">~ 2k€</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">Lime-SDR</td>
+					<td style="text-align: center">RX/TX</td>
+					<td style="text-align: center">Full</td>
+					<td style="text-align: center">~ 30MHz - 3.8GHz</td>
+					<td style="text-align: center">~ 40MHz - 120MHz</td>
+					<td style="text-align: center">~ 340€ - 20k€</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">KrakenSDR</td>
+					<td style="text-align: center">RX/TX</td>
+					<td style="text-align: center">Full</td>
+					<td style="text-align: center">24MHz - 1766MHz</td>
+					<td style="text-align: center">2.56MHz</td>
+					<td style="text-align: center">~ 500€</td>
+			</tr>
+	</tbody>
 </table>
 <p>Comme on peut le voir, chaque solution à ses avantages et inconvenients.</p>
 <p>Si vous débutez dans le monde de la SDR, je ne peux que vous conseiller la clé RTL-SDR car ça coute moins de 30€, ça à une plage d&rsquo;utilisation très large, une antenne est fournie avec, c&rsquo;est petit et compatible avec tout !</p>

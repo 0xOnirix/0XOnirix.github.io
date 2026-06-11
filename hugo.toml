@@ -4,7 +4,7 @@ defaultContentLang = "fr"
 defaultContentLanguageInSubdir = false
 theme = "hermit-v2"
 title = 'Onirix'
-languageCode = 'fr'
+locale = 'fr-FR'
 
 pygmentsCodefences  = true
 pygmentsUseClasses  = true
@@ -40,7 +40,7 @@ expiryDate = ["expiryDate"]
       unsafe = true
     [markup.goldmark.renderHooks]
       [markup.goldmark.renderHooks.image]
-        enableDefault = true
+        useEmbedded = 'fallback'
 
 [params]
   dateform        = "2 Jan, 2006"
@@ -80,11 +80,7 @@ expiryDate = ["expiryDate"]
 
   [[params.socialLinks]]
     name = "email"
-    url = "mailto:onirix.contact@protonmail.com"
-
-  [[params.socialLinks]]
-    name = "discord"
-    url = "https://discord.com/users/275297786184859648"
+    url = "mailto:contact@0xOnirix.fr"
 
 [menu]
 

@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Loxya(Robert2) on Onirix</title>
-    <link>http://localhost:1313/tags/loxyarobert2/</link>
-    <description>Recent content in Loxya(Robert2) on Onirix</description>
-    <generator>Hugo</generator>
-    <language>fr</language>
-    <copyright>CC BY-NC 4.0</copyright>
-    <lastBuildDate>Mon, 08 Jul 2024 16:04:20 +0200</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/loxyarobert2/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Installation de Loxya(Robert2)</title>
-      <link>http://localhost:1313/posts/installation_robert2/installation_robert2/</link>
-      <pubDate>Mon, 08 Jul 2024 16:04:20 +0200</pubDate>
-      <guid>http://localhost:1313/posts/installation_robert2/installation_robert2/</guid>
-      <description>&lt;aside class=&#34;admonition note&#34;&gt;&#xA;        &lt;div class=&#34;admonition-title&#34;&gt;&#xA;            &lt;div class=&#34;icon&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; width=&#34;24&#34; height=&#34;24&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-width=&#34;2&#34; stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34; class=&#34;feather feather-edit-2&#34;&gt;&lt;path d=&#34;M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z&#34;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/div&gt;&lt;b&gt;Note&lt;/b&gt;&#xA;        &lt;/div&gt;&#xA;        &lt;div class=&#34;admonition-content&#34;&gt;Cet installation a été réalisée sur Debian 12&lt;/div&gt;&#xA;    &lt;/aside&gt;&#xA;&lt;h2 id=&#34;préambule&#34;&gt;Préambule&lt;/h2&gt;&#xA;&lt;p&gt;Loxya(Robert2) est un serveur de gestion et suivis d&amp;rsquo;inventaire.&lt;/p&gt;&#xA;&lt;p&gt;La version gratuite est open-source et comprend les fonctions suivantes:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Gestion du stock&lt;/li&gt;&#xA;&lt;li&gt;Gestion des sorties&lt;/li&gt;&#xA;&lt;li&gt;Calendrier&lt;/li&gt;&#xA;&lt;li&gt;Gestion des clients et emprunteurs&lt;/li&gt;&#xA;&lt;li&gt;Gestion du personnel&lt;/li&gt;&#xA;&lt;li&gt;Edition de fiches de sorties, devis et factures&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Ce qu&amp;rsquo;elle ne comprend PAS:&lt;/p&gt;</description>
-    </item>
-  </channel>
+	<channel>
+		<title>Loxya(Robert2) on Onirix</title>
+		<link>http://localhost:1313/tags/loxyarobert2/</link>
+		<description>Recent content in Loxya(Robert2) on Onirix</description>
+		<generator>Hugo</generator>
+		<language>fr-FR</language>
+		
+		
+		
+			<copyright>CC BY-NC 4.0</copyright>
+		
+		
+			<lastBuildDate>Mon, 08 Jul 2024 16:04:20 +0200</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/loxyarobert2/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Installation de Loxya(Robert2)</title>
+				<link>http://localhost:1313/posts/installation_robert2/installation_robert2/</link>
+				<pubDate>Mon, 08 Jul 2024 16:04:20 +0200</pubDate>
+				<guid>http://localhost:1313/posts/installation_robert2/installation_robert2/</guid>
+				<description>&lt;aside class=&#34;admonition note&#34;&gt;&#xA;        &lt;div class=&#34;admonition-title&#34;&gt;&#xA;            &lt;div class=&#34;icon&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; width=&#34;24&#34; height=&#34;24&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-width=&#34;2&#34; stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34; class=&#34;feather feather-edit-2&#34;&gt;&lt;path d=&#34;M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z&#34;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/div&gt;&lt;b&gt;Note&lt;/b&gt;&#xA;        &lt;/div&gt;&#xA;        &lt;div class=&#34;admonition-content&#34;&gt;Cet installation a été réalisée sur Debian 12&lt;/div&gt;&#xA;    &lt;/aside&gt;&#xA;&lt;h2 id=&#34;préambule&#34;&gt;Préambule&lt;/h2&gt;&#xA;&lt;p&gt;Loxya(Robert2) est un serveur de gestion et suivis d&amp;rsquo;inventaire.&lt;/p&gt;&#xA;&lt;p&gt;La version gratuite est open-source et comprend les fonctions suivantes:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Gestion du stock&lt;/li&gt;&#xA;&lt;li&gt;Gestion des sorties&lt;/li&gt;&#xA;&lt;li&gt;Calendrier&lt;/li&gt;&#xA;&lt;li&gt;Gestion des clients et emprunteurs&lt;/li&gt;&#xA;&lt;li&gt;Gestion du personnel&lt;/li&gt;&#xA;&lt;li&gt;Edition de fiches de sorties, devis et factures&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Ce qu&amp;rsquo;elle ne comprend PAS:&lt;/p&gt;</description>
+			</item>
+	</channel>
 </rss>
