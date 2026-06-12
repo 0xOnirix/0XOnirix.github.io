@@ -459,7 +459,8 @@
 </span></span></code></pre></div><p>Et enfin pour le 3ème <strong>3. Quit</strong>, cela clôt la connexion.</p>
 <hr>
 <h3 id="formattage-des-commandes">Formattage des commandes</h3>
-<p>Comme on peut voir dans la section <a href="#appendix-b-st25tb512-ac-command-brief">8. ST25TB512-AC commands</a>, le formattage des commandes ressemble à ceci:</p>
+<p>Chose très intéressante dans ces menus est la possibilité d&rsquo;envoyer des commandes hexadecimal, pour savoir comment elle sont formattées, on va voir dans la section <a href="#appendix-b-st25tb512-ac-command-brief">8. ST25TB512-AC commands</a>.</p>
+<p>Il ressemble alors à ceci:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">+-----+----------+--------+------+------+-----+
 </span></span><span class="line"><span class="cl">| SOF | Commande | Option | CRCL | CRCH | EOF |
 </span></span><span class="line"><span class="cl">+-----+----------+--------+------+------+-----+
@@ -510,8 +511,8 @@
 <h3 id="identification-du-compteur">Identification du compteur</h3>
 <p>La première chose qu&rsquo;il nous faut est savoir est l&rsquo;adresse du bloc contenant le nombre de voyage et comment il fonctionne (est-ce qu&rsquo;il contient les voyages restants ou alors le nombre de voyages effectués).</p>
 <p>Dans la section <strong>4. Memory mapping</strong> de la documentation, on peut voir le <a href="#memory-mapping">Tableau 1 - Mappage mémoire</a>, tableau qui liste toutes les adresses de la mémoire ainsi que des informations les concernants.</p>
-<p>Parmis tout ça, on remarque la zone <strong>Resettable OTP bit</strong>, en lisant la <a href="#description-2">deuxième partie</a> de la description, il est indiqué que cette zone peut uniquement passer de 0 à 1, sauf via une <strong>commande spéciale</strong>.</p>
-<p>Des différentes &ldquo;zones&rdquo; c&rsquo;est celle qui a l&rsquo;air la plus prometteuse pour contenir notre compteur de voyages car il s&rsquo;agit d&rsquo;un <strong>compteur réinitialisable</strong> (pour rappelle, il s&rsquo;agit d&rsquo;une puce sur une carte de transport donc rechargeable).</p>
+<p>Parmi tout ça, on remarque la zone <strong>Resettable OTP bit</strong>, en lisant la <a href="#description-2">deuxième partie</a> de la description, il est indiqué que cette zone peut uniquement passer de 1 à 0, sauf via une <strong>commande spéciale</strong>.</p>
+<p>Des différentes &ldquo;zones&rdquo; c&rsquo;est celle qui a l&rsquo;air la plus prometteuse pour contenir notre compteur de voyages car il s&rsquo;agit d&rsquo;un <strong>compteur réinitialisable</strong> (pour rappel, il s&rsquo;agit d&rsquo;une puce sur une carte rechargeable).</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
@@ -762,7 +763,7 @@ Il faut donc enlever les 4 derniers caractères pour avoir la valeur réelle.</d
 </span></span></span><span class="line"><span class="cl"><span class="s2">    data (str): The hexadecimal value to write.
 </span></span></span><span class="line"><span class="cl"><span class="s2">
 </span></span></span><span class="line"><span class="cl"><span class="s2">    Returns:
-</span></span></span><span class="line"><span class="cl"><span class="s2">    str: The return string of the command by the card.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    str: The return string of the command from the chip.
 </span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">((</span><span class="s2">&#34;2</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
@@ -823,7 +824,7 @@ Il faut donc enlever les 4 derniers caractères pour avoir la valeur réelle.</d
 			</tr>
 			<tr>
 					<td>crc</td>
-					<td>Calcul le CRC (ISO14443 Type B) de la comande en entrée et retourne la commande avec son CRC prêt à être utilisée</td>
+					<td>Calcule le CRC (ISO14443 Type B) de la comande en entrée et retourne la commande avec son CRC prête à être utilisée</td>
 			</tr>
 			<tr>
 					<td>get_uid</td>
@@ -857,7 +858,7 @@ Il faut donc enlever les 4 derniers caractères pour avoir la valeur réelle.</d
 </span></span><span class="line"><span class="cl">              │                         
 </span></span><span class="line"><span class="cl">              ▼                             
 </span></span><span class="line"><span class="cl"> ┌─────────────────────────┐          
-</span></span><span class="line"><span class="cl"> │ Calcul le décrément de  │          
+</span></span><span class="line"><span class="cl"> │ Calcule le décrément de │          
 </span></span><span class="line"><span class="cl"> │                         │◄─────┐     
 </span></span><span class="line"><span class="cl"> │ 1 bit du compteur n°6   │      │     
 </span></span><span class="line"><span class="cl"> └────────────┬────────────┘      │     
@@ -888,7 +889,7 @@ Il faut donc enlever les 4 derniers caractères pour avoir la valeur réelle.</d
 <h2 id="conclusion">Conclusion</h2>
 <p>Ce challenge hardware était aussi dense qu&rsquo;intéressant, le fait de le calquer sur un équipement réel et largement utilisé le rend encore plus immersif.</p>
 <p>La &ldquo;faille&rdquo; utilisée ici est plus une fonctionnalité qu&rsquo;autre chose. En effet, le fait de pouvoir recharger la carte est voulu dans le design de la puce, il peut même être empêché si besoin (voir la section <a href="#431-otp_lock_reg">4.3.1. OTP_Lock_Reg</a>).</p>
-<p>Le problème ici est l&rsquo;utilisation de la carte, pour empêcher son exploitation il aurait fallut:</p>
+<p>Le problème ici est son utilisation, pour empêcher son exploitation il aurait fallut:</p>
 <ul>
 <li>Soit utiliser un identifiant unique stocké dans la partie <strong>Lockable EEPROM</strong> et passé en lecture seule via le <strong>OTP_Lock_Reg</strong> (un serveur distant gérerait alors le nombre de voyage ainsi que sa validation)</li>
 <li>Soit utiliser une autre carte/puce avec un fonctionnement différent</li>
@@ -901,7 +902,6 @@ Il faut donc enlever les 4 derniers caractères pour avoir la valeur réelle.</d
 <li><a href="https://docs.python.org/fr/3/howto/sockets.html">https://docs.python.org/fr/3/howto/sockets.html</a></li>
 <li><a href="https://www.geeksforgeeks.org/python/bytes-fromhex-method-python/">https://www.geeksforgeeks.org/python/bytes-fromhex-method-python/</a></li>
 <li><a href="https://www.geeksforgeeks.org/python/to-bytes-in-python/">https://www.geeksforgeeks.org/python/to-bytes-in-python/</a></li>
-<li><a href="https://www.askpython.com/python/examples/python-bit-manipulation-masking-techniques">https://www.askpython.com/python/examples/python-bit-manipulation-masking-techniques</a></li>
 </ul>
 ]]></content>
 		</item>

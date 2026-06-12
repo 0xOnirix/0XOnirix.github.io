@@ -504,7 +504,9 @@ Et enfin pour le 3ème **3. Quit**, cela clôt la connexion.
 
 ### Formattage des commandes
 
-Comme on peut voir dans la section [8. ST25TB512-AC commands](#appendix-b-st25tb512-ac-command-brief), le formattage des commandes ressemble à ceci:
+Chose très intéressante dans ces menus est la possibilité d'envoyer des commandes hexadecimal, pour savoir comment elle sont formattées, on va voir dans la section [8. ST25TB512-AC commands](#appendix-b-st25tb512-ac-command-brief).
+
+Il ressemble alors à ceci:
 
 ```txt
 +-----+----------+--------+------+------+-----+
@@ -574,9 +576,9 @@ La première chose qu'il nous faut est savoir est l'adresse du bloc contenant le
 
 Dans la section **4. Memory mapping** de la documentation, on peut voir le [Tableau 1 - Mappage mémoire](#memory-mapping), tableau qui liste toutes les adresses de la mémoire ainsi que des informations les concernants.
 
-Parmis tout ça, on remarque la zone **Resettable OTP bit**, en lisant la [deuxième partie](#description-2) de la description, il est indiqué que cette zone peut uniquement passer de 0 à 1, sauf via une **commande spéciale**.
+Parmi tout ça, on remarque la zone **Resettable OTP bit**, en lisant la [deuxième partie](#description-2) de la description, il est indiqué que cette zone peut uniquement passer de 1 à 0, sauf via une **commande spéciale**.
 
-Des différentes "zones" c'est celle qui a l'air la plus prometteuse pour contenir notre compteur de voyages car il s'agit d'un **compteur réinitialisable** (pour rappelle, il s'agit d'une puce sur une carte de transport donc rechargeable).
+Des différentes "zones" c'est celle qui a l'air la plus prometteuse pour contenir notre compteur de voyages car il s'agit d'un **compteur réinitialisable** (pour rappel, il s'agit d'une puce sur une carte rechargeable).
 
 
 {{< admonition type=note title="Note" >}}
@@ -834,7 +836,7 @@ def write(socket, address, data):
     data (str): The hexadecimal value to write.
 
     Returns:
-    str: The return string of the command by the card.
+    str: The return string of the command from the chip.
     """
 
     socket.sendall(("2\n").encode())
@@ -887,7 +889,7 @@ Voici un récap des fonctions:
 | **Fonction** | **Description**                                                                                                                                |
 |--------------|------------------------------------------------------------------------------------------------------------------------------------------------|
 | empty_buffer | Permet de vider le buffer de l'objet **socket**, sans ça, une fois plein il n'enregistre plus les nouveaux éléments de la sortie               |
-| crc          | Calcul le CRC (ISO14443 Type B) de la comande en entrée et retourne la commande avec son CRC prêt à être utilisée                              |
+| crc          | Calcule le CRC (ISO14443 Type B) de la comande en entrée et retourne la commande avec son CRC prête à être utilisée                            |
 | get_uid      | Récupère l'UID de la carte car il change à chaque redémarrage (dans le contexte du CTF, à chaque nouvelle connexion) ou après une commande     |
 | select       | Permet la remise à zéro du cycle d'effacement vu plus haut                                                                                     |
 | read         | Va lire la valeur à l'adresse donnée en entrée, envoie la commande via le sous-menu **2. Send command**                                        |
@@ -906,7 +908,7 @@ Le script en lui même va fonctionner comme cela:
               │                         
               ▼                             
  ┌─────────────────────────┐          
- │ Calcul le décrément de  │          
+ │ Calcule le décrément de │          
  │                         │◄─────┐     
  │ 1 bit du compteur n°6   │      │     
  └────────────┬────────────┘      │     
@@ -947,7 +949,7 @@ Ce challenge hardware était aussi dense qu'intéressant, le fait de le calquer 
 
 La "faille" utilisée ici est plus une fonctionnalité qu'autre chose. En effet, le fait de pouvoir recharger la carte est voulu dans le design de la puce, il peut même être empêché si besoin (voir la section [4.3.1. OTP_Lock_Reg](#431-otp_lock_reg)).
 
-Le problème ici est l'utilisation de la carte, pour empêcher son exploitation il aurait fallut:
+Le problème ici est son utilisation, pour empêcher son exploitation il aurait fallut:
 - Soit utiliser un identifiant unique stocké dans la partie **Lockable EEPROM** et passé en lecture seule via le **OTP_Lock_Reg** (un serveur distant gérerait alors le nombre de voyage ainsi que sa validation)
 - Soit utiliser une autre carte/puce avec un fonctionnement différent
 
@@ -960,4 +962,3 @@ Merci à [ElyKar](https://github.com/ElyKar) pour le chall !
 - https://docs.python.org/fr/3/howto/sockets.html
 - https://www.geeksforgeeks.org/python/bytes-fromhex-method-python/
 - https://www.geeksforgeeks.org/python/to-bytes-in-python/
-- https://www.askpython.com/python/examples/python-bit-manipulation-masking-techniques

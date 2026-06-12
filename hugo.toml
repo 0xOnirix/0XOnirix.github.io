@@ -43,7 +43,7 @@ expiryDate = ["expiryDate"]
         useEmbedded = 'fallback'
 
 [params]
-  dateform        = "2 Jan, 2006"
+  dateform        = "2 Jan 2006"
   dateformShort   = "2 Jan"
   dateformNum     = "02-01-2006"
   dateformNumTime = "02-01-2006"
